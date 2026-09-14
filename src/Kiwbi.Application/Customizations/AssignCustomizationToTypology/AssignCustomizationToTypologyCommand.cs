@@ -1,0 +1,3 @@
+namespace Kiwbi.Application.Customizations.AssignCustomizationToTypology;
+
+public sealed record AssignCustomizationToTypologyCommand(Guid CustomizationId, Guid HousingTypologyId);

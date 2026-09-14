@@ -28,6 +28,14 @@ using Kiwbi.Application.Customizations.UpdateTradeCategory;
 using Kiwbi.Application.Customizations.DeleteTradeCategory;
 using Kiwbi.Application.Customizations.GetTradeCategory;
 using Kiwbi.Application.Customizations.GetTradeCategories;
+using Kiwbi.Application.Customizations.CreateCustomization;
+using Kiwbi.Application.Customizations.RenameCustomization;
+using Kiwbi.Application.Customizations.DeleteCustomization;
+using Kiwbi.Application.Customizations.GetCustomization;
+using Kiwbi.Application.Customizations.GetCustomizations;
+using Kiwbi.Application.Customizations.AssignCustomizationToTypology;
+using Kiwbi.Application.Customizations.AssignCustomizationToUnit;
+using Kiwbi.Application.Customizations.RemoveCustomizationAssignment;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Kiwbi.Application;
@@ -71,6 +79,15 @@ public static class DependencyInjection
         services.AddScoped<DeleteTradeCategoryUseCase>();
         services.AddScoped<GetTradeCategoryUseCase>();
         services.AddScoped<GetTradeCategoriesUseCase>();
+
+        services.AddScoped<CreateCustomizationUseCase>();
+        services.AddScoped<RenameCustomizationUseCase>();
+        services.AddScoped<DeleteCustomizationUseCase>();
+        services.AddScoped<GetCustomizationUseCase>();
+        services.AddScoped<GetCustomizationsUseCase>();
+        services.AddScoped<AssignCustomizationToTypologyUseCase>();
+        services.AddScoped<AssignCustomizationToUnitUseCase>();
+        services.AddScoped<RemoveCustomizationAssignmentUseCase>();
 
         return services;
     }

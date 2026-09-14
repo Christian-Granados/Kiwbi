@@ -2,60 +2,53 @@ using Kiwbi.Application.Common;
 using Kiwbi.Domain.Customizations;
 using Kiwbi.Domain.RealEstate;
 
-namespace Kiwbi.Application.Customizations.DeleteTradeCategory;
+namespace Kiwbi.Application.Customizations.GetCustomizations;
 
-/// <summary>Deletes a TradeCategory whose HousingPromotion is owned by the currently authenticated tenant, blocking deletion if it has customizations.</summary>
-public class DeleteTradeCategoryUseCase
+/// <summary>Lists the Customizations of a TradeCategory owned by the currently authenticated tenant.</summary>
+public class GetCustomizationsUseCase
 {
     private readonly ICurrentUser _currentUser;
     private readonly IHousingPromotionRepository _housingPromotionRepository;
     private readonly ITradeCategoryRepository _tradeCategoryRepository;
     private readonly ICustomizationRepository _customizationRepository;
-    private readonly IUnitOfWork _unitOfWork;
 
-    public DeleteTradeCategoryUseCase(
+    public GetCustomizationsUseCase(
         ICurrentUser currentUser,
         IHousingPromotionRepository housingPromotionRepository,
         ITradeCategoryRepository tradeCategoryRepository,
-        ICustomizationRepository customizationRepository,
-        IUnitOfWork unitOfWork)
+        ICustomizationRepository customizationRepository)
     {
         _currentUser = currentUser;
         _housingPromotionRepository = housingPromotionRepository;
         _tradeCategoryRepository = tradeCategoryRepository;
         _customizationRepository = customizationRepository;
-        _unitOfWork = unitOfWork;
     }
 
-    public async Task<Result> ExecuteAsync(Guid tradeCategoryId, CancellationToken cancellationToken = default)
+    public async Task<Result<IReadOnlyList<CustomizationDto>>> ExecuteAsync(Guid tradeCategoryId, CancellationToken cancellationToken = default)
     {
         if (_currentUser.DeveloperCompanyId is not { } developerCompanyId)
         {
-            return Result.Failure("El usuario actual no está vinculado a ninguna promotora.");
+            return Result.Failure<IReadOnlyList<CustomizationDto>>("El usuario actual no está vinculado a ninguna promotora.");
         }
 
         var tradeCategory = await _tradeCategoryRepository.GetByIdAsync(tradeCategoryId, cancellationToken);
 
         if (tradeCategory is null)
         {
-            return Result.Failure("No se ha encontrado el gremio.");
+            return Result.Failure<IReadOnlyList<CustomizationDto>>("No se ha encontrado el gremio.");
         }
 
         var promotion = await _housingPromotionRepository.GetByIdAsync(tradeCategory.HousingPromotionId, cancellationToken);
 
         if (promotion is null || promotion.DeveloperCompanyId != developerCompanyId)
         {
-            return Result.Failure("No se ha encontrado el gremio.");
+            return Result.Failure<IReadOnlyList<CustomizationDto>>("No se ha encontrado el gremio.");
         }
 
-        if (await _customizationRepository.ExistsByTradeCategoryIdAsync(tradeCategoryId, cancellationToken))
-        {
-            return Result.Failure("No se puede eliminar el gremio porque tiene personalizaciones asociadas.");
-        }
+        var customizations = await _customizationRepository.GetByTradeCategoryIdAsync(tradeCategoryId, cancellationToken);
 
-        _tradeCategoryRepository.Remove(tradeCategory);
-        await _unitOfWork.SaveChangesAsync(cancellationToken);
+        var dtos = customizations.Select(CustomizationDto.FromEntity).ToList();
 
-        return Result.Success();
+        return Result.Success<IReadOnlyList<CustomizationDto>>(dtos);
     }
 }

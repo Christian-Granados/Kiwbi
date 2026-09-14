@@ -1,0 +1,103 @@
+@model Kiwbi.Web.Models.Customizations.CustomizationDetailsViewModel
+@{
+    ViewData["Title"] = "Detalle de la personalización";
+}
+
+<h1>@Model.Name</h1>
+
+@if (TempData["Error"] is string error)
+{
+    <div class="alert alert-danger">@error</div>
+}
+@if (!ViewData.ModelState.IsValid)
+{
+    <div class="alert alert-danger" asp-validation-summary="ModelOnly"></div>
+}
+
+<h2 class="h4 mt-4">Opciones</h2>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Sobrecoste</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var option in Model.Options)
+        {
+            <tr>
+                <td>@option.Name</td>
+                <td>@option.SurchargeAmount.ToString("0.00") €</td>
+                <td>
+                    @if (option.IsDefault)
+                    {
+                        <span class="badge bg-primary">Por defecto</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+<p class="text-muted">La gestión de opciones (añadir, editar, fijar por defecto, eliminar) se incorporará en la Feature 3.3.</p>
+
+<h2 class="h4 mt-4">Se aplica a</h2>
+@if (!Model.Assignments.Any())
+{
+    <p>Sin asignaciones.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nivel</th>
+                <th>Destino</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var assignment in Model.Assignments)
+            {
+                <tr>
+                    <td>@assignment.Scope</td>
+                    <td>@assignment.TargetLabel</td>
+                    <td>
+                        @if (Model.Assignments.Count > 1)
+                        {
+                            <form asp-controller="Customizations" asp-action="RemoveAssignment" asp-route-id="@Model.Id" asp-route-assignmentId="@assignment.Id" method="post" class="d-inline"
+                                  onsubmit="return confirm('¿Seguro que quieres eliminar esta asignación?');">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Quitar</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@if (!Model.IsAssignedToWholePromotion)
+{
+    <div class="row">
+        <div class="col-md-5">
+            <h3 class="h6">Añadir tipología</h3>
+            <form asp-controller="Customizations" asp-action="AddTypologyAssignment" asp-route-id="@Model.Id" method="post" class="d-flex gap-2">
+                <select name="housingTypologyId" class="form-select" asp-items="Model.AvailableTypologies"></select>
+                <button type="submit" class="btn btn-outline-primary text-nowrap">Añadir</button>
+            </form>
+        </div>
+        <div class="col-md-5">
+            <h3 class="h6">Añadir vivienda</h3>
+            <form asp-controller="Customizations" asp-action="AddUnitAssignment" asp-route-id="@Model.Id" method="post" class="d-flex gap-2">
+                <select name="housingUnitId" class="form-select" asp-items="Model.AvailableUnits"></select>
+                <button type="submit" class="btn btn-outline-primary text-nowrap">Añadir</button>
+            </form>
+        </div>
+    </div>
+}
+
+<div class="mt-4">
+    <a asp-controller="Customizations" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary">Editar nombre</a>
+    <a asp-controller="Customizations" asp-action="Index" asp-route-tradeCategoryId="@Model.TradeCategoryId" class="btn btn-secondary">Volver al listado</a>
+</div>

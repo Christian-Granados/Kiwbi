@@ -1,0 +1,53 @@
+@model List<Kiwbi.Web.Models.Customizations.CustomizationListItemViewModel>
+@{
+    ViewData["Title"] = "Personalizaciones";
+    var tradeCategoryId = (Guid)ViewBag.TradeCategoryId;
+    var promotionId = (Guid)ViewBag.PromotionId;
+}
+
+<h1>Personalizaciones de @ViewBag.TradeCategoryName</h1>
+
+@if (TempData["Error"] is string error)
+{
+    <div class="alert alert-danger">@error</div>
+}
+
+<p>
+    <a asp-controller="Customizations" asp-action="Create" asp-route-tradeCategoryId="@tradeCategoryId" class="btn btn-primary">Nueva personalización</a>
+    <a asp-controller="TradeCategories" asp-action="Index" asp-route-promotionId="@promotionId" class="btn btn-secondary">Volver a los gremios</a>
+</p>
+
+@if (!Model.Any())
+{
+    <p>Todavía no hay personalizaciones dadas de alta.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Opciones</th>
+                <th>Se aplica a</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var customization in Model)
+            {
+                <tr>
+                    <td>@customization.Name</td>
+                    <td>@customization.OptionsCount</td>
+                    <td>@customization.AssignmentsSummary</td>
+                    <td>
+                        <a asp-controller="Customizations" asp-action="Details" asp-route-id="@customization.Id" class="btn btn-sm btn-outline-secondary">Detalle</a>
+                        <form asp-controller="Customizations" asp-action="Delete" asp-route-id="@customization.Id" asp-route-tradeCategoryId="@tradeCategoryId" method="post" class="d-inline"
+                              onsubmit="return confirm('¿Seguro que quieres eliminar esta personalización?');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

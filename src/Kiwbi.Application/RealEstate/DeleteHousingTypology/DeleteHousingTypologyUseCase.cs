@@ -1,15 +1,17 @@
 using Kiwbi.Application.Common;
+using Kiwbi.Domain.Customizations;
 using Kiwbi.Domain.RealEstate;
 
 namespace Kiwbi.Application.RealEstate.DeleteHousingTypology;
 
-/// <summary>Deletes a HousingTypology whose HousingPromotion is owned by the currently authenticated tenant, blocking deletion if it has units assigned.</summary>
+/// <summary>Deletes a HousingTypology whose HousingPromotion is owned by the currently authenticated tenant, blocking deletion if it has units or customization assignments.</summary>
 public class DeleteHousingTypologyUseCase
 {
     private readonly ICurrentUser _currentUser;
     private readonly IHousingPromotionRepository _housingPromotionRepository;
     private readonly IHousingTypologyRepository _housingTypologyRepository;
     private readonly IHousingUnitRepository _housingUnitRepository;
+    private readonly ICustomizationRepository _customizationRepository;
     private readonly IUnitOfWork _unitOfWork;
 
     public DeleteHousingTypologyUseCase(
@@ -17,12 +19,14 @@ public class DeleteHousingTypologyUseCase
         IHousingPromotionRepository housingPromotionRepository,
         IHousingTypologyRepository housingTypologyRepository,
         IHousingUnitRepository housingUnitRepository,
+        ICustomizationRepository customizationRepository,
         IUnitOfWork unitOfWork)
     {
         _currentUser = currentUser;
         _housingPromotionRepository = housingPromotionRepository;
         _housingTypologyRepository = housingTypologyRepository;
         _housingUnitRepository = housingUnitRepository;
+        _customizationRepository = customizationRepository;
         _unitOfWork = unitOfWork;
     }
 
@@ -50,6 +54,11 @@ public class DeleteHousingTypologyUseCase
         if (await _housingUnitRepository.ExistsByHousingTypologyIdAsync(typologyId, cancellationToken))
         {
             return Result.Failure("No se puede eliminar la tipología porque tiene viviendas asociadas.");
+        }
+
+        if (await _customizationRepository.ExistsByHousingTypologyIdAsync(typologyId, cancellationToken))
+        {
+            return Result.Failure("No se puede eliminar la tipología porque tiene personalizaciones asignadas.");
         }
 
         _housingTypologyRepository.Remove(typology);

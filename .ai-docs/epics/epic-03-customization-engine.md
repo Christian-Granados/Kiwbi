@@ -133,14 +133,14 @@ Cambios sobre casos de uso existentes de Epic 2 (necesarios para no dejar huérf
 
 ### Feature 3.2 - CRUD de Personalizaciones y asociación condicional
 
-- [ ] Crear `Customization`, `CustomizationOption`, `CustomizationAssignment` y `CustomizationScope` en `Kiwbi.Domain.Customizations`, con las invariantes descritas (opción por defecto única, asignación inicial obligatoria, exclusión mutua `WholePromotion` vs. `Typology`/`Unit`).
-- [ ] Crear `ICustomizationRepository`, incluyendo `GetByTradeCategoryIdAsync`, `ExistsByTradeCategoryIdAsync`, `ExistsByHousingTypologyIdAsync` y `ExistsByHousingUnitIdAsync`.
-- [ ] Implementar `CreateCustomization` (con opción y asignación inicial), `RenameCustomization`, `GetCustomization`, `GetCustomizations`, `DeleteCustomization`, `AssignCustomizationToTypology`, `AssignCustomizationToUnit`, `RemoveCustomizationAssignment`, validando que el Gremio y la Tipología/Vivienda de destino pertenezcan a la misma promoción del tenant actual.
-- [ ] Ampliar `DeleteHousingTypologyUseCase` y `DeleteHousingUnitUseCase` (Epic 2) para bloquear el borrado si existe alguna `CustomizationAssignment` que las referencie.
-- [ ] Crear la configuración EF Core (`OwnsMany` para `Options` y `Assignments`, con sus índices únicos) y `DbSet<Customization>`.
-- [ ] Implementar `CustomizationRepository`.
-- [ ] Generar y aplicar la migración que incorpora `customizations` y `customization_assignments`.
-- [ ] Crear `CustomizationsController` y sus vistas (listado por Gremio, alta con asignación inicial, detalle con gestión de asignaciones, baja).
+- [x] Crear `Customization`, `CustomizationOption`, `CustomizationAssignment` y `CustomizationScope` en `Kiwbi.Domain.Customizations`, con las invariantes descritas (opción por defecto única, asignación inicial obligatoria, exclusión mutua `WholePromotion` vs. `Typology`/`Unit`).
+- [x] Crear `ICustomizationRepository`, incluyendo `GetByTradeCategoryIdAsync`, `ExistsByTradeCategoryIdAsync`, `ExistsByHousingTypologyIdAsync` y `ExistsByHousingUnitIdAsync`.
+- [x] Implementar `CreateCustomization` (con opción y asignación inicial), `RenameCustomization`, `GetCustomization`, `GetCustomizations`, `DeleteCustomization`, `AssignCustomizationToTypology`, `AssignCustomizationToUnit`, `RemoveCustomizationAssignment`, validando que el Gremio y la Tipología/Vivienda de destino pertenezcan a la misma promoción del tenant actual.
+- [x] Ampliar `DeleteHousingTypologyUseCase` y `DeleteHousingUnitUseCase` (Epic 2) para bloquear el borrado si existe alguna `CustomizationAssignment` que las referencie.
+- [x] Crear la configuración EF Core (`OwnsMany` para `Options` y `Assignments`, con sus índices únicos) y `DbSet<Customization>`.
+- [x] Implementar `CustomizationRepository`.
+- [x] Generar y aplicar la migración que incorpora `customizations` y `customization_assignments`.
+- [x] Crear `CustomizationsController` y sus vistas (listado por Gremio, alta con asignación inicial, detalle con gestión de asignaciones, baja).
 
 ### Feature 3.3 - CRUD de Opciones por Personalización
 
@@ -180,3 +180,13 @@ Cambios sobre casos de uso existentes de Epic 2 (necesarios para no dejar huérf
 - `DeleteHousingPromotionUseCase` sí se amplió ya en esta Feature con `ITradeCategoryRepository.ExistsByHousingPromotionIdAsync`, bloqueando el borrado de una promoción con Gremios asociados.
 - El selector de fecha y hora usa `<input type="datetime-local">`: el Input Tag Helper de ASP.NET Core detecta este `type` y formatea automáticamente el valor de un `DateTime` al formato `yyyy-MM-ddTHH:mm:ss.fff` esperado por el control HTML5, sin necesitar formateo manual en la vista. La cultura invariante ya forzada en `Program.cs` (Epic 2) evita conflictos de separador decimal/fecha con el resto de formularios.
 - Verificado manualmente: `/TradeCategories?promotionId=...` sin sesión redirige 302 a `/Account/Login`. 135 tests pasando (65 Domain + 70 Application) tras esta Feature.
+
+### Decisiones técnicas durante la ejecución (Feature 3.2)
+
+- `CustomizationOption` y `CustomizationAssignment` se mapearon con `OwnsMany` de EF Core: son colecciones "owned" sin `DbSet` propio, siempre cargadas junto con su `Customization` propietaria (no hace falta `.Include()` explícito). Se configuró `SetPropertyAccessMode(PropertyAccessMode.Field)` en ambas navegaciones para que EF Core lea/escriba directamente los campos privados `_options`/`_assignments` sin necesitar un setter público en las colecciones.
+- `Customization.CreateForWholePromotion/CreateForTypologies/CreateForUnits` son tres fábricas estáticas (en vez de un único `Create` con un enum + lista opcional) para que la invariante "al menos una asignación inicial" sea imposible de omitir por construcción: cada fábrica exige sus propios argumentos obligatorios. `CreateForTypologies`/`CreateForUnits` deduplican automáticamente los ids repetidos.
+- `ICustomizationRepository.ExistsByHousingTypologyIdAsync`/`ExistsByHousingUnitIdAsync` consultan con `_dbContext.Customizations.SelectMany(c => c.Assignments).AnyAsync(...)`: EF Core traduce la navegación a la colección "owned" `customization_assignments` a un JOIN SQL normal, sin necesitar un `DbSet` propio para esa tabla.
+- Se ampliaron `DeleteHousingTypologyUseCase` y `DeleteHousingUnitUseCase` (Epic 2) con `ICustomizationRepository` para bloquear el borrado de una Tipología/Vivienda referenciada por alguna `CustomizationAssignment`, cerrando el hueco de integridad señalado en el análisis inicial del Epic.
+- La gestión de Opciones (añadir, editar, fijar por defecto, eliminar) se deja fuera de las vistas de esta Feature a propósito: el dominio ya expone `AddOption`/`UpdateOption`/`SetDefaultOption`/`RemoveOption` (necesarios para que `Create` tenga una opción por defecto), pero los casos de uso y la UI dedicados se implementan en la Feature 3.3, tal como estaba planeado.
+- El formulario de alta de Personalización muestra siempre los `<select multiple>` de tipologías y viviendas (sin JavaScript de mostrar/ocultar según el `Scope` elegido), priorizando la simplicidad sobre la interactividad; Alpine.js/HTMX quedan reservados para el Epic 5 según `02-architecture-and-stack.md`.
+- Verificado manualmente: `/Customizations?tradeCategoryId=...` sin sesión redirige 302 a `/Account/Login`. 185 tests pasando (92 Domain + 93 Application) tras esta Feature.

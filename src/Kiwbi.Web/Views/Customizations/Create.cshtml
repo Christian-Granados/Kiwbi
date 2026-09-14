@@ -1,0 +1,62 @@
+@model Kiwbi.Web.Models.Customizations.CreateCustomizationViewModel
+@using Kiwbi.Domain.Customizations
+@{
+    ViewData["Title"] = "Nueva personalización";
+}
+
+<h1>Nueva personalización</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-controller="Customizations" asp-action="Create" method="post">
+            <input type="hidden" asp-for="TradeCategoryId" />
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="DefaultOptionName" class="form-label"></label>
+                <input asp-for="DefaultOptionName" class="form-control" />
+                <span asp-validation-for="DefaultOptionName" class="text-danger"></span>
+                <div class="form-text">Nombre de la primera opción, que nace marcada como opción por defecto.</div>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="DefaultOptionSurchargeAmount" class="form-label"></label>
+                <input asp-for="DefaultOptionSurchargeAmount" class="form-control" type="number" step="0.01" min="0" />
+                <span asp-validation-for="DefaultOptionSurchargeAmount" class="text-danger"></span>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="Scope" class="form-label"></label>
+                <select asp-for="Scope" class="form-select"
+                        asp-items="Html.GetEnumSelectList<CustomizationScope>()"></select>
+                <div class="form-text">
+                    Si eliges "Toda la promoción" no hace falta seleccionar tipologías ni viviendas.
+                    Si eliges "Tipología" o "Vivienda", selecciona una o varias en la lista correspondiente.
+                </div>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="SelectedHousingTypologyIds" class="form-label"></label>
+                <select asp-for="SelectedHousingTypologyIds" class="form-select" multiple size="6" asp-items="Model.AvailableTypologies"></select>
+            </div>
+
+            <div class="form-group mb-3">
+                <label asp-for="SelectedHousingUnitIds" class="form-label"></label>
+                <select asp-for="SelectedHousingUnitIds" class="form-select" multiple size="6" asp-items="Model.AvailableUnits"></select>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Crear</button>
+            <a asp-controller="Customizations" asp-action="Index" asp-route-tradeCategoryId="@Model.TradeCategoryId" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

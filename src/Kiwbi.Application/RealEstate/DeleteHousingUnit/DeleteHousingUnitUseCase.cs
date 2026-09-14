@@ -1,14 +1,16 @@
 using Kiwbi.Application.Common;
+using Kiwbi.Domain.Customizations;
 using Kiwbi.Domain.RealEstate;
 
 namespace Kiwbi.Application.RealEstate.DeleteHousingUnit;
 
-/// <summary>Deletes a HousingUnit whose HousingPromotion is owned by the currently authenticated tenant.</summary>
+/// <summary>Deletes a HousingUnit whose HousingPromotion is owned by the currently authenticated tenant, blocking deletion if it has customization assignments.</summary>
 public class DeleteHousingUnitUseCase
 {
     private readonly ICurrentUser _currentUser;
     private readonly IHousingPromotionRepository _housingPromotionRepository;
     private readonly IHousingUnitRepository _housingUnitRepository;
+    private readonly ICustomizationRepository _customizationRepository;
     private readonly IFileStorageService _fileStorageService;
     private readonly IUnitOfWork _unitOfWork;
 
@@ -16,12 +18,14 @@ public class DeleteHousingUnitUseCase
         ICurrentUser currentUser,
         IHousingPromotionRepository housingPromotionRepository,
         IHousingUnitRepository housingUnitRepository,
+        ICustomizationRepository customizationRepository,
         IFileStorageService fileStorageService,
         IUnitOfWork unitOfWork)
     {
         _currentUser = currentUser;
         _housingPromotionRepository = housingPromotionRepository;
         _housingUnitRepository = housingUnitRepository;
+        _customizationRepository = customizationRepository;
         _fileStorageService = fileStorageService;
         _unitOfWork = unitOfWork;
     }
@@ -45,6 +49,11 @@ public class DeleteHousingUnitUseCase
         if (promotion is null || promotion.DeveloperCompanyId != developerCompanyId)
         {
             return Result.Failure("No se ha encontrado la vivienda.");
+        }
+
+        if (await _customizationRepository.ExistsByHousingUnitIdAsync(unitId, cancellationToken))
+        {
+            return Result.Failure("No se puede eliminar la vivienda porque tiene personalizaciones asignadas.");
         }
 
         var floorPlanImagePath = unit.FloorPlanImagePath;

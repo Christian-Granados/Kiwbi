@@ -37,6 +37,7 @@ else
                     <td>@tradeCategory.Name</td>
                     <td>@tradeCategory.SelectionCutOffDateUtc.ToString("dd/MM/yyyy HH:mm")</td>
                     <td>
+                        <a asp-controller="Customizations" asp-action="Index" asp-route-tradeCategoryId="@tradeCategory.Id" class="btn btn-sm btn-outline-primary">Personalizaciones</a>
                         <a asp-controller="TradeCategories" asp-action="Edit" asp-route-id="@tradeCategory.Id" class="btn btn-sm btn-outline-secondary">Editar</a>
                         <form asp-controller="TradeCategories" asp-action="Delete" asp-route-id="@tradeCategory.Id" asp-route-promotionId="@promotionId" method="post" class="d-inline"
                               onsubmit="return confirm('¿Seguro que quieres eliminar este gremio?');">

@@ -2,10 +2,10 @@ using Kiwbi.Application.Common;
 using Kiwbi.Domain.Customizations;
 using Kiwbi.Domain.RealEstate;
 
-namespace Kiwbi.Application.Customizations.DeleteTradeCategory;
+namespace Kiwbi.Application.Customizations.DeleteCustomization;
 
-/// <summary>Deletes a TradeCategory whose HousingPromotion is owned by the currently authenticated tenant, blocking deletion if it has customizations.</summary>
-public class DeleteTradeCategoryUseCase
+/// <summary>Deletes a Customization whose TradeCategory/HousingPromotion is owned by the currently authenticated tenant.</summary>
+public class DeleteCustomizationUseCase
 {
     private readonly ICurrentUser _currentUser;
     private readonly IHousingPromotionRepository _housingPromotionRepository;
@@ -13,7 +13,7 @@ public class DeleteTradeCategoryUseCase
     private readonly ICustomizationRepository _customizationRepository;
     private readonly IUnitOfWork _unitOfWork;
 
-    public DeleteTradeCategoryUseCase(
+    public DeleteCustomizationUseCase(
         ICurrentUser currentUser,
         IHousingPromotionRepository housingPromotionRepository,
         ITradeCategoryRepository tradeCategoryRepository,
@@ -27,33 +27,35 @@ public class DeleteTradeCategoryUseCase
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<Result> ExecuteAsync(Guid tradeCategoryId, CancellationToken cancellationToken = default)
+    public async Task<Result> ExecuteAsync(Guid customizationId, CancellationToken cancellationToken = default)
     {
         if (_currentUser.DeveloperCompanyId is not { } developerCompanyId)
         {
             return Result.Failure("El usuario actual no está vinculado a ninguna promotora.");
         }
 
-        var tradeCategory = await _tradeCategoryRepository.GetByIdAsync(tradeCategoryId, cancellationToken);
+        var customization = await _customizationRepository.GetByIdAsync(customizationId, cancellationToken);
+
+        if (customization is null)
+        {
+            return Result.Failure("No se ha encontrado la personalización.");
+        }
+
+        var tradeCategory = await _tradeCategoryRepository.GetByIdAsync(customization.TradeCategoryId, cancellationToken);
 
         if (tradeCategory is null)
         {
-            return Result.Failure("No se ha encontrado el gremio.");
+            return Result.Failure("No se ha encontrado la personalización.");
         }
 
         var promotion = await _housingPromotionRepository.GetByIdAsync(tradeCategory.HousingPromotionId, cancellationToken);
 
         if (promotion is null || promotion.DeveloperCompanyId != developerCompanyId)
         {
-            return Result.Failure("No se ha encontrado el gremio.");
+            return Result.Failure("No se ha encontrado la personalización.");
         }
 
-        if (await _customizationRepository.ExistsByTradeCategoryIdAsync(tradeCategoryId, cancellationToken))
-        {
-            return Result.Failure("No se puede eliminar el gremio porque tiene personalizaciones asociadas.");
-        }
-
-        _tradeCategoryRepository.Remove(tradeCategory);
+        _customizationRepository.Remove(customization);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success();
