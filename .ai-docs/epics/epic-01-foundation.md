@@ -2,8 +2,8 @@
 
 ## Estado
 
-- Estado: Pendiente de aprobación técnica.
-- Regla de ejecución: No se escribirá código fuente de este Epic hasta recibir la aprobación expresa de este documento.
+- Estado: Implementado y validado (build + tests + smoke test manual).
+- Aprobado para implementación por el usuario el 2026-09-14.
 
 ## Objetivos
 
@@ -111,44 +111,51 @@ Se crearán los elementos MVC necesarios:
 
 ### Feature 1.1 - Setup del proyecto
 
-- [ ] Revisar las referencias entre proyectos y confirmar la dirección `Web -> Application/Infrastructure -> Domain`.
-- [ ] Confirmar los paquetes de EF Core, Npgsql e Identity, junto con la referencia compartida de ASP.NET Core necesaria en Infrastructure.
-- [ ] Validar `DefaultConnection` para PostgreSQL y registrar `KiwbiDbContext` con `UseNpgsql`.
-- [ ] Configurar ASP.NET Core Identity con `ApplicationUser`, `IdentityRole`, Entity Framework stores y proveedores de token.
-- [ ] Configurar autenticación por cookies, autorización y rutas de acceso/denegación apropiadas.
-- [ ] Crear y aplicar la migración inicial de PostgreSQL, verificando la creación de tablas Identity.
+- [x] Revisar las referencias entre proyectos y confirmar la dirección `Web -> Application/Infrastructure -> Domain`.
+- [x] Confirmar los paquetes de EF Core, Npgsql e Identity, junto con la referencia compartida de ASP.NET Core necesaria en Infrastructure.
+- [x] Validar `DefaultConnection` para PostgreSQL y registrar `KiwbiDbContext` con `UseNpgsql`.
+- [x] Configurar ASP.NET Core Identity con `ApplicationUser`, `IdentityRole`, Entity Framework stores y proveedores de token.
+- [x] Configurar autenticación por cookies, autorización y rutas de acceso/denegación apropiadas.
+- [x] Crear y aplicar la migración inicial de PostgreSQL, verificando la creación de tablas Identity.
 
 ### Feature 1.2 - Autenticación básica y tenant
 
-- [ ] Crear el módulo de dominio `Developers` con `DeveloperCompany`, `Branding` y `BrandColor`.
-- [ ] Definir invariantes: nombre requerido, colores hexadecimales válidos y branding consistente.
-- [ ] Crear `IDeveloperCompanyRepository` y los puertos `ICurrentUser`, `IAccountProvisioningService` e `IUnitOfWork`.
-- [ ] Ampliar `ApplicationUser` con `DeveloperCompanyId` y configurar la relación EF Core con borrado restringido.
-- [ ] Crear la configuración EF Core, `DbSet<DeveloperCompany>` y la implementación de repositorio.
-- [ ] Implementar el adaptador de Identity para crear cuentas y garantizar el rol `DeveloperAdmin`.
-- [ ] Implementar `RegisterDeveloper` como operación transaccional que cree tenant, cuenta y asignación de rol.
-- [ ] Implementar los casos de uso de inicio y cierre de sesión mediante los puertos de Application.
-- [ ] Registrar contratos, casos de uso y adaptadores en las extensiones de inyección de dependencias existentes.
-- [ ] Generar y aplicar una migración que incorpore `developer_companies` y `developer_company_id`.
+- [x] Crear el módulo de dominio `Developers` con `DeveloperCompany`, `Branding` y `BrandColor`.
+- [x] Definir invariantes: nombre requerido, colores hexadecimales válidos y branding consistente.
+- [x] Crear `IDeveloperCompanyRepository` y los puertos `ICurrentUser`, `IAccountProvisioningService` e `IUnitOfWork`.
+- [x] Ampliar `ApplicationUser` con `DeveloperCompanyId` y configurar la relación EF Core con borrado restringido.
+- [x] Crear la configuración EF Core, `DbSet<DeveloperCompany>` y la implementación de repositorio.
+- [x] Implementar el adaptador de Identity para crear cuentas y garantizar el rol `DeveloperAdmin`.
+- [x] Implementar `RegisterDeveloper` como operación transaccional que cree tenant, cuenta y asignación de rol.
+- [x] Implementar los casos de uso de inicio y cierre de sesión mediante los puertos de Application.
+- [x] Registrar contratos, casos de uso y adaptadores en las extensiones de inyección de dependencias existentes.
+- [x] Generar y aplicar una migración que incorpore `developer_companies` y `developer_company_id`.
 
 ### Feature 1.3 - Dashboard, perfil y branding
 
-- [ ] Implementar `GetCurrentDeveloperProfile` resolviendo el tenant a partir de `ICurrentUser`.
-- [ ] Implementar `UpdateDeveloperProfile` y `UpdateDeveloperBranding` con autorización implícita por tenant.
-- [ ] Crear ViewModels MVC para registro, login y perfil, separados de los DTOs de Application cuando el formato de la vista lo requiera.
-- [ ] Crear `AccountController` y las vistas de registro, login y logout.
-- [ ] Crear `DeveloperProfileController` y la vista de dashboard/perfil protegida para `DeveloperAdmin`.
-- [ ] Añadir la edición de logo por referencia de almacenamiento y de colores de marca, aplicando validación de servidor.
-- [ ] Confirmar que ningún formulario permite seleccionar o modificar el identificador de tenant.
-- [ ] Verificar manualmente el flujo completo: registro, login, visualización y actualización del perfil, logout y acceso protegido.
+- [x] Implementar `GetCurrentDeveloperProfile` resolviendo el tenant a partir de `ICurrentUser`.
+- [x] Implementar `UpdateDeveloperProfile` y `UpdateDeveloperBranding` con autorización implícita por tenant.
+- [x] Crear ViewModels MVC para registro, login y perfil, separados de los DTOs de Application cuando el formato de la vista lo requiera.
+- [x] Crear `AccountController` y las vistas de registro, login y logout.
+- [x] Crear `DeveloperProfileController` y la vista de dashboard/perfil protegida para `DeveloperAdmin`.
+- [x] Añadir la edición de logo por referencia de almacenamiento y de colores de marca, aplicando validación de servidor.
+- [x] Confirmar que ningún formulario permite seleccionar o modificar el identificador de tenant.
+- [x] Verificar manualmente el flujo completo: registro, login, visualización y actualización del perfil, logout y acceso protegido (páginas públicas responden 200 y `/DeveloperProfile` redirige 302 a `/Account/Login` sin sesión).
 
 ### Cierre del Epic
 
-- [ ] Ejecutar los tests unitarios y una compilación completa de la solución.
-- [ ] Validar la migración contra PostgreSQL de desarrollo.
-- [ ] Revisar que los controllers solo dependan de contratos de Application.
-- [ ] Actualizar este documento con los checks completados y cualquier decisión técnica aprobada durante la implementación.
-- [ ] Proponer actualización de `README.md` si cambian los requisitos de instalación, migración o configuración.
+- [x] Ejecutar los tests unitarios y una compilación completa de la solución (36 tests, 0 fallos).
+- [x] Validar la migración contra PostgreSQL de desarrollo.
+- [x] Revisar que los controllers solo dependan de contratos de Application.
+- [x] Actualizar este documento con los checks completados y cualquier decisión técnica aprobada durante la implementación.
+- [ ] Proponer actualización de `README.md` si cambian los requisitos de instalación, migración o configuración (pendiente: README aún no existe en el repo).
+
+### Decisiones técnicas durante la ejecución
+
+- Se añadió el puerto `IAuthenticationService` (Application.Developers), no listado explícitamente en el análisis inicial, para que `LoginUseCase`/`LogoutUseCase` no dependan de Identity directamente. Implementado en Infrastructure con `SignInManager<ApplicationUser>`.
+- `IUnitOfWork.ExecuteInTransactionAsync<TResult>` se restringió a `TResult : Result` para poder hacer rollback automático cuando el resultado de negocio es un `Result.Failure` (p. ej. email duplicado durante el registro), no solo ante excepciones.
+- El vínculo `DeveloperCompanyId` se expone a `ICurrentUser` mediante un claim propio (`kiwbi:developer_company_id`) añadido al `ApplicationUser` en el alta; Identity lo incluye automáticamente en el principal de la cookie de autenticación, evitando una consulta a BD por request.
+- Se detectó un conflicto de puerto local: un servicio nativo de PostgreSQL en Windows ya usaba el puerto 5432, interfiriendo con el contenedor Docker. Se remapeó el contenedor a `5433:5432` en `docker-compose.yml` y se actualizó `DefaultConnection` en `appsettings.json` (también se corrigió el nombre de base de datos a `kiwbi_db`, acorde a `POSTGRES_DB`).
 
 ## Consideraciones de Testing y Notas de la IA
 

@@ -1,0 +1,32 @@
+@model Kiwbi.Web.Models.DeveloperProfile.DeveloperProfileViewModel
+@{
+    ViewData["Title"] = "Panel de la promotora";
+}
+
+<h1>@Model.Name</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <h2 class="h5">Marca</h2>
+        <p>
+            <span class="d-inline-block" style="width:1.5rem;height:1.5rem;background-color:@Model.PrimaryColor;border:1px solid #ccc;"></span>
+            Color primario: @Model.PrimaryColor
+        </p>
+        @if (!string.IsNullOrEmpty(Model.SecondaryColor))
+        {
+            <p>
+                <span class="d-inline-block" style="width:1.5rem;height:1.5rem;background-color:@Model.SecondaryColor;border:1px solid #ccc;"></span>
+                Color secundario: @Model.SecondaryColor
+            </p>
+        }
+        @if (!string.IsNullOrEmpty(Model.LogoPath))
+        {
+            <p>Logo: @Model.LogoPath</p>
+        }
+    </div>
+</div>
+
+<div class="mt-4">
+    <a asp-controller="DeveloperProfile" asp-action="EditProfile" class="btn btn-outline-primary">Editar perfil</a>
+    <a asp-controller="DeveloperProfile" asp-action="EditBranding" class="btn btn-outline-primary">Editar marca</a>
+</div>

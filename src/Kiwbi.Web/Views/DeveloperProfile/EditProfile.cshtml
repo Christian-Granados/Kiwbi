@@ -1,0 +1,25 @@
+@model Kiwbi.Web.Models.DeveloperProfile.EditDeveloperProfileViewModel
+@{
+    ViewData["Title"] = "Editar perfil de la promotora";
+}
+
+<h1>Editar perfil de la promotora</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-controller="DeveloperProfile" asp-action="EditProfile" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group mb-3">
+                <label asp-for="Name" class="form-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a asp-controller="DeveloperProfile" asp-action="Index" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

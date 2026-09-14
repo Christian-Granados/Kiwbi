@@ -1,0 +1,35 @@
+@model Kiwbi.Web.Models.DeveloperProfile.EditDeveloperBrandingViewModel
+@{
+    ViewData["Title"] = "Editar marca de la promotora";
+}
+
+<h1>Editar marca de la promotora</h1>
+
+<div class="row">
+    <div class="col-md-6">
+        <form asp-controller="DeveloperProfile" asp-action="EditBranding" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group mb-3">
+                <label asp-for="PrimaryColor" class="form-label"></label>
+                <input asp-for="PrimaryColor" class="form-control" type="color" />
+                <span asp-validation-for="PrimaryColor" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="SecondaryColor" class="form-label"></label>
+                <input asp-for="SecondaryColor" class="form-control" type="color" />
+                <span asp-validation-for="SecondaryColor" class="text-danger"></span>
+            </div>
+            <div class="form-group mb-3">
+                <label asp-for="LogoPath" class="form-label"></label>
+                <input asp-for="LogoPath" class="form-control" placeholder="ej. logos/acme.png" />
+                <span asp-validation-for="LogoPath" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-primary">Guardar</button>
+            <a asp-controller="DeveloperProfile" asp-action="Index" class="btn btn-secondary">Cancelar</a>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

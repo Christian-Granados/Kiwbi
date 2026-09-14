@@ -1,5 +1,9 @@
+using Kiwbi.Application.Common;
+using Kiwbi.Application.Developers;
+using Kiwbi.Domain.Developers;
 using Kiwbi.Infrastructure.Identity;
 using Kiwbi.Infrastructure.Persistence;
+using Kiwbi.Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -20,6 +24,14 @@ public static class DependencyInjection
             .AddIdentity<ApplicationUser, IdentityRole>()
             .AddEntityFrameworkStores<KiwbiDbContext>()
             .AddDefaultTokenProviders();
+
+        services.AddHttpContextAccessor();
+
+        services.AddScoped<IDeveloperCompanyRepository, DeveloperCompanyRepository>();
+        services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<ICurrentUser, CurrentUser>();
+        services.AddScoped<IAccountProvisioningService, IdentityAccountProvisioningService>();
+        services.AddScoped<IAuthenticationService, IdentityAuthenticationService>();
 
         return services;
     }

@@ -1,0 +1,16 @@
+services:
+  kiwbi-db:
+    image: postgres:16-alpine
+    container_name: kiwbi-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: kiwbi_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - kiwbi_pgdata:/var/lib/postgresql/data
+
+volumes:
+  kiwbi_pgdata:
