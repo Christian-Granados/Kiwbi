@@ -20,3 +20,6 @@ Thumbs.db
 
 ## User secrets (never commit local secrets/connection strings)
 **/appsettings.*.local.json
+
+## Locally uploaded files (LocalFileStorageService), never committed
+src/Kiwbi.Web/wwwroot/uploads/

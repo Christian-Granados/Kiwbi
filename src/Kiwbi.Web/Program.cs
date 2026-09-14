@@ -26,6 +26,9 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Serves runtime-uploaded files (e.g. wwwroot/uploads) which MapStaticAssets' build-time manifest does not cover.
+app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthentication();

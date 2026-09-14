@@ -1,0 +1,42 @@
+@model List<Kiwbi.Web.Models.HousingPromotions.HousingPromotionListItemViewModel>
+@{
+    ViewData["Title"] = "Promociones";
+}
+
+<h1>Promociones</h1>
+
+<p>
+    <a asp-controller="HousingPromotions" asp-action="Create" class="btn btn-primary">Nueva promoción</a>
+</p>
+
+@if (!Model.Any())
+{
+    <p>Todavía no hay promociones dadas de alta.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Ciudad</th>
+                <th>Dirección</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var promotion in Model)
+            {
+                <tr>
+                    <td>@promotion.Name</td>
+                    <td>@promotion.City</td>
+                    <td>@promotion.Address</td>
+                    <td>
+                        <a asp-controller="HousingPromotions" asp-action="Details" asp-route-id="@promotion.Id" class="btn btn-sm btn-outline-primary">Ver</a>
+                        <a asp-controller="HousingPromotions" asp-action="Edit" asp-route-id="@promotion.Id" class="btn btn-sm btn-outline-secondary">Editar</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

@@ -1,0 +1,40 @@
+@model Kiwbi.Web.Models.HousingPromotions.HousingPromotionViewModel
+@{
+    ViewData["Title"] = "Detalle de la promoción";
+}
+
+@if (TempData["Error"] is string error)
+{
+    <div class="alert alert-danger">@error</div>
+}
+
+<h1>@Model.Name</h1>
+
+<dl class="row">
+    <dt class="col-sm-2">Ciudad</dt>
+    <dd class="col-sm-10">@Model.City</dd>
+
+    <dt class="col-sm-2">Dirección</dt>
+    <dd class="col-sm-10">@Model.Address</dd>
+
+    <dt class="col-sm-2">Plano general</dt>
+    <dd class="col-sm-10">
+        @if (!string.IsNullOrEmpty(Model.MasterPlanImagePath))
+        {
+            <a href="~/@Model.MasterPlanImagePath" target="_blank">Ver plano</a>
+        }
+        else
+        {
+            <span>Sin plano cargado.</span>
+        }
+    </dd>
+</dl>
+
+<div class="mt-4">
+    <a asp-controller="HousingPromotions" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary">Editar</a>
+    <a asp-controller="HousingPromotions" asp-action="Index" class="btn btn-secondary">Volver al listado</a>
+    <form asp-controller="HousingPromotions" asp-action="Delete" asp-route-id="@Model.Id" method="post" class="d-inline"
+          onsubmit="return confirm('¿Seguro que quieres eliminar esta promoción?');">
+        <button type="submit" class="btn btn-outline-danger">Eliminar</button>
+    </form>
+</div>

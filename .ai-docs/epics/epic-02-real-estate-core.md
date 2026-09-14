@@ -115,14 +115,14 @@ Nuevo puerto en `Kiwbi.Application.Common`:
 
 ### Feature 2.1 - CRUD de Promociones
 
-- [ ] Crear `HousingPromotion` en `Kiwbi.Domain.RealEstate` con sus invariantes y métodos (`Create`, `UpdateDetails`, `UpdateMasterPlanImage`).
-- [ ] Crear `IHousingPromotionRepository`.
-- [ ] Crear el puerto `IFileStorageService` en `Kiwbi.Application.Common`.
-- [ ] Implementar `CreateHousingPromotion`, `UpdateHousingPromotion`, `UpdateHousingPromotionMasterPlan`, `GetHousingPromotion`, `GetHousingPromotions` y `DeleteHousingPromotion`, resolviendo siempre el tenant desde `ICurrentUser`.
-- [ ] Crear la configuración EF Core, `DbSet<HousingPromotion>` y `HousingPromotionRepository`.
-- [ ] Implementar `LocalFileStorageService` y registrarlo en `AddInfrastructureServices`.
-- [ ] Generar y aplicar la migración que incorpora `housing_promotions`.
-- [ ] Crear `HousingPromotionsController` y las vistas de listado, alta, edición y baja, con subida del plano general.
+- [x] Crear `HousingPromotion` en `Kiwbi.Domain.RealEstate` con sus invariantes y métodos (`Create`, `UpdateDetails`, `UpdateMasterPlanImage`).
+- [x] Crear `IHousingPromotionRepository`.
+- [x] Crear el puerto `IFileStorageService` en `Kiwbi.Application.Common`.
+- [x] Implementar `CreateHousingPromotion`, `UpdateHousingPromotion`, `UpdateHousingPromotionMasterPlan`, `GetHousingPromotion`, `GetHousingPromotions` y `DeleteHousingPromotion`, resolviendo siempre el tenant desde `ICurrentUser`.
+- [x] Crear la configuración EF Core, `DbSet<HousingPromotion>` y `HousingPromotionRepository`.
+- [x] Implementar `LocalFileStorageService` y registrarlo en `AddInfrastructureServices`.
+- [x] Generar y aplicar la migración que incorpora `housing_promotions`.
+- [x] Crear `HousingPromotionsController` y las vistas de listado, alta, edición y baja, con subida del plano general.
 
 ### Feature 2.2 - CRUD de Tipologías y Viviendas
 
@@ -164,3 +164,11 @@ Nuevo puerto en `Kiwbi.Application.Common`:
 - `HousingTypology` y `HousingUnit` no dependen de `HousingPromotion` como agregado contenedor: cada una es una raíz independiente con su propio repositorio; las invariantes cruzadas se validan en Application.
 - Los controllers no deben manipular rutas de disco directamente: toda subida de fichero pasa por `IFileStorageService`.
 - Antes de programar este Epic, el usuario debe resolver las preguntas abiertas de la sección anterior y aprobar este documento.
+
+### Decisiones técnicas durante la ejecución (Feature 2.1)
+
+- `app.MapStaticAssets()` (introducido en .NET 9/10 para assets con manifiesto de compilación) no sirve ficheros creados en tiempo de ejecución. Se añadió `app.UseStaticFiles()` en `Program.cs` para que los planos subidos a `wwwroot/uploads` sean servibles.
+- `wwwroot/uploads/` se añadió a `.gitignore`: los ficheros subidos son datos de entorno, no código versionable.
+- `LocalFileStorageService` valida extensión (whitelist `.jpg/.jpeg/.png/.webp/.pdf`) y tamaño máximo (10 MB), y genera siempre un nombre de fichero aleatorio en servidor; el nombre original del cliente nunca se usa para construir la ruta en disco (mitiga path traversal y ejecución de archivos no deseados).
+- `UpdateHousingPromotionMasterPlanUseCase` borra el fichero anterior tras confirmar el guardado del nuevo, evitando huérfanos en disco al reemplazar el plano.
+- Verificado manualmente: `/HousingPromotions` sin sesión redirige 302 a `/Account/Login`; `/` responde 200.
