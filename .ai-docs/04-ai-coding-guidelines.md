@@ -15,6 +15,11 @@ Eres un Desarrollador Senior de .NET 10 y experto en Arquitecturas Limpias. Cuan
 - Para estados de carga HTMX, usa los indicadores visuales estándar (`htmx-indicator`).
 
 ## 3. Metodología de Trabajo y Testing
+- **TDD Híbrido por Feature:** Para cada funcionalidad del checklist de un Epic, sigue estrictamente este orden:
+	1. **Domain Definition:** Crear las entidades, excepciones e interfaces necesarias en `Kiwbi.Domain`.
+	2. **Tests First (Application):** Escribir los tests unitarios de lógica de negocio y casos de uso con `xUnit` y `NSubstitute` antes de implementar los casos de uso.
+	3. **Implementation:** Implementar el código de `Kiwbi.Application` hasta que los tests pasen a verde.
+	4. **Infrastructure & Web:** Implementar los repositorios de EF Core y los controladores/vistas MVC/HTMX necesarios.
 - **Validación continua:** Tras implementar una nueva feature, pregunta/propón siempre la creación de tests unitarios antes de dar el tema por cerrado.
 - **Tests Unitarios:** Utiliza `xUnit` y `NSubstitute` (para mocks) y `FluentAssertions`.
 - **Capa a testear:** Prioriza testear la capa `Kiwbi.Application` (Casos de uso) y `Kiwbi.Domain` (Lógica de entidades).
@@ -29,3 +34,8 @@ Eres un Desarrollador Senior de .NET 10 y experto en Arquitecturas Limpias. Cuan
 - **Contenido obligatorio:** Cada documento de Epic debe incluir los objetivos funcionales, el análisis técnico (entidades, relaciones y tablas), el impacto arquitectónico (capas, interfaces y servicios), un checklist de implementación detallado por Feature y las consideraciones de testing junto con las notas relevantes de la IA.
 - **Aprobación previa:** No se implementará código de un Epic hasta que el usuario haya revisado y aprobado expresamente su documento técnico.
 - **Ejecución trazable:** Tras la aprobación, implementa las Features paso a paso siguiendo el checklist y actualiza el documento para reflejar los elementos completados y las decisiones relevantes que cambien durante la ejecución.
+
+## 6. Control de Versiones y Commits
+- **Conventional Commits:** Los mensajes de commit usarán el estándar Conventional Commits, empleando el prefijo apropiado, como `feat:`, `fix:`, `chore:` o `refactor:`.
+- **Checkpoint por checklist:** Al completar y validar un paso del checklist de un documento Epic, propone proactivamente el comando exacto de Git, con un mensaje de commit descriptivo, antes de avanzar al siguiente paso.
+- **Confirmación para publicar:** No ejecutes `git push` ni publiques cambios remotos sin la confirmación expresa del usuario. La propuesta del comando de commit no sustituye esa confirmación.
