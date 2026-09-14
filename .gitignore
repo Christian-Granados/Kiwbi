@@ -1,0 +1,22 @@
+## .NET
+bin/
+obj/
+*.user
+
+## Visual Studio / VS Code
+.vs/
+.vscode/*
+!.vscode/extensions.json
+
+## Rider
+.idea/
+
+## OS
+.DS_Store
+Thumbs.db
+
+## Logs
+*.log
+
+## User secrets (never commit local secrets/connection strings)
+**/appsettings.*.local.json
