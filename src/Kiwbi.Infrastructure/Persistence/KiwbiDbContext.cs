@@ -14,6 +14,8 @@ public class KiwbiDbContext : IdentityDbContext<ApplicationUser>
 
     public DbSet<DeveloperCompany> DeveloperCompanies => Set<DeveloperCompany>();
     public DbSet<HousingPromotion> HousingPromotions => Set<HousingPromotion>();
+    public DbSet<HousingTypology> HousingTypologies => Set<HousingTypology>();
+    public DbSet<HousingUnit> HousingUnits => Set<HousingUnit>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

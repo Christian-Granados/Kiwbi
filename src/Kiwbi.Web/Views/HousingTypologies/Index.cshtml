@@ -1,0 +1,48 @@
+@model List<Kiwbi.Web.Models.HousingTypologies.HousingTypologyListItemViewModel>
+@{
+    ViewData["Title"] = "Tipologías";
+    var promotionId = (Guid)ViewBag.PromotionId;
+}
+
+<h1>Tipologías de @ViewBag.PromotionName</h1>
+
+@if (TempData["Error"] is string error)
+{
+    <div class="alert alert-danger">@error</div>
+}
+
+<p>
+    <a asp-controller="HousingTypologies" asp-action="Create" asp-route-promotionId="@promotionId" class="btn btn-primary">Nueva tipología</a>
+    <a asp-controller="HousingPromotions" asp-action="Details" asp-route-id="@promotionId" class="btn btn-secondary">Volver a la promoción</a>
+</p>
+
+@if (!Model.Any())
+{
+    <p>Todavía no hay tipologías dadas de alta.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var typology in Model)
+            {
+                <tr>
+                    <td>@typology.Name</td>
+                    <td>
+                        <a asp-controller="HousingTypologies" asp-action="Edit" asp-route-id="@typology.Id" class="btn btn-sm btn-outline-secondary">Editar</a>
+                        <form asp-controller="HousingTypologies" asp-action="Delete" asp-route-id="@typology.Id" asp-route-promotionId="@promotionId" method="post" class="d-inline"
+                              onsubmit="return confirm('¿Seguro que quieres eliminar esta tipología?');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

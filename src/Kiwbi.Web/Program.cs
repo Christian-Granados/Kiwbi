@@ -1,5 +1,7 @@
+using System.Globalization;
 using Kiwbi.Application;
 using Kiwbi.Infrastructure;
+using Microsoft.AspNetCore.Localization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,6 +18,15 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 var app = builder.Build();
+
+// Force invariant number/date formatting (period decimals) regardless of the server's OS culture, since HTML5
+// number inputs and model binding always use "." — only Razor's literal Spanish text is UI-language dependent.
+app.UseRequestLocalization(new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new RequestCulture(CultureInfo.InvariantCulture),
+    SupportedCultures = [CultureInfo.InvariantCulture],
+    SupportedUICultures = [CultureInfo.InvariantCulture],
+});
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

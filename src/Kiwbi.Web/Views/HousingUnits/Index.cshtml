@@ -1,0 +1,70 @@
+@using Kiwbi.Domain.RealEstate
+@model List<Kiwbi.Web.Models.HousingUnits.HousingUnitListItemViewModel>
+@{
+    ViewData["Title"] = "Viviendas";
+    var promotionId = (Guid)ViewBag.PromotionId;
+    var statuses = Enum.GetValues<HousingUnitStatus>();
+}
+
+<h1>Viviendas de @ViewBag.PromotionName</h1>
+
+@if (TempData["Error"] is string error)
+{
+    <div class="alert alert-danger">@error</div>
+}
+
+<p>
+    <a asp-controller="HousingUnits" asp-action="Create" asp-route-promotionId="@promotionId" class="btn btn-primary">Nueva vivienda</a>
+    <a asp-controller="HousingPromotions" asp-action="Details" asp-route-id="@promotionId" class="btn btn-secondary">Volver a la promoción</a>
+</p>
+
+@if (!Model.Any())
+{
+    <p>Todavía no hay viviendas dadas de alta.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Planta</th>
+                <th>Puerta</th>
+                <th>Tipología</th>
+                <th>Superficie construida</th>
+                <th>Superficie útil</th>
+                <th>Estado</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var unit in Model)
+            {
+                <tr>
+                    <td>@unit.Floor</td>
+                    <td>@unit.Door</td>
+                    <td>@(unit.TypologyName ?? "-")</td>
+                    <td>@unit.BuiltAreaSqm m²</td>
+                    <td>@(unit.UsableAreaSqm is { } usable ? $"{usable} m²" : "-")</td>
+                    <td>
+                        <form asp-controller="HousingUnits" asp-action="ChangeStatus" asp-route-id="@unit.Id" asp-route-promotionId="@promotionId" method="post" class="d-flex gap-1">
+                            <select name="status" class="form-select form-select-sm">
+                                @foreach (var status in statuses)
+                                {
+                                    <option value="@status" selected="@(status.ToString() == unit.Status)">@status</option>
+                                }
+                            </select>
+                            <button type="submit" class="btn btn-sm btn-outline-primary">Guardar</button>
+                        </form>
+                    </td>
+                    <td>
+                        <a asp-controller="HousingUnits" asp-action="Edit" asp-route-id="@unit.Id" class="btn btn-sm btn-outline-secondary">Editar</a>
+                        <form asp-controller="HousingUnits" asp-action="Delete" asp-route-id="@unit.Id" asp-route-promotionId="@promotionId" method="post" class="d-inline"
+                              onsubmit="return confirm('¿Seguro que quieres eliminar esta vivienda?');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

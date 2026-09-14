@@ -4,12 +4,24 @@ using Kiwbi.Application.Developers.Logout;
 using Kiwbi.Application.Developers.RegisterDeveloper;
 using Kiwbi.Application.Developers.UpdateDeveloperBranding;
 using Kiwbi.Application.Developers.UpdateDeveloperProfile;
+using Kiwbi.Application.RealEstate.ChangeHousingUnitStatus;
 using Kiwbi.Application.RealEstate.CreateHousingPromotion;
+using Kiwbi.Application.RealEstate.CreateHousingTypology;
+using Kiwbi.Application.RealEstate.CreateHousingUnit;
 using Kiwbi.Application.RealEstate.DeleteHousingPromotion;
+using Kiwbi.Application.RealEstate.DeleteHousingTypology;
+using Kiwbi.Application.RealEstate.DeleteHousingUnit;
 using Kiwbi.Application.RealEstate.GetHousingPromotion;
 using Kiwbi.Application.RealEstate.GetHousingPromotions;
+using Kiwbi.Application.RealEstate.GetHousingTypologies;
+using Kiwbi.Application.RealEstate.GetHousingTypology;
+using Kiwbi.Application.RealEstate.GetHousingUnit;
+using Kiwbi.Application.RealEstate.GetHousingUnits;
 using Kiwbi.Application.RealEstate.UpdateHousingPromotion;
 using Kiwbi.Application.RealEstate.UpdateHousingPromotionMasterPlan;
+using Kiwbi.Application.RealEstate.UpdateHousingTypology;
+using Kiwbi.Application.RealEstate.UpdateHousingUnit;
+using Kiwbi.Application.RealEstate.UpdateHousingUnitFloorPlan;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Kiwbi.Application;
@@ -32,6 +44,20 @@ public static class DependencyInjection
         services.AddScoped<GetHousingPromotionUseCase>();
         services.AddScoped<GetHousingPromotionsUseCase>();
         services.AddScoped<DeleteHousingPromotionUseCase>();
+
+        services.AddScoped<CreateHousingTypologyUseCase>();
+        services.AddScoped<UpdateHousingTypologyUseCase>();
+        services.AddScoped<DeleteHousingTypologyUseCase>();
+        services.AddScoped<GetHousingTypologyUseCase>();
+        services.AddScoped<GetHousingTypologiesUseCase>();
+
+        services.AddScoped<CreateHousingUnitUseCase>();
+        services.AddScoped<UpdateHousingUnitUseCase>();
+        services.AddScoped<UpdateHousingUnitFloorPlanUseCase>();
+        services.AddScoped<ChangeHousingUnitStatusUseCase>();
+        services.AddScoped<DeleteHousingUnitUseCase>();
+        services.AddScoped<GetHousingUnitUseCase>();
+        services.AddScoped<GetHousingUnitsUseCase>();
 
         return services;
     }

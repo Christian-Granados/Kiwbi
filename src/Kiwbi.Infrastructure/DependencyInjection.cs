@@ -31,6 +31,8 @@ public static class DependencyInjection
 
         services.AddScoped<IDeveloperCompanyRepository, DeveloperCompanyRepository>();
         services.AddScoped<IHousingPromotionRepository, HousingPromotionRepository>();
+        services.AddScoped<IHousingTypologyRepository, HousingTypologyRepository>();
+        services.AddScoped<IHousingUnitRepository, HousingUnitRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<ICurrentUser, CurrentUser>();
         services.AddScoped<IAccountProvisioningService, IdentityAccountProvisioningService>();

@@ -126,14 +126,14 @@ Nuevo puerto en `Kiwbi.Application.Common`:
 
 ### Feature 2.2 - CRUD de Tipologías y Viviendas
 
-- [ ] Crear `HousingTypology` y `HousingUnit` (+ `HousingUnitStatus`) en `Kiwbi.Domain.RealEstate` con sus invariantes.
-- [ ] Crear `IHousingTypologyRepository` e `IHousingUnitRepository`, incluyendo la consulta de duplicados `Floor`/`Door` por promoción.
-- [ ] Implementar `CreateHousingTypology`, `UpdateHousingTypology`, `DeleteHousingTypology` (bloqueando el borrado si hay viviendas asociadas), validando que la tipología pertenezca a una promoción del tenant actual.
-- [ ] Implementar `CreateHousingUnit`, `UpdateHousingUnit`, `UpdateHousingUnitFloorPlan`, `ChangeHousingUnitStatus`, `DeleteHousingUnit`, validando promoción/tipología del tenant actual y unicidad de `Floor`/`Door`.
-- [ ] Crear las configuraciones EF Core, `DbSet`s e índices únicos para `HousingTypology` y `HousingUnit`.
-- [ ] Implementar `HousingTypologyRepository` y `HousingUnitRepository`.
-- [ ] Generar y aplicar la migración que incorpora `housing_typologies` y `housing_units`.
-- [ ] Crear `HousingTypologiesController` y `HousingUnitsController` con sus vistas (alta, edición, baja, cambio de estado y subida del plano específico).
+- [x] Crear `HousingTypology` y `HousingUnit` (+ `HousingUnitStatus`) en `Kiwbi.Domain.RealEstate` con sus invariantes.
+- [x] Crear `IHousingTypologyRepository` e `IHousingUnitRepository`, incluyendo la consulta de duplicados `Floor`/`Door` por promoción.
+- [x] Implementar `CreateHousingTypology`, `UpdateHousingTypology`, `DeleteHousingTypology` (bloqueando el borrado si hay viviendas asociadas), validando que la tipología pertenezca a una promoción del tenant actual.
+- [x] Implementar `CreateHousingUnit`, `UpdateHousingUnit`, `UpdateHousingUnitFloorPlan`, `ChangeHousingUnitStatus`, `DeleteHousingUnit`, validando promoción/tipología del tenant actual y unicidad de `Floor`/`Door`.
+- [x] Crear las configuraciones EF Core, `DbSet`s e índices únicos para `HousingTypology` y `HousingUnit`.
+- [x] Implementar `HousingTypologyRepository` y `HousingUnitRepository`.
+- [x] Generar y aplicar la migración que incorpora `housing_typologies` y `housing_units`.
+- [x] Crear `HousingTypologiesController` y `HousingUnitsController` con sus vistas (alta, edición, baja, cambio de estado y subida del plano específico).
 
 ### Feature 2.3 - Vista resumen de la promoción
 
@@ -172,3 +172,10 @@ Nuevo puerto en `Kiwbi.Application.Common`:
 - `LocalFileStorageService` valida extensión (whitelist `.jpg/.jpeg/.png/.webp/.pdf`) y tamaño máximo (10 MB), y genera siempre un nombre de fichero aleatorio en servidor; el nombre original del cliente nunca se usa para construir la ruta en disco (mitiga path traversal y ejecución de archivos no deseados).
 - `UpdateHousingPromotionMasterPlanUseCase` borra el fichero anterior tras confirmar el guardado del nuevo, evitando huérfanos en disco al reemplazar el plano.
 - Verificado manualmente: `/HousingPromotions` sin sesión redirige 302 a `/Account/Login`; `/` responde 200.
+
+### Decisiones técnicas durante la ejecución (Feature 2.2)
+
+- `DeleteHousingPromotionUseCase` se amplió (respecto al diseño inicial) para depender también de `IHousingTypologyRepository` e `IHousingUnitRepository` y bloquear el borrado si la promoción tiene tipologías o viviendas, tal como estaba previsto para cuando estos repositorios existieran.
+- `HousingTypology` y `HousingUnit` no almacenan `DeveloperCompanyId` directamente; la pertenencia al tenant se resuelve en cada caso de uso cargando su `HousingPromotion` y comparando `DeveloperCompanyId`, consistente con la decisión de agregados independientes.
+- Se añadieron casos de uso de lectura (`GetHousingTypology(s)`, `GetHousingUnit(s)`) no listados explícitamente en el análisis inicial, necesarios para las pantallas de listado y edición del CRUD.
+- Verificado manualmente: `/HousingTypologies` y `/HousingUnits` sin sesión redirigen 302 a `/Account/Login`.
