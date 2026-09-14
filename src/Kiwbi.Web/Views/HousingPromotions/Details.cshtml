@@ -30,6 +30,48 @@
     </dd>
 </dl>
 
+<h2 class="h4 mt-4">Viviendas (@Model.Units.Count)</h2>
+
+@if (!Model.Units.Any())
+{
+    <p>Todavía no hay viviendas dadas de alta en esta promoción.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Planta</th>
+                <th>Puerta</th>
+                <th>Tipología</th>
+                <th>Superficie construida</th>
+                <th>Superficie útil</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var unit in Model.Units)
+            {
+                var badgeClass = unit.Status switch
+                {
+                    "Available" => "bg-success",
+                    "Reserved" => "bg-warning text-dark",
+                    "Sold" => "bg-secondary",
+                    _ => "bg-light text-dark",
+                };
+                <tr>
+                    <td>@unit.Floor</td>
+                    <td>@unit.Door</td>
+                    <td>@(unit.TypologyName ?? "-")</td>
+                    <td>@unit.BuiltAreaSqm m²</td>
+                    <td>@(unit.UsableAreaSqm is { } usable ? $"{usable} m²" : "-")</td>
+                    <td><span class="badge @badgeClass">@unit.Status</span></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
 <div class="mt-4">
     <a asp-controller="HousingPromotions" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary">Editar</a>
     <a asp-controller="HousingTypologies" asp-action="Index" asp-route-promotionId="@Model.Id" class="btn btn-outline-secondary">Tipologías</a>

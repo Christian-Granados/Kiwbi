@@ -2,6 +2,7 @@ using Kiwbi.Application.RealEstate.CreateHousingPromotion;
 using Kiwbi.Application.RealEstate.DeleteHousingPromotion;
 using Kiwbi.Application.RealEstate.GetHousingPromotion;
 using Kiwbi.Application.RealEstate.GetHousingPromotions;
+using Kiwbi.Application.RealEstate.GetHousingPromotionSummary;
 using Kiwbi.Application.RealEstate.UpdateHousingPromotion;
 using Kiwbi.Application.RealEstate.UpdateHousingPromotionMasterPlan;
 using Kiwbi.Web.Models.HousingPromotions;
@@ -18,6 +19,7 @@ public class HousingPromotionsController : Controller
     private readonly UpdateHousingPromotionMasterPlanUseCase _updateHousingPromotionMasterPlanUseCase;
     private readonly GetHousingPromotionUseCase _getHousingPromotionUseCase;
     private readonly GetHousingPromotionsUseCase _getHousingPromotionsUseCase;
+    private readonly GetHousingPromotionSummaryUseCase _getHousingPromotionSummaryUseCase;
     private readonly DeleteHousingPromotionUseCase _deleteHousingPromotionUseCase;
 
     public HousingPromotionsController(
@@ -26,6 +28,7 @@ public class HousingPromotionsController : Controller
         UpdateHousingPromotionMasterPlanUseCase updateHousingPromotionMasterPlanUseCase,
         GetHousingPromotionUseCase getHousingPromotionUseCase,
         GetHousingPromotionsUseCase getHousingPromotionsUseCase,
+        GetHousingPromotionSummaryUseCase getHousingPromotionSummaryUseCase,
         DeleteHousingPromotionUseCase deleteHousingPromotionUseCase)
     {
         _createHousingPromotionUseCase = createHousingPromotionUseCase;
@@ -33,6 +36,7 @@ public class HousingPromotionsController : Controller
         _updateHousingPromotionMasterPlanUseCase = updateHousingPromotionMasterPlanUseCase;
         _getHousingPromotionUseCase = getHousingPromotionUseCase;
         _getHousingPromotionsUseCase = getHousingPromotionsUseCase;
+        _getHousingPromotionSummaryUseCase = getHousingPromotionSummaryUseCase;
         _deleteHousingPromotionUseCase = deleteHousingPromotionUseCase;
     }
 
@@ -54,14 +58,14 @@ public class HousingPromotionsController : Controller
     [HttpGet]
     public async Task<IActionResult> Details(Guid id, CancellationToken cancellationToken)
     {
-        var result = await _getHousingPromotionUseCase.ExecuteAsync(id, cancellationToken);
+        var result = await _getHousingPromotionSummaryUseCase.ExecuteAsync(id, cancellationToken);
 
         if (result.IsFailure)
         {
             return NotFound();
         }
 
-        return View(HousingPromotionViewModel.FromDto(result.Value!));
+        return View(HousingPromotionViewModel.FromSummaryDto(result.Value!));
     }
 
     [HttpGet]

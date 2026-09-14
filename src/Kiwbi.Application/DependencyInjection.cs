@@ -13,6 +13,7 @@ using Kiwbi.Application.RealEstate.DeleteHousingTypology;
 using Kiwbi.Application.RealEstate.DeleteHousingUnit;
 using Kiwbi.Application.RealEstate.GetHousingPromotion;
 using Kiwbi.Application.RealEstate.GetHousingPromotions;
+using Kiwbi.Application.RealEstate.GetHousingPromotionSummary;
 using Kiwbi.Application.RealEstate.GetHousingTypologies;
 using Kiwbi.Application.RealEstate.GetHousingTypology;
 using Kiwbi.Application.RealEstate.GetHousingUnit;
@@ -43,6 +44,7 @@ public static class DependencyInjection
         services.AddScoped<UpdateHousingPromotionMasterPlanUseCase>();
         services.AddScoped<GetHousingPromotionUseCase>();
         services.AddScoped<GetHousingPromotionsUseCase>();
+        services.AddScoped<GetHousingPromotionSummaryUseCase>();
         services.AddScoped<DeleteHousingPromotionUseCase>();
 
         services.AddScoped<CreateHousingTypologyUseCase>();

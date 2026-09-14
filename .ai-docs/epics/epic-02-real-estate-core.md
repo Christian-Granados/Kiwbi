@@ -2,7 +2,7 @@
 
 ## Estado
 
-- Estado: Aprobado para implementación por el usuario el 2026-09-14.
+- Estado: Implementado y validado (build + tests + smoke tests manuales de las 3 Features).
 - Depende de: Epic 1 (Foundation & Promotora Tenant), ya implementado. Reutiliza `DeveloperCompany`, `ICurrentUser`, `IUnitOfWork` y el patrón `Result`.
 
 ## Objetivos
@@ -137,16 +137,16 @@ Nuevo puerto en `Kiwbi.Application.Common`:
 
 ### Feature 2.3 - Vista resumen de la promoción
 
-- [ ] Implementar `GetHousingPromotionSummary`, devolviendo los datos de la promoción y el listado de sus viviendas con tipología, planta, puerta, superficie y estado.
-- [ ] Extender la vista `Details` de `HousingPromotionsController` para mostrar el resumen con una tabla de viviendas y badges de estado (`Available`/`Reserved`/`Sold`).
-- [ ] Confirmar que el resumen solo es accesible para el tenant propietario de la promoción.
+- [x] Implementar `GetHousingPromotionSummary`, devolviendo los datos de la promoción y el listado de sus viviendas con tipología, planta, puerta, superficie y estado.
+- [x] Extender la vista `Details` de `HousingPromotionsController` para mostrar el resumen con una tabla de viviendas y badges de estado (`Available`/`Reserved`/`Sold`).
+- [x] Confirmar que el resumen solo es accesible para el tenant propietario de la promoción.
 
 ### Cierre del Epic
 
-- [ ] Ejecutar los tests unitarios y una compilación completa de la solución.
-- [ ] Validar la migración contra PostgreSQL de desarrollo.
-- [ ] Revisar que los controllers solo dependan de contratos de Application y no accedan a `KiwbiDbContext` ni a rutas de disco.
-- [ ] Actualizar este documento con los checks completados y cualquier decisión técnica aprobada durante la implementación.
+- [x] Ejecutar los tests unitarios y una compilación completa de la solución (111 tests, 0 fallos).
+- [x] Validar la migración contra PostgreSQL de desarrollo.
+- [x] Revisar que los controllers solo dependan de contratos de Application y no accedan a `KiwbiDbContext` ni a rutas de disco.
+- [x] Actualizar este documento con los checks completados y cualquier decisión técnica aprobada durante la implementación.
 
 ## Consideraciones de Testing y Notas de la IA
 
@@ -179,3 +179,10 @@ Nuevo puerto en `Kiwbi.Application.Common`:
 - `HousingTypology` y `HousingUnit` no almacenan `DeveloperCompanyId` directamente; la pertenencia al tenant se resuelve en cada caso de uso cargando su `HousingPromotion` y comparando `DeveloperCompanyId`, consistente con la decisión de agregados independientes.
 - Se añadieron casos de uso de lectura (`GetHousingTypology(s)`, `GetHousingUnit(s)`) no listados explícitamente en el análisis inicial, necesarios para las pantallas de listado y edición del CRUD.
 - Verificado manualmente: `/HousingTypologies` y `/HousingUnits` sin sesión redirigen 302 a `/Account/Login`.
+
+### Decisiones técnicas durante la ejecución (Feature 2.3)
+
+- `GetHousingPromotionSummaryUseCase` reutiliza `IHousingTypologyRepository` e `IHousingUnitRepository` para resolver, en una sola llamada, el nombre de tipología de cada vivienda (diccionario en memoria) sin sobrecargar el dominio con referencias cruzadas.
+- `HousingPromotionsController.Details` pasó a usar `GetHousingPromotionSummaryUseCase` en lugar de `GetHousingPromotionUseCase`; este último se mantiene para el formulario `Edit`.
+- Bug encontrado y corregido durante la validación manual (no relacionado directamente con 2.3 pero afectaba a los formularios de vivienda): sin cultura explícita, `CultureInfo.CurrentCulture` seguía el locale del SO (es-ES), por lo que los campos decimales se renderizaban con coma ("75,00") mientras que los inputs numéricos y el model binding esperan punto. Se añadió `app.UseRequestLocalization(...)` en `Program.cs` forzando `CultureInfo.InvariantCulture` en toda la app.
+- Verificado manualmente end-to-end: alta de promoción, alta de vivienda y visualización del resumen en `Details` con el badge de estado `Available`.
