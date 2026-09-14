@@ -123,13 +123,13 @@ Cambios sobre casos de uso existentes de Epic 2 (necesarios para no dejar huérf
 
 ### Feature 3.1 - CRUD de Gremios
 
-- [ ] Crear `TradeCategory` en `Kiwbi.Domain.Customizations` con sus invariantes y métodos (`Create`, `Rename`, `Reschedule`, `IsExpired`).
-- [ ] Crear `ITradeCategoryRepository`.
-- [ ] Implementar `CreateTradeCategory`, `UpdateTradeCategory`, `GetTradeCategory`, `GetTradeCategories`, `DeleteTradeCategory`, resolviendo el tenant desde `ICurrentUser` vía la `HousingPromotion` padre.
-- [ ] Ampliar `DeleteHousingPromotionUseCase` para bloquear el borrado si existen `TradeCategory`.
-- [ ] Crear la configuración EF Core, `DbSet<TradeCategory>` y `TradeCategoryRepository`.
-- [ ] Generar y aplicar la migración que incorpora `trade_categories`.
-- [ ] Crear `TradeCategoriesController` y las vistas de listado, alta, edición y baja.
+- [x] Crear `TradeCategory` en `Kiwbi.Domain.Customizations` con sus invariantes y métodos (`Create`, `Rename`, `Reschedule`, `IsExpired`).
+- [x] Crear `ITradeCategoryRepository`.
+- [x] Implementar `CreateTradeCategory`, `UpdateTradeCategory`, `GetTradeCategory`, `GetTradeCategories`, `DeleteTradeCategory`, resolviendo el tenant desde `ICurrentUser` vía la `HousingPromotion` padre.
+- [x] Ampliar `DeleteHousingPromotionUseCase` para bloquear el borrado si existen `TradeCategory`.
+- [x] Crear la configuración EF Core, `DbSet<TradeCategory>` y `TradeCategoryRepository`.
+- [x] Generar y aplicar la migración que incorpora `trade_categories`.
+- [x] Crear `TradeCategoriesController` y las vistas de listado, alta, edición y baja.
 
 ### Feature 3.2 - CRUD de Personalizaciones y asociación condicional
 
@@ -173,3 +173,10 @@ Cambios sobre casos de uso existentes de Epic 2 (necesarios para no dejar huérf
 - `CustomizationAssignment` referencia Tipologías/Viviendas por Id de forma dinámica: si se asigna a una Tipología, cualquier Vivienda que se dé de alta después en esa Tipología queda automáticamente cubierta por la Personalización (relevante para Epic 5, no se testea aquí).
 - El bloqueo por fecha límite (`SelectionCutOffDateUtc`) y el volcado automático a la opción por defecto al expirar son reglas de Epic 5/6 sobre `HomeCustomizationChoice`; este Epic solo expone `TradeCategory.IsExpired(utcNow)` como bloque de dominio reutilizable, sin consumirlo todavía.
 - Antes de programar este Epic, el usuario debe aprobar este documento.
+
+### Decisiones técnicas durante la ejecución (Feature 3.1)
+
+- `DeleteTradeCategoryUseCase` se implementó **sin** dependencia de `ICustomizationRepository` en esta Feature (esa interfaz aún no existe): de momento borra el Gremio sin comprobar Personalizaciones dependientes. Se ampliará en la Feature 3.2, replicando el mismo criterio incremental usado en Epic 2 (`DeleteHousingPromotionUseCase` se amplió en la Feature 2.2 cuando `IHousingTypologyRepository`/`IHousingUnitRepository` empezaron a existir).
+- `DeleteHousingPromotionUseCase` sí se amplió ya en esta Feature con `ITradeCategoryRepository.ExistsByHousingPromotionIdAsync`, bloqueando el borrado de una promoción con Gremios asociados.
+- El selector de fecha y hora usa `<input type="datetime-local">`: el Input Tag Helper de ASP.NET Core detecta este `type` y formatea automáticamente el valor de un `DateTime` al formato `yyyy-MM-ddTHH:mm:ss.fff` esperado por el control HTML5, sin necesitar formateo manual en la vista. La cultura invariante ya forzada en `Program.cs` (Epic 2) evita conflictos de separador decimal/fecha con el resto de formularios.
+- Verificado manualmente: `/TradeCategories?promotionId=...` sin sesión redirige 302 a `/Account/Login`. 135 tests pasando (65 Domain + 70 Application) tras esta Feature.

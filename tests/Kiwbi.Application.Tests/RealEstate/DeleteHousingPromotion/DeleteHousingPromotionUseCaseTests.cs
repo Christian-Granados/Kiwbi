@@ -1,6 +1,7 @@
 using FluentAssertions;
 using Kiwbi.Application.Common;
 using Kiwbi.Application.RealEstate.DeleteHousingPromotion;
+using Kiwbi.Domain.Customizations;
 using Kiwbi.Domain.RealEstate;
 using NSubstitute;
 
@@ -12,13 +13,14 @@ public class DeleteHousingPromotionUseCaseTests
     private readonly IHousingPromotionRepository _repository = Substitute.For<IHousingPromotionRepository>();
     private readonly IHousingTypologyRepository _typologyRepository = Substitute.For<IHousingTypologyRepository>();
     private readonly IHousingUnitRepository _unitRepository = Substitute.For<IHousingUnitRepository>();
+    private readonly ITradeCategoryRepository _tradeCategoryRepository = Substitute.For<ITradeCategoryRepository>();
     private readonly IFileStorageService _fileStorageService = Substitute.For<IFileStorageService>();
     private readonly IUnitOfWork _unitOfWork = Substitute.For<IUnitOfWork>();
     private readonly DeleteHousingPromotionUseCase _useCase;
 
     public DeleteHousingPromotionUseCaseTests()
     {
-        _useCase = new DeleteHousingPromotionUseCase(_currentUser, _repository, _typologyRepository, _unitRepository, _fileStorageService, _unitOfWork);
+        _useCase = new DeleteHousingPromotionUseCase(_currentUser, _repository, _typologyRepository, _unitRepository, _tradeCategoryRepository, _fileStorageService, _unitOfWork);
     }
 
     [Fact]
@@ -61,6 +63,21 @@ public class DeleteHousingPromotionUseCaseTests
         _currentUser.DeveloperCompanyId.Returns(developerCompanyId);
         _repository.GetByIdAsync(promotion.Id, Arg.Any<CancellationToken>()).Returns(promotion);
         _unitRepository.ExistsByHousingPromotionIdAsync(promotion.Id, Arg.Any<CancellationToken>()).Returns(true);
+
+        var result = await _useCase.ExecuteAsync(promotion.Id);
+
+        result.IsFailure.Should().BeTrue();
+        _repository.DidNotReceive().Remove(Arg.Any<HousingPromotion>());
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_WhenPromotionHasTradeCategories_ShouldReturnFailureWithoutRemoving()
+    {
+        var developerCompanyId = Guid.NewGuid();
+        var promotion = HousingPromotion.Create(developerCompanyId, "Residencial Acacias", "Madrid", "Calle Mayor 1");
+        _currentUser.DeveloperCompanyId.Returns(developerCompanyId);
+        _repository.GetByIdAsync(promotion.Id, Arg.Any<CancellationToken>()).Returns(promotion);
+        _tradeCategoryRepository.ExistsByHousingPromotionIdAsync(promotion.Id, Arg.Any<CancellationToken>()).Returns(true);
 
         var result = await _useCase.ExecuteAsync(promotion.Id);
 

@@ -1,0 +1,50 @@
+@model List<Kiwbi.Web.Models.TradeCategories.TradeCategoryListItemViewModel>
+@{
+    ViewData["Title"] = "Gremios";
+    var promotionId = (Guid)ViewBag.PromotionId;
+}
+
+<h1>Gremios de @ViewBag.PromotionName</h1>
+
+@if (TempData["Error"] is string error)
+{
+    <div class="alert alert-danger">@error</div>
+}
+
+<p>
+    <a asp-controller="TradeCategories" asp-action="Create" asp-route-promotionId="@promotionId" class="btn btn-primary">Nuevo gremio</a>
+    <a asp-controller="HousingPromotions" asp-action="Details" asp-route-id="@promotionId" class="btn btn-secondary">Volver a la promoción</a>
+</p>
+
+@if (!Model.Any())
+{
+    <p>Todavía no hay gremios dados de alta.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Fecha límite de selección (UTC)</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var tradeCategory in Model)
+            {
+                <tr>
+                    <td>@tradeCategory.Name</td>
+                    <td>@tradeCategory.SelectionCutOffDateUtc.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td>
+                        <a asp-controller="TradeCategories" asp-action="Edit" asp-route-id="@tradeCategory.Id" class="btn btn-sm btn-outline-secondary">Editar</a>
+                        <form asp-controller="TradeCategories" asp-action="Delete" asp-route-id="@tradeCategory.Id" asp-route-promotionId="@promotionId" method="post" class="d-inline"
+                              onsubmit="return confirm('¿Seguro que quieres eliminar este gremio?');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

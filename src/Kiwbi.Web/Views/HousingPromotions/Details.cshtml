@@ -76,6 +76,7 @@ else
     <a asp-controller="HousingPromotions" asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-outline-primary">Editar</a>
     <a asp-controller="HousingTypologies" asp-action="Index" asp-route-promotionId="@Model.Id" class="btn btn-outline-secondary">Tipologías</a>
     <a asp-controller="HousingUnits" asp-action="Index" asp-route-promotionId="@Model.Id" class="btn btn-outline-secondary">Viviendas</a>
+    <a asp-controller="TradeCategories" asp-action="Index" asp-route-promotionId="@Model.Id" class="btn btn-outline-secondary">Gremios</a>
     <a asp-controller="HousingPromotions" asp-action="Index" class="btn btn-secondary">Volver al listado</a>
     <form asp-controller="HousingPromotions" asp-action="Delete" asp-route-id="@Model.Id" method="post" class="d-inline"
           onsubmit="return confirm('¿Seguro que quieres eliminar esta promoción?');">

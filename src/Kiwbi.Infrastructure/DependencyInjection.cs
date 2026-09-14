@@ -1,5 +1,6 @@
 using Kiwbi.Application.Common;
 using Kiwbi.Application.Developers;
+using Kiwbi.Domain.Customizations;
 using Kiwbi.Domain.Developers;
 using Kiwbi.Domain.RealEstate;
 using Kiwbi.Infrastructure.Identity;
@@ -33,6 +34,7 @@ public static class DependencyInjection
         services.AddScoped<IHousingPromotionRepository, HousingPromotionRepository>();
         services.AddScoped<IHousingTypologyRepository, HousingTypologyRepository>();
         services.AddScoped<IHousingUnitRepository, HousingUnitRepository>();
+        services.AddScoped<ITradeCategoryRepository, TradeCategoryRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<ICurrentUser, CurrentUser>();
         services.AddScoped<IAccountProvisioningService, IdentityAccountProvisioningService>();

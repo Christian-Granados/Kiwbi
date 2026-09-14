@@ -1,15 +1,17 @@
 using Kiwbi.Application.Common;
+using Kiwbi.Domain.Customizations;
 using Kiwbi.Domain.RealEstate;
 
 namespace Kiwbi.Application.RealEstate.DeleteHousingPromotion;
 
-/// <summary>Deletes a HousingPromotion owned by the currently authenticated tenant, blocking deletion if it has typologies or units.</summary>
+/// <summary>Deletes a HousingPromotion owned by the currently authenticated tenant, blocking deletion if it has typologies, units or trade categories.</summary>
 public class DeleteHousingPromotionUseCase
 {
     private readonly ICurrentUser _currentUser;
     private readonly IHousingPromotionRepository _housingPromotionRepository;
     private readonly IHousingTypologyRepository _housingTypologyRepository;
     private readonly IHousingUnitRepository _housingUnitRepository;
+    private readonly ITradeCategoryRepository _tradeCategoryRepository;
     private readonly IFileStorageService _fileStorageService;
     private readonly IUnitOfWork _unitOfWork;
 
@@ -18,6 +20,7 @@ public class DeleteHousingPromotionUseCase
         IHousingPromotionRepository housingPromotionRepository,
         IHousingTypologyRepository housingTypologyRepository,
         IHousingUnitRepository housingUnitRepository,
+        ITradeCategoryRepository tradeCategoryRepository,
         IFileStorageService fileStorageService,
         IUnitOfWork unitOfWork)
     {
@@ -25,6 +28,7 @@ public class DeleteHousingPromotionUseCase
         _housingPromotionRepository = housingPromotionRepository;
         _housingTypologyRepository = housingTypologyRepository;
         _housingUnitRepository = housingUnitRepository;
+        _tradeCategoryRepository = tradeCategoryRepository;
         _fileStorageService = fileStorageService;
         _unitOfWork = unitOfWork;
     }
@@ -44,9 +48,10 @@ public class DeleteHousingPromotionUseCase
         }
 
         if (await _housingTypologyRepository.ExistsByHousingPromotionIdAsync(promotionId, cancellationToken) ||
-            await _housingUnitRepository.ExistsByHousingPromotionIdAsync(promotionId, cancellationToken))
+            await _housingUnitRepository.ExistsByHousingPromotionIdAsync(promotionId, cancellationToken) ||
+            await _tradeCategoryRepository.ExistsByHousingPromotionIdAsync(promotionId, cancellationToken))
         {
-            return Result.Failure("No se puede eliminar la promoción porque tiene tipologías o viviendas asociadas.");
+            return Result.Failure("No se puede eliminar la promoción porque tiene tipologías, viviendas o gremios asociados.");
         }
 
         var masterPlanImagePath = promotion.MasterPlanImagePath;

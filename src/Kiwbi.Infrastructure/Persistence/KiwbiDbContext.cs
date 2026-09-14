@@ -1,3 +1,4 @@
+using Kiwbi.Domain.Customizations;
 using Kiwbi.Domain.Developers;
 using Kiwbi.Domain.RealEstate;
 using Kiwbi.Infrastructure.Identity;
@@ -16,6 +17,7 @@ public class KiwbiDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<HousingPromotion> HousingPromotions => Set<HousingPromotion>();
     public DbSet<HousingTypology> HousingTypologies => Set<HousingTypology>();
     public DbSet<HousingUnit> HousingUnits => Set<HousingUnit>();
+    public DbSet<TradeCategory> TradeCategories => Set<TradeCategory>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

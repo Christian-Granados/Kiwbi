@@ -23,6 +23,11 @@ using Kiwbi.Application.RealEstate.UpdateHousingPromotionMasterPlan;
 using Kiwbi.Application.RealEstate.UpdateHousingTypology;
 using Kiwbi.Application.RealEstate.UpdateHousingUnit;
 using Kiwbi.Application.RealEstate.UpdateHousingUnitFloorPlan;
+using Kiwbi.Application.Customizations.CreateTradeCategory;
+using Kiwbi.Application.Customizations.UpdateTradeCategory;
+using Kiwbi.Application.Customizations.DeleteTradeCategory;
+using Kiwbi.Application.Customizations.GetTradeCategory;
+using Kiwbi.Application.Customizations.GetTradeCategories;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Kiwbi.Application;
@@ -60,6 +65,12 @@ public static class DependencyInjection
         services.AddScoped<DeleteHousingUnitUseCase>();
         services.AddScoped<GetHousingUnitUseCase>();
         services.AddScoped<GetHousingUnitsUseCase>();
+
+        services.AddScoped<CreateTradeCategoryUseCase>();
+        services.AddScoped<UpdateTradeCategoryUseCase>();
+        services.AddScoped<DeleteTradeCategoryUseCase>();
+        services.AddScoped<GetTradeCategoryUseCase>();
+        services.AddScoped<GetTradeCategoriesUseCase>();
 
         return services;
     }
