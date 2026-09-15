@@ -36,6 +36,10 @@ using Kiwbi.Application.Customizations.GetCustomizations;
 using Kiwbi.Application.Customizations.AssignCustomizationToTypology;
 using Kiwbi.Application.Customizations.AssignCustomizationToUnit;
 using Kiwbi.Application.Customizations.RemoveCustomizationAssignment;
+using Kiwbi.Application.Customizations.AddCustomizationOption;
+using Kiwbi.Application.Customizations.UpdateCustomizationOption;
+using Kiwbi.Application.Customizations.SetDefaultCustomizationOption;
+using Kiwbi.Application.Customizations.RemoveCustomizationOption;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Kiwbi.Application;
@@ -88,6 +92,11 @@ public static class DependencyInjection
         services.AddScoped<AssignCustomizationToTypologyUseCase>();
         services.AddScoped<AssignCustomizationToUnitUseCase>();
         services.AddScoped<RemoveCustomizationAssignmentUseCase>();
+
+        services.AddScoped<AddCustomizationOptionUseCase>();
+        services.AddScoped<UpdateCustomizationOptionUseCase>();
+        services.AddScoped<SetDefaultCustomizationOptionUseCase>();
+        services.AddScoped<RemoveCustomizationOptionUseCase>();
 
         return services;
     }

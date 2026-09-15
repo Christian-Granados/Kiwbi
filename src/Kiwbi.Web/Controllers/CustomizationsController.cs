@@ -7,6 +7,10 @@ using Kiwbi.Application.Customizations.GetCustomizations;
 using Kiwbi.Application.Customizations.GetTradeCategory;
 using Kiwbi.Application.Customizations.RemoveCustomizationAssignment;
 using Kiwbi.Application.Customizations.RenameCustomization;
+using Kiwbi.Application.Customizations.AddCustomizationOption;
+using Kiwbi.Application.Customizations.UpdateCustomizationOption;
+using Kiwbi.Application.Customizations.SetDefaultCustomizationOption;
+using Kiwbi.Application.Customizations.RemoveCustomizationOption;
 using Kiwbi.Application.RealEstate.GetHousingTypologies;
 using Kiwbi.Application.RealEstate.GetHousingUnits;
 using Kiwbi.Web.Models.Customizations;
@@ -30,6 +34,10 @@ public class CustomizationsController : Controller
     private readonly AssignCustomizationToTypologyUseCase _assignCustomizationToTypologyUseCase;
     private readonly AssignCustomizationToUnitUseCase _assignCustomizationToUnitUseCase;
     private readonly RemoveCustomizationAssignmentUseCase _removeCustomizationAssignmentUseCase;
+    private readonly AddCustomizationOptionUseCase _addCustomizationOptionUseCase;
+    private readonly UpdateCustomizationOptionUseCase _updateCustomizationOptionUseCase;
+    private readonly SetDefaultCustomizationOptionUseCase _setDefaultCustomizationOptionUseCase;
+    private readonly RemoveCustomizationOptionUseCase _removeCustomizationOptionUseCase;
 
     public CustomizationsController(
         CreateCustomizationUseCase createCustomizationUseCase,
@@ -42,7 +50,11 @@ public class CustomizationsController : Controller
         GetHousingUnitsUseCase getHousingUnitsUseCase,
         AssignCustomizationToTypologyUseCase assignCustomizationToTypologyUseCase,
         AssignCustomizationToUnitUseCase assignCustomizationToUnitUseCase,
-        RemoveCustomizationAssignmentUseCase removeCustomizationAssignmentUseCase)
+        RemoveCustomizationAssignmentUseCase removeCustomizationAssignmentUseCase,
+        AddCustomizationOptionUseCase addCustomizationOptionUseCase,
+        UpdateCustomizationOptionUseCase updateCustomizationOptionUseCase,
+        SetDefaultCustomizationOptionUseCase setDefaultCustomizationOptionUseCase,
+        RemoveCustomizationOptionUseCase removeCustomizationOptionUseCase)
     {
         _createCustomizationUseCase = createCustomizationUseCase;
         _renameCustomizationUseCase = renameCustomizationUseCase;
@@ -55,6 +67,10 @@ public class CustomizationsController : Controller
         _assignCustomizationToTypologyUseCase = assignCustomizationToTypologyUseCase;
         _assignCustomizationToUnitUseCase = assignCustomizationToUnitUseCase;
         _removeCustomizationAssignmentUseCase = removeCustomizationAssignmentUseCase;
+        _addCustomizationOptionUseCase = addCustomizationOptionUseCase;
+        _updateCustomizationOptionUseCase = updateCustomizationOptionUseCase;
+        _setDefaultCustomizationOptionUseCase = setDefaultCustomizationOptionUseCase;
+        _removeCustomizationOptionUseCase = removeCustomizationOptionUseCase;
     }
 
     [HttpGet]
@@ -249,6 +265,95 @@ public class CustomizationsController : Controller
     public async Task<IActionResult> RemoveAssignment(Guid id, Guid assignmentId, CancellationToken cancellationToken)
     {
         var result = await _removeCustomizationAssignmentUseCase.ExecuteAsync(id, assignmentId, cancellationToken);
+
+        if (result.IsFailure)
+        {
+            TempData["Error"] = result.Error;
+        }
+
+        return RedirectToAction(nameof(Details), new { id });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> AddOption(Guid id, string name, decimal surchargeAmount, CancellationToken cancellationToken)
+    {
+        var result = await _addCustomizationOptionUseCase.ExecuteAsync(new AddCustomizationOptionCommand(id, name, surchargeAmount), cancellationToken);
+
+        if (result.IsFailure)
+        {
+            TempData["Error"] = result.Error;
+        }
+
+        return RedirectToAction(nameof(Details), new { id });
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> EditOption(Guid id, Guid optionId, CancellationToken cancellationToken)
+    {
+        var result = await _getCustomizationUseCase.ExecuteAsync(id, cancellationToken);
+
+        if (result.IsFailure)
+        {
+            return NotFound();
+        }
+
+        var option = result.Value!.Options.FirstOrDefault(o => o.Id == optionId);
+
+        if (option is null)
+        {
+            return NotFound();
+        }
+
+        return View(new EditCustomizationOptionViewModel
+        {
+            CustomizationId = id,
+            OptionId = optionId,
+            Name = option.Name,
+            SurchargeAmount = option.SurchargeAmount,
+        });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> EditOption(EditCustomizationOptionViewModel model, CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        var command = new UpdateCustomizationOptionCommand(model.CustomizationId, model.OptionId, model.Name, model.SurchargeAmount);
+        var result = await _updateCustomizationOptionUseCase.ExecuteAsync(command, cancellationToken);
+
+        if (result.IsFailure)
+        {
+            ModelState.AddModelError(string.Empty, result.Error!);
+            return View(model);
+        }
+
+        return RedirectToAction(nameof(Details), new { id = model.CustomizationId });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> SetDefaultOption(Guid id, Guid optionId, CancellationToken cancellationToken)
+    {
+        var result = await _setDefaultCustomizationOptionUseCase.ExecuteAsync(id, optionId, cancellationToken);
+
+        if (result.IsFailure)
+        {
+            TempData["Error"] = result.Error;
+        }
+
+        return RedirectToAction(nameof(Details), new { id });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> RemoveOption(Guid id, Guid optionId, CancellationToken cancellationToken)
+    {
+        var result = await _removeCustomizationOptionUseCase.ExecuteAsync(id, optionId, cancellationToken);
 
         if (result.IsFailure)
         {

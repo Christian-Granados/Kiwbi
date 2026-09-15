@@ -2,7 +2,7 @@
 
 ## Estado
 
-- Estado: Diseño cerrado, pendiente de aprobación expresa del usuario antes de implementar código (regla de `04-ai-coding-guidelines.md`, sección 5).
+- Estado: Implementado y validado (build + tests + smoke tests manuales de las 3 Features).
 - Depende de: Epic 1 (Foundation & Promotora Tenant) y Epic 2 (Real Estate Core), ya implementados. Reutiliza `HousingPromotion`, `HousingTypology`, `HousingUnit`, `ICurrentUser`, `IUnitOfWork` y el patrón `Result`.
 
 ## Objetivos
@@ -144,17 +144,17 @@ Cambios sobre casos de uso existentes de Epic 2 (necesarios para no dejar huérf
 
 ### Feature 3.3 - CRUD de Opciones por Personalización
 
-- [ ] Implementar `AddCustomizationOption`, `UpdateCustomizationOption`, `SetDefaultCustomizationOption`, `RemoveCustomizationOption` sobre el agregado `Customization` ya cargado.
-- [ ] Incorporar `customization_options` a la configuración EF Core (`OwnsMany`) creada en la Feature 3.2, con su índice único de nombre.
-- [ ] Extender la vista de detalle de `CustomizationsController` con la tabla de Opciones (nombre, sobrecoste, badge "Por defecto") y las acciones para añadir, editar, fijar por defecto y eliminar opciones.
-- [ ] Confirmar que no se puede eliminar la única opción restante ni la opción por defecto sin fijar antes otra.
+- [x] Implementar `AddCustomizationOption`, `UpdateCustomizationOption`, `SetDefaultCustomizationOption`, `RemoveCustomizationOption` sobre el agregado `Customization` ya cargado.
+- [x] Incorporar `customization_options` a la configuración EF Core (`OwnsMany`) creada en la Feature 3.2, con su índice único de nombre.
+- [x] Extender la vista de detalle de `CustomizationsController` con la tabla de Opciones (nombre, sobrecoste, badge "Por defecto") y las acciones para añadir, editar, fijar por defecto y eliminar opciones.
+- [x] Confirmar que no se puede eliminar la única opción restante ni la opción por defecto sin fijar antes otra.
 
 ### Cierre del Epic
 
-- [ ] Ejecutar los tests unitarios y una compilación completa de la solución.
-- [ ] Validar las migraciones contra PostgreSQL de desarrollo.
-- [ ] Revisar que los controllers solo dependan de contratos de Application y no accedan a `KiwbiDbContext`.
-- [ ] Actualizar este documento con los checks completados y cualquier decisión técnica aprobada durante la implementación.
+- [x] Ejecutar los tests unitarios y una compilación completa de la solución (195 tests: 92 Domain + 103 Application, 0 fallos).
+- [x] Validar las migraciones contra PostgreSQL de desarrollo.
+- [x] Revisar que los controllers solo dependan de contratos de Application y no accedan a `KiwbiDbContext`.
+- [x] Actualizar este documento con los checks completados y cualquier decisión técnica aprobada durante la implementación.
 
 ## Consideraciones de Testing y Notas de la IA
 
@@ -190,3 +190,10 @@ Cambios sobre casos de uso existentes de Epic 2 (necesarios para no dejar huérf
 - La gestión de Opciones (añadir, editar, fijar por defecto, eliminar) se deja fuera de las vistas de esta Feature a propósito: el dominio ya expone `AddOption`/`UpdateOption`/`SetDefaultOption`/`RemoveOption` (necesarios para que `Create` tenga una opción por defecto), pero los casos de uso y la UI dedicados se implementan en la Feature 3.3, tal como estaba planeado.
 - El formulario de alta de Personalización muestra siempre los `<select multiple>` de tipologías y viviendas (sin JavaScript de mostrar/ocultar según el `Scope` elegido), priorizando la simplicidad sobre la interactividad; Alpine.js/HTMX quedan reservados para el Epic 5 según `02-architecture-and-stack.md`.
 - Verificado manualmente: `/Customizations?tradeCategoryId=...` sin sesión redirige 302 a `/Account/Login`. 185 tests pasando (92 Domain + 93 Application) tras esta Feature.
+
+### Decisiones técnicas durante la ejecución (Feature 3.3)
+
+- La edición de una Opción se implementó como una página GET/POST dedicada (`EditOption.cshtml`), igual patrón que `TradeCategories/Edit` o `HousingTypologies/Edit`, en vez de una fila editable inline dentro de la tabla: un `<form>` no puede envolver válidamente varias celdas `<td>` de una misma fila sin romper el HTML de la tabla, y esta alternativa mantiene la consistencia con el resto de formularios CRUD del proyecto.
+- `AddOption`/`SetDefaultOption`/`RemoveOption` sí se mantienen como acciones POST simples que redirigen de vuelta a `Details`, ya que no necesitan mostrar un formulario propio (solo un input inline para añadir, o botones de acción directa).
+- Las invariantes de dominio ya cubrían "no eliminar la única opción" y "no eliminar la opción por defecto" desde la Feature 3.2 (necesarias para que `Customization.Create...` garantizase una opción por defecto inicial); esta Feature solo expuso los casos de uso y la UI que las ejercitan.
+- Verificado manualmente: `/Customizations/EditOption?...` sin sesión redirige 302 a `/Account/Login`. 195 tests pasando (92 Domain + 103 Application) tras esta Feature; Epic 3 completo.

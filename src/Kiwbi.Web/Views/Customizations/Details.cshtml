@@ -15,11 +15,12 @@
 }
 
 <h2 class="h4 mt-4">Opciones</h2>
-<table class="table">
+<table class="table align-middle">
     <thead>
         <tr>
             <th>Nombre</th>
             <th>Sobrecoste</th>
+            <th>Por defecto</th>
             <th></th>
         </tr>
     </thead>
@@ -35,11 +36,34 @@
                         <span class="badge bg-primary">Por defecto</span>
                     }
                 </td>
+                <td class="text-nowrap">
+                    <a asp-controller="Customizations" asp-action="EditOption" asp-route-id="@Model.Id" asp-route-optionId="@option.Id" class="btn btn-sm btn-outline-secondary">Editar</a>
+                    @if (!option.IsDefault)
+                    {
+                        <form asp-controller="Customizations" asp-action="SetDefaultOption" asp-route-id="@Model.Id" asp-route-optionId="@option.Id" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-sm btn-outline-primary">Fijar por defecto</button>
+                        </form>
+                        <form asp-controller="Customizations" asp-action="RemoveOption" asp-route-id="@Model.Id" asp-route-optionId="@option.Id" method="post" class="d-inline"
+                              onsubmit="return confirm('¿Seguro que quieres eliminar esta opción?');">
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
+                        </form>
+                    }
+                </td>
             </tr>
         }
     </tbody>
 </table>
-<p class="text-muted">La gestión de opciones (añadir, editar, fijar por defecto, eliminar) se incorporará en la Feature 3.3.</p>
+
+<div class="row mb-4">
+    <div class="col-md-6">
+        <h3 class="h6">Añadir opción</h3>
+        <form asp-controller="Customizations" asp-action="AddOption" asp-route-id="@Model.Id" method="post" class="d-flex gap-2">
+            <input type="text" name="name" class="form-control" placeholder="Nombre" required />
+            <input type="number" name="surchargeAmount" class="form-control" placeholder="Sobrecoste" step="0.01" min="0" value="0" required />
+            <button type="submit" class="btn btn-outline-primary text-nowrap">Añadir</button>
+        </form>
+    </div>
+</div>
 
 <h2 class="h4 mt-4">Se aplica a</h2>
 @if (!Model.Assignments.Any())

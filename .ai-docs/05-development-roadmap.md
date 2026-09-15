@@ -29,7 +29,7 @@ Este documento define el flujo de uso de la aplicación y divide el MVP en "Epic
 
 ## 2. Plan de Desarrollo (Epics del MVP)
 
-El desarrollo debe seguir este orden estricto para no tener bloqueos de dependencias en la base de datos:
+El desarrollo debe seguir este orden estricto para no tener bloqueos de dependencias en la base de datos. Los Epics 1 a 6 conforman el núcleo funcional del MVP descrito en el flujo de usuario anterior. Los Epics 7 y 8 son mejoras transversales (navegación e imagen visual) sin dependencias de base de datos entre sí ni con los Epics 1-6; se documentan al final para no interrumpir el avance del núcleo funcional, pero pueden abordarse en el momento que convenga.
 
 ### EPIC 1: Foundation & Promotora Tenant
 - **Feature 1.1:** Setup del proyecto (Clean Architecture, EF Core, PostgreSQL).
@@ -60,3 +60,12 @@ El desarrollo debe seguir este orden estricto para no tener bloqueos de dependen
 - **Feature 6.1:** Panel de la Promotora para ver el progreso de las elecciones por Vivienda.
 - **Feature 6.2:** Gestión de estados manuales (Pendiente, Elegido, Confirmado, Pagado).
 - **Feature 6.3:** Generación y exportación de reportes (Excel/PDF) agrupados por Gremio.
+
+### EPIC 7: Reorganización de Navegación (Personalizaciones a nivel de Promoción)
+- **Feature 7.1:** Punto de entrada de "Nueva Personalización" y su listado accesibles directamente desde la Promoción (agregando los Gremios existentes), en vez de exigir navegar primero a un Gremio concreto. Cambio acotado a `Kiwbi.Web` (routing/vistas), sin impacto en Domain/Application/Infrastructure. Ver `epic-07-customizations-promotion-navigation.md`.
+
+### EPIC 8: Rediseño Visual Global (Design System)
+- **Feature 8.1:** Investigación y selección de herramienta/enfoque para un sistema de diseño propio de Kiwbi (tema Bootstrap a medida, plantilla open-source, Tailwind CSS, generación asistida por IA, etc.), integrando el *branding* por tenant ya existente (`DeveloperCompany.Branding`).
+- **Feature 8.2:** Implementación del sistema de diseño base (tokens de color/tipografía, layout, componentes comunes) parametrizado por el branding de cada promotora.
+- **Feature 8.3:** Aplicación del rediseño a todas las vistas existentes (Epics 1-7).
+- Ver `epic-08-visual-redesign.md`.
