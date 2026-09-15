@@ -1,0 +1,77 @@
+@model List<Kiwbi.Web.Models.Onboarding.BuyerInvitationListItemViewModel>
+@{
+    ViewData["Title"] = "Invitaciones de comprador";
+    var housingUnitId = (Guid)ViewBag.HousingUnitId;
+    var promotionId = (Guid)ViewBag.PromotionId;
+}
+
+<h1>Invitaciones de comprador - Vivienda @ViewBag.UnitLabel</h1>
+
+@if (TempData["Error"] is string error)
+{
+    <div class="alert alert-danger">@error</div>
+}
+
+<p>
+    <a asp-controller="HousingUnits" asp-action="InviteBuyer" asp-route-id="@housingUnitId" class="btn btn-primary">Invitar comprador</a>
+    <a asp-controller="HousingUnits" asp-action="Index" asp-route-promotionId="@promotionId" class="btn btn-secondary">Volver a viviendas</a>
+</p>
+
+@if (!Model.Any())
+{
+    <p>Todavía no se ha invitado a ningún comprador para esta vivienda.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Correo electrónico</th>
+                <th>Estado</th>
+                <th>Enviada</th>
+                <th>Caduca</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var invitation in Model)
+            {
+                <tr>
+                    <td>@invitation.Email</td>
+                    <td>
+                        @if (invitation.Status == "Accepted")
+                        {
+                            <span class="badge bg-success">Aceptada</span>
+                        }
+                        else if (invitation.Status == "Cancelled")
+                        {
+                            <span class="badge bg-secondary">Cancelada</span>
+                        }
+                        else if (invitation.IsExpired)
+                        {
+                            <span class="badge bg-danger">Caducada</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-warning text-dark">Pendiente</span>
+                        }
+                    </td>
+                    <td>@invitation.CreatedAtUtc.ToLocalTime()</td>
+                    <td>@invitation.ExpiresAtUtc.ToLocalTime()</td>
+                    <td>
+                        @if (invitation.Status == "Pending")
+                        {
+                            <form asp-controller="HousingUnits" asp-action="ResendInvitation" asp-route-invitationId="@invitation.Id" asp-route-id="@housingUnitId" method="post" class="d-inline">
+                                <button type="submit" class="btn btn-sm btn-outline-primary">Reenviar</button>
+                            </form>
+                            <form asp-controller="HousingUnits" asp-action="CancelInvitation" asp-route-invitationId="@invitation.Id" asp-route-id="@housingUnitId" method="post" class="d-inline"
+                                  onsubmit="return confirm('¿Seguro que quieres cancelar esta invitación?');">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Cancelar</button>
+                            </form>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

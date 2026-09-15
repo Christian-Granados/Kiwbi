@@ -2,8 +2,10 @@ using Kiwbi.Application.Common;
 using Kiwbi.Application.Developers;
 using Kiwbi.Domain.Customizations;
 using Kiwbi.Domain.Developers;
+using Kiwbi.Domain.Onboarding;
 using Kiwbi.Domain.RealEstate;
 using Kiwbi.Infrastructure.Identity;
+using Kiwbi.Infrastructure.Onboarding;
 using Kiwbi.Infrastructure.Persistence;
 using Kiwbi.Infrastructure.Repositories;
 using Kiwbi.Infrastructure.Storage;
@@ -36,11 +38,13 @@ public static class DependencyInjection
         services.AddScoped<IHousingUnitRepository, HousingUnitRepository>();
         services.AddScoped<ITradeCategoryRepository, TradeCategoryRepository>();
         services.AddScoped<ICustomizationRepository, CustomizationRepository>();
+        services.AddScoped<IBuyerInvitationRepository, BuyerInvitationRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<ICurrentUser, CurrentUser>();
         services.AddScoped<IAccountProvisioningService, IdentityAccountProvisioningService>();
         services.AddScoped<IAuthenticationService, IdentityAuthenticationService>();
         services.AddScoped<IFileStorageService, LocalFileStorageService>();
+        services.AddScoped<IEmailSender, LoggingBuyerInvitationEmailSender>();
 
         return services;
     }

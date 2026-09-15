@@ -1,5 +1,6 @@
 using Kiwbi.Domain.Customizations;
 using Kiwbi.Domain.Developers;
+using Kiwbi.Domain.Onboarding;
 using Kiwbi.Domain.RealEstate;
 using Kiwbi.Infrastructure.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
@@ -19,6 +20,7 @@ public class KiwbiDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<HousingUnit> HousingUnits => Set<HousingUnit>();
     public DbSet<TradeCategory> TradeCategories => Set<TradeCategory>();
     public DbSet<Customization> Customizations => Set<Customization>();
+    public DbSet<BuyerInvitation> BuyerInvitations => Set<BuyerInvitation>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

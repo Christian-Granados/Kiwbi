@@ -7,8 +7,13 @@ using Kiwbi.Application.RealEstate.GetHousingUnit;
 using Kiwbi.Application.RealEstate.GetHousingUnits;
 using Kiwbi.Application.RealEstate.UpdateHousingUnit;
 using Kiwbi.Application.RealEstate.UpdateHousingUnitFloorPlan;
+using Kiwbi.Application.Onboarding.InviteBuyerToHousingUnit;
+using Kiwbi.Application.Onboarding.ResendBuyerInvitation;
+using Kiwbi.Application.Onboarding.CancelBuyerInvitation;
+using Kiwbi.Application.Onboarding.GetBuyerInvitationsForHousingUnit;
 using Kiwbi.Domain.RealEstate;
 using Kiwbi.Web.Models.HousingUnits;
+using Kiwbi.Web.Models.Onboarding;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -27,6 +32,10 @@ public class HousingUnitsController : Controller
     private readonly GetHousingUnitsUseCase _getHousingUnitsUseCase;
     private readonly GetHousingTypologiesUseCase _getHousingTypologiesUseCase;
     private readonly GetHousingPromotionUseCase _getHousingPromotionUseCase;
+    private readonly InviteBuyerToHousingUnitUseCase _inviteBuyerToHousingUnitUseCase;
+    private readonly ResendBuyerInvitationUseCase _resendBuyerInvitationUseCase;
+    private readonly CancelBuyerInvitationUseCase _cancelBuyerInvitationUseCase;
+    private readonly GetBuyerInvitationsForHousingUnitUseCase _getBuyerInvitationsForHousingUnitUseCase;
 
     public HousingUnitsController(
         CreateHousingUnitUseCase createHousingUnitUseCase,
@@ -37,7 +46,11 @@ public class HousingUnitsController : Controller
         GetHousingUnitUseCase getHousingUnitUseCase,
         GetHousingUnitsUseCase getHousingUnitsUseCase,
         GetHousingTypologiesUseCase getHousingTypologiesUseCase,
-        GetHousingPromotionUseCase getHousingPromotionUseCase)
+        GetHousingPromotionUseCase getHousingPromotionUseCase,
+        InviteBuyerToHousingUnitUseCase inviteBuyerToHousingUnitUseCase,
+        ResendBuyerInvitationUseCase resendBuyerInvitationUseCase,
+        CancelBuyerInvitationUseCase cancelBuyerInvitationUseCase,
+        GetBuyerInvitationsForHousingUnitUseCase getBuyerInvitationsForHousingUnitUseCase)
     {
         _createHousingUnitUseCase = createHousingUnitUseCase;
         _updateHousingUnitUseCase = updateHousingUnitUseCase;
@@ -48,6 +61,10 @@ public class HousingUnitsController : Controller
         _getHousingUnitsUseCase = getHousingUnitsUseCase;
         _getHousingTypologiesUseCase = getHousingTypologiesUseCase;
         _getHousingPromotionUseCase = getHousingPromotionUseCase;
+        _inviteBuyerToHousingUnitUseCase = inviteBuyerToHousingUnitUseCase;
+        _resendBuyerInvitationUseCase = resendBuyerInvitationUseCase;
+        _cancelBuyerInvitationUseCase = cancelBuyerInvitationUseCase;
+        _getBuyerInvitationsForHousingUnitUseCase = getBuyerInvitationsForHousingUnitUseCase;
     }
 
     [HttpGet]
@@ -215,6 +232,96 @@ public class HousingUnitsController : Controller
         }
 
         return RedirectToAction(nameof(Index), new { promotionId });
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> Invitations(Guid id, CancellationToken cancellationToken)
+    {
+        var unitResult = await _getHousingUnitUseCase.ExecuteAsync(id, cancellationToken);
+
+        if (unitResult.IsFailure)
+        {
+            return NotFound();
+        }
+
+        var invitationsResult = await _getBuyerInvitationsForHousingUnitUseCase.ExecuteAsync(id, cancellationToken);
+
+        if (invitationsResult.IsFailure)
+        {
+            return Forbid();
+        }
+
+        ViewBag.HousingUnitId = id;
+        ViewBag.PromotionId = unitResult.Value!.HousingPromotionId;
+        ViewBag.UnitLabel = $"{unitResult.Value.Floor} {unitResult.Value.Door}";
+
+        var items = invitationsResult.Value!.Select(BuyerInvitationListItemViewModel.FromDto).ToList();
+
+        return View(items);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> InviteBuyer(Guid id, CancellationToken cancellationToken)
+    {
+        var unitResult = await _getHousingUnitUseCase.ExecuteAsync(id, cancellationToken);
+
+        if (unitResult.IsFailure)
+        {
+            return NotFound();
+        }
+
+        ViewBag.UnitLabel = $"{unitResult.Value!.Floor} {unitResult.Value.Door}";
+
+        return View(new InviteBuyerViewModel { HousingUnitId = id });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> InviteBuyer(InviteBuyerViewModel model, CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        var command = new InviteBuyerToHousingUnitCommand(model.HousingUnitId, model.Email);
+        var result = await _inviteBuyerToHousingUnitUseCase.ExecuteAsync(command, cancellationToken);
+
+        if (result.IsFailure)
+        {
+            ModelState.AddModelError(string.Empty, result.Error!);
+            return View(model);
+        }
+
+        return RedirectToAction(nameof(Invitations), new { id = model.HousingUnitId });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ResendInvitation(Guid invitationId, Guid id, CancellationToken cancellationToken)
+    {
+        var result = await _resendBuyerInvitationUseCase.ExecuteAsync(invitationId, cancellationToken);
+
+        if (result.IsFailure)
+        {
+            TempData["Error"] = result.Error;
+        }
+
+        return RedirectToAction(nameof(Invitations), new { id });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> CancelInvitation(Guid invitationId, Guid id, CancellationToken cancellationToken)
+    {
+        var result = await _cancelBuyerInvitationUseCase.ExecuteAsync(invitationId, cancellationToken);
+
+        if (result.IsFailure)
+        {
+            TempData["Error"] = result.Error;
+        }
+
+        return RedirectToAction(nameof(Invitations), new { id });
     }
 
     private async Task<List<SelectListItem>> BuildTypologyOptionsAsync(Guid promotionId, CancellationToken cancellationToken)

@@ -58,6 +58,7 @@ else
                     </td>
                     <td>
                         <a asp-controller="HousingUnits" asp-action="Edit" asp-route-id="@unit.Id" class="btn btn-sm btn-outline-secondary">Editar</a>
+                        <a asp-controller="HousingUnits" asp-action="Invitations" asp-route-id="@unit.Id" class="btn btn-sm btn-outline-primary">Compradores</a>
                         <form asp-controller="HousingUnits" asp-action="Delete" asp-route-id="@unit.Id" asp-route-promotionId="@promotionId" method="post" class="d-inline"
                               onsubmit="return confirm('¿Seguro que quieres eliminar esta vivienda?');">
                             <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>

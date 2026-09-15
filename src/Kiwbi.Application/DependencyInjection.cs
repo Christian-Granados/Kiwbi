@@ -40,6 +40,10 @@ using Kiwbi.Application.Customizations.AddCustomizationOption;
 using Kiwbi.Application.Customizations.UpdateCustomizationOption;
 using Kiwbi.Application.Customizations.SetDefaultCustomizationOption;
 using Kiwbi.Application.Customizations.RemoveCustomizationOption;
+using Kiwbi.Application.Onboarding.InviteBuyerToHousingUnit;
+using Kiwbi.Application.Onboarding.ResendBuyerInvitation;
+using Kiwbi.Application.Onboarding.CancelBuyerInvitation;
+using Kiwbi.Application.Onboarding.GetBuyerInvitationsForHousingUnit;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Kiwbi.Application;
@@ -97,6 +101,11 @@ public static class DependencyInjection
         services.AddScoped<UpdateCustomizationOptionUseCase>();
         services.AddScoped<SetDefaultCustomizationOptionUseCase>();
         services.AddScoped<RemoveCustomizationOptionUseCase>();
+
+        services.AddScoped<InviteBuyerToHousingUnitUseCase>();
+        services.AddScoped<ResendBuyerInvitationUseCase>();
+        services.AddScoped<CancelBuyerInvitationUseCase>();
+        services.AddScoped<GetBuyerInvitationsForHousingUnitUseCase>();
 
         return services;
     }

@@ -2,7 +2,7 @@
 
 ## Estado
 
-- Estado: Propuesta pendiente de aprobación del usuario. No implementado.
+- Estado: Aprobado por el usuario el 2026-09-15. Feature 4.1 implementada y validada (build + 228 tests + smoke test manual). Feature 4.2 pendiente.
 - Depende de: Epic 1 (Foundation & Promotora Tenant) y Epic 2 (Real Estate Core), ya implementados. Reutiliza `HousingUnit`, `ICurrentUser`, `IUnitOfWork`, `IAuthenticationService`, el patrón `Result` y el estilo de `ApplicationUser`/roles Identity de Epic 1.
 
 ## Objetivos
@@ -126,15 +126,15 @@ Cambios sobre casos de uso existentes de Epic 2:
 
 ### Feature 4.1 - Generación de token y envío de email
 
-- [ ] Crear `BuyerInvitation`, `BuyerInvitationStatus` en `Kiwbi.Domain.Onboarding`, con generación interna de token, `ExpiresAtUtc` a 7 días, y los métodos `Create`/`Resend`/`Cancel`/`MarkAccepted`/`IsExpired`.
-- [ ] Crear `IBuyerInvitationRepository`.
-- [ ] Crear el puerto `IEmailSender` en Application.
-- [ ] Implementar `InviteBuyerToHousingUnit`, `ResendBuyerInvitation`, `CancelBuyerInvitation`, `GetBuyerInvitationsForHousingUnit`, resolviendo el tenant desde `ICurrentUser` vía la `HousingUnit`/`HousingPromotion` padre y bloqueando duplicados pendientes por `(HousingUnitId, Email)`.
-- [ ] Ampliar `DeleteHousingUnitUseCase` para bloquear el borrado si existen `BuyerInvitation` asociadas.
-- [ ] Crear la configuración EF Core, `DbSet<BuyerInvitation>` y `BuyerInvitationRepository`.
-- [ ] Implementar `ApplicationRoles.Buyer` y `LoggingBuyerInvitationEmailSender` (adaptador de desarrollo), leyendo `AppBaseUrl` de configuración.
-- [ ] Generar y aplicar la migración que incorpora `buyer_invitations`.
-- [ ] Extender `HousingUnitsController` con `Invitations`, `InviteBuyer`, `ResendInvitation`, `CancelInvitation` y sus vistas.
+- [x] Crear `BuyerInvitation`, `BuyerInvitationStatus` en `Kiwbi.Domain.Onboarding`, con generación interna de token, `ExpiresAtUtc` a 7 días, y los métodos `Create`/`Resend`/`Cancel`/`MarkAccepted`/`IsExpired`.
+- [x] Crear `IBuyerInvitationRepository`.
+- [x] Crear el puerto `IEmailSender` en Application.
+- [x] Implementar `InviteBuyerToHousingUnit`, `ResendBuyerInvitation`, `CancelBuyerInvitation`, `GetBuyerInvitationsForHousingUnit`, resolviendo el tenant desde `ICurrentUser` vía la `HousingUnit`/`HousingPromotion` padre y bloqueando duplicados pendientes por `(HousingUnitId, Email)`.
+- [x] Ampliar `DeleteHousingUnitUseCase` para bloquear el borrado si existen `BuyerInvitation` asociadas.
+- [x] Crear la configuración EF Core, `DbSet<BuyerInvitation>` y `BuyerInvitationRepository`.
+- [x] Implementar `ApplicationRoles.Buyer` y `LoggingBuyerInvitationEmailSender` (adaptador de desarrollo), leyendo `AppBaseUrl` de configuración.
+- [x] Generar y aplicar la migración que incorpora `buyer_invitations`.
+- [x] Extender `HousingUnitsController` con `Invitations`, `InviteBuyer`, `ResendInvitation`, `CancelInvitation` y sus vistas.
 
 ### Feature 4.2 - Aceptación del comprador y vinculación
 
@@ -174,3 +174,10 @@ Cambios sobre casos de uso existentes de Epic 2:
 - La distinción entre `BuyerInvitation` (intención/pendiente) y `HousingUnitBuyer` (vínculo confirmado) es intencional, igual criterio de separación que Epic 3 entre catálogo de configuración y datos transaccionales: permite conservar el histórico de invitaciones (incluidas las canceladas o caducadas) sin mezclarlo con la relación de negocio real comprador-vivienda que consumirá Epic 5.
 - El adaptador de email de desarrollo (`LoggingBuyerInvitationEmailSender`) es una implementación explícitamente temporal: queda documentado que sustituirla por un proveedor SMTP real no requiere cambios en Domain ni Application, solo un nuevo adaptador de Infrastructure y su registro en `AddInfrastructureServices`.
 - Antes de programar este Epic, el usuario debe aprobar este documento.
+
+### Decisiones técnicas durante la ejecución (Feature 4.1)
+
+- `BuyerInvitation.Create` valida el email con una comprobación simple (`Contains('@')` sin empezar/terminar en `@`), no una regex RFC completa: coherente con que el `[EmailAddress]` de `InviteBuyerViewModel` ya cubre la validación de formato más estricta en el borde de entrada (Web); el dominio solo evita persistir valores claramente inválidos si esa capa se saltara.
+- `HousingUnitsController` reutiliza `GetHousingUnitUseCase` para resolver `HousingPromotionId` y el label de la vivienda tanto en `Invitations` como en `InviteBuyer`, evitando pasar `promotionId` como parámetro de ruta adicional (igual criterio que otras acciones del controller que ya cargan la vivienda antes de mostrar la vista).
+- `AppBaseUrl` se añadió a `appsettings.json` (`https://localhost:5001`, placeholder) y `appsettings.Development.json` (`https://localhost:7215`, coincide con el perfil `https` de `launchSettings.json`) para que `LoggingBuyerInvitationEmailSender` componga la URL completa del Magic Link.
+- Verificado manualmente: `/HousingUnits/Invitations/{id}` e `/HousingUnits/InviteBuyer/{id}` sin sesión redirigen 302 a `/Account/Login`. 228 tests pasando (112 Domain + 116 Application) tras esta Feature.

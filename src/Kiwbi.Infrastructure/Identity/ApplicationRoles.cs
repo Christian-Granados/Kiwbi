@@ -4,4 +4,5 @@ namespace Kiwbi.Infrastructure.Identity;
 public static class ApplicationRoles
 {
     public const string DeveloperAdmin = "DeveloperAdmin";
+    public const string Buyer = "Buyer";
 }
