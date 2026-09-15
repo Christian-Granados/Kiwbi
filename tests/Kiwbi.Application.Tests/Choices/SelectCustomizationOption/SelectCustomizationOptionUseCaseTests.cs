@@ -96,6 +96,34 @@ public class SelectCustomizationOptionUseCaseTests
         var result = await _useCase.ExecuteAsync(new SelectCustomizationOptionCommand(unit.Id, customization.Id, customization.Options.Single().Id));
 
         result.IsFailure.Should().BeTrue();
+        await _homeCustomizationChoiceRepository.DidNotReceive().AddAsync(Arg.Any<HomeCustomizationChoice>(), Arg.Any<CancellationToken>());
+        _homeCustomizationChoiceRepository.DidNotReceive().Update(Arg.Any<HomeCustomizationChoice>());
+        await _unitOfWork.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_WhenTradeCategoryExpiredAndChoiceAlreadyExists_ShouldNotOverwriteIt()
+    {
+        var promotion = HousingPromotion.Create(Guid.NewGuid(), "Residencial Acacias", "Madrid", "Calle Mayor 1");
+        var unit = HousingUnit.Create(promotion.Id, "1", "A", 90m, 80m);
+        var tradeCategory = TradeCategory.Create(promotion.Id, "Carpintería", DateTime.UtcNow.AddMonths(1));
+        tradeCategory.Reschedule(DateTime.UtcNow.AddDays(-1));
+        var customization = Customization.CreateForWholePromotion(tradeCategory.Id, "Suelo", "Parquet Roble", 0m);
+        customization.AddOption("Porcelánico Premium", 500m);
+        var defaultOptionId = customization.Options.Single(o => o.IsDefault).Id;
+        var otherOptionId = customization.Options.Single(o => !o.IsDefault).Id;
+        var existingChoice = HomeCustomizationChoice.Create(unit.Id, customization.Id);
+        existingChoice.SelectOption(defaultOptionId, DateTime.UtcNow);
+        SetupUnitAndCustomization(unit, customization);
+        _tradeCategoryRepository.GetByIdAsync(tradeCategory.Id, Arg.Any<CancellationToken>()).Returns(tradeCategory);
+        _homeCustomizationChoiceRepository.GetByHousingUnitIdAndCustomizationIdAsync(unit.Id, customization.Id, Arg.Any<CancellationToken>())
+            .Returns(existingChoice);
+
+        var result = await _useCase.ExecuteAsync(new SelectCustomizationOptionCommand(unit.Id, customization.Id, otherOptionId));
+
+        result.IsFailure.Should().BeTrue();
+        existingChoice.SelectedOptionId.Should().Be(defaultOptionId);
+        _homeCustomizationChoiceRepository.DidNotReceive().Update(Arg.Any<HomeCustomizationChoice>());
         await _unitOfWork.DidNotReceive().SaveChangesAsync(Arg.Any<CancellationToken>());
     }
 

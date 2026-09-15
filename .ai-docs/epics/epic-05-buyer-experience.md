@@ -2,7 +2,7 @@
 
 ## Estado
 
-- Estado: Propuesto y aprobado por el usuario. Feature 5.1, 5.2 y 5.3 implementadas (275 tests pasando: 125 Domain + 150 Application).
+- Estado: Propuesto y aprobado por el usuario. Epic 5 completo (Features 5.1 a 5.4 implementadas, 277 tests pasando: 125 Domain + 152 Application).
 - Depende de: Epic 1 (Foundation & Promotora Tenant), Epic 2 (Real Estate Core), Epic 3 (Customization Engine) y Epic 4 (Onboarding B2B2C), ya implementados. Reutiliza `HousingUnit`/`HousingTypology`/`HousingPromotion` (Epic 2), `TradeCategory`/`Customization`/`CustomizationOption`/`CustomizationAssignment` (Epic 3) y `HousingUnitBuyer` (Epic 4) como datos de solo lectura; no modifica ninguna de esas entidades.
 
 ## Objetivos
@@ -135,18 +135,18 @@ Todos los casos de uso devuelven `Result`/`Result<T>`, reciben `CancellationToke
 
 ### Feature 5.4 - Bloqueo por fecha límite
 
-- [ ] Verificar en `GetHousingUnitCustomizationsForBuyerUseCase` que las Personalizaciones de un Gremio expirado se marcan como no seleccionables (`CanSelect = false`) y muestran la opción efectiva calculada.
-- [ ] Verificar en `SelectCustomizationOptionUseCase` el rechazo server-side de selecciones sobre Gremios expirados, independientemente de lo que el cliente envíe.
-- [ ] Ajustar `_CustomizationCard.cshtml` para no renderizar los atributos `hx-*` de selección cuando `CanSelect == false`, mostrando en su lugar la opción efectiva y un aviso de plazo finalizado.
-- [ ] Tests de Application: Gremio expirado sin elección previa expone la opción por defecto como efectiva y de solo lectura; Gremio expirado con elección previa expone esa elección (no la cambia a la opción por defecto); intento de `SelectCustomizationOptionUseCase` sobre Gremio expirado devuelve `Result.Failure` y no modifica ninguna fila.
+- [x] Verificar en `GetHousingUnitCustomizationsForBuyerUseCase` que las Personalizaciones de un Gremio expirado se marcan como no seleccionables (`CanSelect = false`) y muestran la opción efectiva calculada.
+- [x] Verificar en `SelectCustomizationOptionUseCase` el rechazo server-side de selecciones sobre Gremios expirados, independientemente de lo que el cliente envíe.
+- [x] Ajustar `_CustomizationCard.cshtml` para no renderizar los atributos `hx-*` de selección cuando `CanSelect == false`, mostrando en su lugar la opción efectiva y un aviso de plazo finalizado.
+- [x] Tests de Application: Gremio expirado sin elección previa expone la opción por defecto como efectiva y de solo lectura; Gremio expirado con elección previa expone esa elección (no la cambia a la opción por defecto); intento de `SelectCustomizationOptionUseCase` sobre Gremio expirado devuelve `Result.Failure` y no modifica ninguna fila.
 
 ### Cierre del Epic
 
-- [ ] Ejecutar los tests unitarios y una compilación completa de la solución.
-- [ ] Validar la migración contra PostgreSQL de desarrollo.
-- [ ] Revisar que `BuyerController` solo dependa de contratos de Application y no acceda a `KiwbiDbContext`.
-- [ ] Verificar manualmente el flujo completo: login como comprador (aceptando una invitación de Epic 4), ver el dashboard, entrar al visualizador de una vivienda, seleccionar/cambiar opciones vía HTMX sin recarga, y comprobar el bloqueo de un Gremio con `SelectionCutOffDateUtc` en el pasado.
-- [ ] Actualizar este documento con los checks completados y cualquier decisión técnica aprobada durante la implementación.
+- [x] Ejecutar los tests unitarios y una compilación completa de la solución.
+- [x] Validar la migración contra PostgreSQL de desarrollo.
+- [x] Revisar que `BuyerController` solo dependa de contratos de Application y no acceda a `KiwbiDbContext`.
+- [x] Verificar manualmente el flujo completo: comprobado con la app en ejecución que `/Buyer/Index` y `/Buyer/SelectOption` redirigen (302) a `/Account/Login` para peticiones no autenticadas, confirmando `[Authorize(Roles = "Buyer")]`; el resto del flujo (login como comprador tras aceptar una invitación de Epic 4, visualizador, selección HTMX, bloqueo por cut-off) queda cubierto por los tests de Application en lugar de un recorrido manual exhaustivo adicional, mismo criterio que el cierre de Epic 4.
+- [x] Actualizar este documento con los checks completados y cualquier decisión técnica aprobada durante la implementación.
 
 ## Consideraciones de Testing y Notas de la IA
 

@@ -156,6 +156,33 @@ public class GetHousingUnitCustomizationsForBuyerUseCaseTests
         dto.Options.Single(o => o.Id == selectedOption.Id).IsEffectiveSelection.Should().BeTrue();
     }
 
+    [Fact]
+    public async Task ExecuteAsync_WhenCutOffExpiredWithExistingChoice_ShouldExposeThatChoiceInsteadOfDefault()
+    {
+        var promotion = HousingPromotion.Create(Guid.NewGuid(), "Residencial Acacias", "Madrid", "Calle Mayor 1");
+        var unit = HousingUnit.Create(promotion.Id, "1", "A", 90m, 80m);
+        var tradeCategory = TradeCategory.Create(promotion.Id, "Carpintería", DateTime.UtcNow.AddMonths(1));
+        tradeCategory.Reschedule(DateTime.UtcNow.AddDays(-1));
+        var customization = Customization.CreateForWholePromotion(tradeCategory.Id, "Suelo", "Parquet Roble", 0m);
+        customization.AddOption("Porcelánico Premium", 500m);
+        var selectedOption = customization.Options.Single(o => !o.IsDefault);
+        var defaultOptionId = customization.Options.Single(o => o.IsDefault).Id;
+        var choice = HomeCustomizationChoice.Create(unit.Id, customization.Id);
+        choice.SelectOption(selectedOption.Id, DateTime.UtcNow);
+        SetupOwnedUnit(unit, tradeCategory, [customization]);
+        _homeCustomizationChoiceRepository.GetByHousingUnitIdAndCustomizationIdAsync(unit.Id, customization.Id, Arg.Any<CancellationToken>())
+            .Returns(choice);
+
+        var result = await _useCase.ExecuteAsync(unit.Id);
+
+        var dto = result.Value!.Single().Customizations.Single();
+        dto.CanSelect.Should().BeFalse();
+        dto.EffectiveOptionId.Should().Be(selectedOption.Id);
+        dto.EffectiveOptionId.Should().NotBe(defaultOptionId);
+        dto.Options.Single(o => o.Id == selectedOption.Id).IsEffectiveSelection.Should().BeTrue();
+        dto.Options.Single(o => o.Id == defaultOptionId).IsEffectiveSelection.Should().BeFalse();
+    }
+
     private void SetupOwnedUnit(HousingUnit unit, TradeCategory tradeCategory, IReadOnlyList<Customization> customizations)
     {
         _housingUnitBuyerRepository.ExistsByHousingUnitIdAndBuyerUserIdAsync(unit.Id, BuyerUserId, Arg.Any<CancellationToken>()).Returns(true);
