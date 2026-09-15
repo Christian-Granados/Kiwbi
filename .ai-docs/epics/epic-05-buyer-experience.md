@@ -2,7 +2,7 @@
 
 ## Estado
 
-- Estado: Propuesto, pendiente de aprobación del usuario. No implementado.
+- Estado: Propuesto y aprobado por el usuario. Feature 5.1 implementada (251 tests pasando: 117 Domain + 134 Application).
 - Depende de: Epic 1 (Foundation & Promotora Tenant), Epic 2 (Real Estate Core), Epic 3 (Customization Engine) y Epic 4 (Onboarding B2B2C), ya implementados. Reutiliza `HousingUnit`/`HousingTypology`/`HousingPromotion` (Epic 2), `TradeCategory`/`Customization`/`CustomizationOption`/`CustomizationAssignment` (Epic 3) y `HousingUnitBuyer` (Epic 4) como datos de solo lectura; no modifica ninguna de esas entidades.
 
 ## Objetivos
@@ -111,9 +111,9 @@ Todos los casos de uso devuelven `Result`/`Result<T>`, reciben `CancellationToke
 
 ### Feature 5.1 - Dashboard del Comprador (Mis Viviendas)
 
-- [ ] Crear `GetHousingUnitsForCurrentBuyerUseCase` y `BuyerHousingUnitDto` en `Kiwbi.Application.Choices` (o en `Kiwbi.Application.Onboarding`, reutilizando `IHousingUnitBuyerRepository` ya existente de Epic 4; decidir ubicación al implementar según si depende de algo del nuevo módulo `Choices`).
-- [ ] Crear `BuyerController` (`[Authorize(Roles = "Buyer")]`) con la acción `Index` y su vista.
-- [ ] Tests de Application: comprador sin viviendas ve lista vacía; comprador con varias viviendas (de distintas promociones) las ve todas; una vivienda de otro comprador nunca aparece.
+- [x] Crear `GetHousingUnitsForCurrentBuyerUseCase` y `BuyerHousingUnitDto` en `Kiwbi.Application.Onboarding` (reutiliza `IHousingUnitBuyerRepository` ya existente de Epic 4; no necesita nada del futuro módulo `Choices`, así que se descartó crear ese módulo solo para esto).
+- [x] Crear `BuyerController` (`[Authorize(Roles = "Buyer")]`) con la acción `Index` y su vista.
+- [x] Tests de Application: comprador sin viviendas ve lista vacía; comprador con varias viviendas las ve todas con los datos de su promoción; vivienda enlazada que ya no existe se omite en vez de fallar; usuario no autenticado devuelve `Result.Failure`.
 
 ### Feature 5.2 - Visualizador de Personalizaciones
 

@@ -1,0 +1,34 @@
+@model List<Kiwbi.Web.Models.Buyer.BuyerHousingUnitViewModel>
+@{
+    ViewData["Title"] = "Mis viviendas";
+}
+
+<h1>Mis viviendas</h1>
+
+@if (!Model.Any())
+{
+    <p>Todavía no tienes ninguna vivienda vinculada a tu cuenta.</p>
+}
+else
+{
+    <div class="row">
+        @foreach (var unit in Model)
+        {
+            <div class="col-md-4 mb-3">
+                <div class="card h-100">
+                    @if (!string.IsNullOrWhiteSpace(unit.FloorPlanImagePath))
+                    {
+                        <img src="@unit.FloorPlanImagePath" class="card-img-top" alt="Plano de la vivienda" />
+                    }
+                    <div class="card-body">
+                        <h5 class="card-title">@unit.HousingPromotionName</h5>
+                        <p class="card-text">
+                            @unit.City<br />
+                            Planta @unit.Floor, puerta @unit.Door
+                        </p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
