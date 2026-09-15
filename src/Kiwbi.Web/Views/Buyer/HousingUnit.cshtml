@@ -1,7 +1,12 @@
 @model List<Kiwbi.Web.Models.Buyer.TradeCategoryCustomizationsViewModel>
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
 @{
     ViewData["Title"] = "Personalizaciones de la vivienda";
+    var housingUnitId = (Guid)ViewData["HousingUnitId"]!;
+    var csrfToken = Antiforgery.GetAndStoreTokens(Context).RequestToken;
 }
+
+<meta name="csrf-token" content="@csrfToken" />
 
 <h1>Personalizaciones de tu vivienda</h1>
 <p>
@@ -31,32 +36,24 @@ else
             <div class="card-body">
                 @foreach (var customization in tradeCategory.Customizations)
                 {
-                    <h5>@customization.Name</h5>
-                    <ul class="list-group mb-3">
-                        @foreach (var option in customization.Options)
-                        {
-                            <li class="list-group-item d-flex justify-content-between align-items-center @(option.IsEffectiveSelection ? "list-group-item-primary" : string.Empty)">
-                                <span>
-                                    @option.Name
-                                    @if (option.IsDefault)
-                                    {
-                                        <span class="badge bg-light text-dark">Por defecto</span>
-                                    }
-                                    @if (option.IsEffectiveSelection)
-                                    {
-                                        <span class="badge bg-primary">Elección actual</span>
-                                    }
-                                </span>
-                                <span>@(option.SurchargeAmount > 0 ? $"+{option.SurchargeAmount:0.00} €" : "Sin sobrecoste")</span>
-                            </li>
-                        }
-                    </ul>
-                    @if (!customization.CanSelect)
+                    @await Html.PartialAsync("_CustomizationCard", new Kiwbi.Web.Models.Buyer.CustomizationCardViewModel
                     {
-                        <p class="text-muted small">El plazo de selección para este gremio ha finalizado; se aplica la opción indicada arriba.</p>
-                    }
+                        HousingUnitId = housingUnitId,
+                        Customization = customization,
+                    })
                 }
             </div>
         </div>
     }
 }
+
+@section Scripts {
+    <script src="~/lib/htmx.org/htmx.min.js"></script>
+    <script src="~/lib/alpinejs/cdn.min.js" defer></script>
+    <script>
+        document.body.addEventListener('htmx:configRequest', function (evt) {
+            evt.detail.headers['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
+        });
+    </script>
+}
+

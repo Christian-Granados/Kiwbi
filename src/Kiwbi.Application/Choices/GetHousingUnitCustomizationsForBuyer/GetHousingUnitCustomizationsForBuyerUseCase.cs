@@ -65,13 +65,13 @@ public class GetHousingUnitCustomizationsForBuyerUseCase
 
             foreach (var customization in customizations)
             {
-                if (!AppliesToUnit(customization, unit))
+                if (!customization.AppliesToHousingUnit(unit.Id, unit.HousingTypologyId))
                 {
                     continue;
                 }
 
                 var choice = await _homeCustomizationChoiceRepository.GetByHousingUnitIdAndCustomizationIdAsync(unit.Id, customization.Id, cancellationToken);
-                applicableCustomizations.Add(BuildCustomizationDto(customization, choice, isExpired));
+                applicableCustomizations.Add(CustomizationForBuyerMapper.Build(customization, choice, isExpired));
             }
 
             if (applicableCustomizations.Count == 0)
@@ -88,30 +88,5 @@ public class GetHousingUnitCustomizationsForBuyerUseCase
         }
 
         return Result.Success<IReadOnlyList<TradeCategoryCustomizationsDto>>(result);
-    }
-
-    private static bool AppliesToUnit(Customization customization, HousingUnit unit) =>
-        customization.Assignments.Any(a =>
-            a.Scope == CustomizationScope.WholePromotion ||
-            (a.Scope == CustomizationScope.Typology && unit.HousingTypologyId is { } typologyId && a.HousingTypologyId == typologyId) ||
-            (a.Scope == CustomizationScope.Unit && a.HousingUnitId == unit.Id));
-
-    private static CustomizationForBuyerDto BuildCustomizationDto(Customization customization, HomeCustomizationChoice? choice, bool isExpired)
-    {
-        var canSelect = !isExpired;
-        var selectedOptionId = choice?.SelectedOptionId;
-        var defaultOptionId = customization.Options.First(o => o.IsDefault).Id;
-        var effectiveOptionId = selectedOptionId ?? (isExpired ? defaultOptionId : null);
-
-        var options = customization.Options
-            .Select(option => new CustomizationOptionForBuyerDto(
-                option.Id,
-                option.Name,
-                option.SurchargeAmount,
-                option.IsDefault,
-                option.Id == effectiveOptionId))
-            .ToList();
-
-        return new CustomizationForBuyerDto(customization.Id, customization.Name, canSelect, selectedOptionId, effectiveOptionId, options);
     }
 }

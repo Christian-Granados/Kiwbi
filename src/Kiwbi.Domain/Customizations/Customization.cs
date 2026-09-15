@@ -215,5 +215,12 @@ public class Customization : BaseEntity
         Touch();
     }
 
+    /// <summary>Whether this Customization applies to the given HousingUnit (and its optional HousingTypology), per its Assignments.</summary>
+    public bool AppliesToHousingUnit(Guid housingUnitId, Guid? housingTypologyId) =>
+        _assignments.Any(a =>
+            a.Scope == CustomizationScope.WholePromotion ||
+            (a.Scope == CustomizationScope.Typology && housingTypologyId is { } typologyId && a.HousingTypologyId == typologyId) ||
+            (a.Scope == CustomizationScope.Unit && a.HousingUnitId == housingUnitId));
+
     private void Touch() => UpdatedAtUtc = DateTime.UtcNow;
 }

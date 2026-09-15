@@ -282,4 +282,34 @@ public class CustomizationTests
         customization.Assignments.Should().ContainSingle();
         customization.Assignments.Should().NotContain(a => a.Id == assignmentToRemove.Id);
     }
+
+    [Fact]
+    public void AppliesToHousingUnit_WithWholePromotionScope_ShouldAlwaysApply()
+    {
+        var customization = Customization.CreateForWholePromotion(TradeCategoryId, "Suelo", "Parquet Roble", 0m);
+
+        customization.AppliesToHousingUnit(Guid.NewGuid(), null).Should().BeTrue();
+    }
+
+    [Fact]
+    public void AppliesToHousingUnit_WithTypologyScope_ShouldOnlyApplyToMatchingTypology()
+    {
+        var typologyId = Guid.NewGuid();
+        var customization = Customization.CreateForTypologies(TradeCategoryId, "Suelo", "Parquet Roble", 0m, new[] { typologyId });
+
+        customization.AppliesToHousingUnit(Guid.NewGuid(), typologyId).Should().BeTrue();
+        customization.AppliesToHousingUnit(Guid.NewGuid(), Guid.NewGuid()).Should().BeFalse();
+        customization.AppliesToHousingUnit(Guid.NewGuid(), null).Should().BeFalse();
+    }
+
+    [Fact]
+    public void AppliesToHousingUnit_WithUnitScope_ShouldOnlyApplyToThatUnit()
+    {
+        var unitId = Guid.NewGuid();
+        var customization = Customization.CreateForUnits(TradeCategoryId, "Suelo", "Parquet Roble", 0m, new[] { unitId });
+
+        customization.AppliesToHousingUnit(unitId, null).Should().BeTrue();
+        customization.AppliesToHousingUnit(Guid.NewGuid(), null).Should().BeFalse();
+    }
 }
+

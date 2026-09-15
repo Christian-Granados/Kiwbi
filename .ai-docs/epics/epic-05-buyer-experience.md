@@ -2,7 +2,7 @@
 
 ## Estado
 
-- Estado: Propuesto y aprobado por el usuario. Feature 5.1 y 5.2 implementadas (265 tests pasando: 122 Domain + 143 Application).
+- Estado: Propuesto y aprobado por el usuario. Feature 5.1, 5.2 y 5.3 implementadas (275 tests pasando: 125 Domain + 150 Application).
 - Depende de: Epic 1 (Foundation & Promotora Tenant), Epic 2 (Real Estate Core), Epic 3 (Customization Engine) y Epic 4 (Onboarding B2B2C), ya implementados. Reutiliza `HousingUnit`/`HousingTypology`/`HousingPromotion` (Epic 2), `TradeCategory`/`Customization`/`CustomizationOption`/`CustomizationAssignment` (Epic 3) y `HousingUnitBuyer` (Epic 4) como datos de solo lectura; no modifica ninguna de esas entidades.
 
 ## Objetivos
@@ -127,11 +127,11 @@ Todos los casos de uso devuelven `Result`/`Result<T>`, reciben `CancellationToke
 
 ### Feature 5.3 - Selección interactiva con HTMX
 
-- [ ] Añadir `htmx.org`/`Alpine.js` vía LibMan a `wwwroot/lib` y referenciarlos en `_Layout.cshtml`.
-- [ ] Implementar `SelectCustomizationOptionUseCase` (validación de vinculación, pertenencia de la opción, aplicabilidad de la personalización a la vivienda, creación/actualización de `HomeCustomizationChoice`).
-- [ ] Añadir la acción `SelectOption` (`[HttpPost]`) a `BuyerController` devolviendo la `PartialView` `_CustomizationCard.cshtml` actualizada.
-- [ ] Maquetar `_CustomizationCard.cshtml` con los atributos `hx-post`/`hx-target`/`hx-swap` sobre cada opción seleccionable.
-- [ ] Tests de Application: selección válida crea la elección la primera vez y la actualiza en selecciones posteriores; opción de otra Personalización rechazada; Personalización no aplicable a la vivienda rechazada.
+- [x] Añadir `htmx.org`/`Alpine.js` vía LibMan a `wwwroot/lib` y referenciarlos en `_Layout.cshtml` (finalmente solo en la vista `HousingUnit.cshtml` del Comprador vía su sección `Scripts`, no en el layout compartido, para no cargarlos en el panel de la promotora).
+- [x] Implementar `SelectCustomizationOptionUseCase` (validación de vinculación, pertenencia de la opción, aplicabilidad de la personalización a la vivienda, creación/actualización de `HomeCustomizationChoice`).
+- [x] Añadir la acción `SelectOption` (`[HttpPost]`) a `BuyerController` devolviendo la `PartialView` `_CustomizationCard.cshtml` actualizada.
+- [x] Maquetar `_CustomizationCard.cshtml` con los atributos `hx-post`/`hx-target`/`hx-swap` sobre cada opción seleccionable.
+- [x] Tests de Application: selección válida crea la elección la primera vez y la actualiza en selecciones posteriores; opción de otra Personalización rechazada; Personalización no aplicable a la vivienda rechazada.
 
 ### Feature 5.4 - Bloqueo por fecha límite
 
@@ -165,3 +165,12 @@ Todos los casos de uso devuelven `Result`/`Result<T>`, reciben `CancellationToke
 - El bloqueo por fecha límite se verifica siempre en el servidor dentro de `SelectCustomizationOptionUseCase`, no solo ocultando los controles `hx-*` en la vista: un comprador podría en teoría disparar la petición HTMX manualmente después de que el plazo expire mientras tenía la página abierta.
 - `htmx.org`/`Alpine.js` se instalan vía LibMan igual que `bootstrap`/`jquery` (no CDN), para mantener consistencia con la gestión de dependencias de front-end ya usada en el proyecto.
 - Antes de programar este Epic, el usuario debe aprobar este documento.
+
+### Decisiones técnicas durante la ejecución (Feature 5.3)
+
+- La regla de aplicabilidad de una Personalización a una Vivienda (`WholePromotion`/`Typology`/`Unit`), inicialmente escrita como un método privado dentro de `GetHousingUnitCustomizationsForBuyerUseCase` (Feature 5.2), se movió al dominio como `Customization.AppliesToHousingUnit(housingUnitId, housingTypologyId)`: la necesitaban tanto el visualizador como `SelectCustomizationOptionUseCase`, y es una regla intrínseca de la propia Personalización, no una comprobación de tenant/ownership cruzada como las de Epics 2-4. El cálculo de la opción efectiva (DTO) también se extrajo a `CustomizationForBuyerMapper` (interno a `Kiwbi.Application.Choices`) para que ambos casos de uso compartan exactamente la misma lógica sin duplicarla.
+- La protección CSRF de la petición HTMX (que no es un `<form>` tradicional) se resolvió configurando `AddAntiforgery(options => options.HeaderName = "X-CSRF-TOKEN")` en `Program.cs`; la vista `HousingUnit.cshtml` inyecta `IAntiforgery` para obtener el token (`GetAndStoreTokens`) y lo publica en una `<meta name="csrf-token">`, y un listener de `htmx:configRequest` añade ese valor como cabecera en cada petición htmx. `[ValidateAntiForgeryToken]` en `BuyerController.SelectOption` valida esa cabecera igual que validaría el campo de formulario oculto en un POST tradicional.
+- `htmx.org` no publica el paquete bajo el id `htmx.org` en el proveedor `cdnjs` de LibMan; el id correcto es `htmx` (verificado con la CLI de LibMan). Se instaló solo el archivo `htmx.min.js` (no las extensiones `ext/*.js` ni el build ESM) para no arrastrar código innecesario a `wwwroot`.
+- `SelectCustomizationOptionUseCase` devuelve `Result<CustomizationForBuyerDto>` (no solo `Result`) para que `BuyerController.SelectOption` pueda re-renderizar directamente la tarjeta `_CustomizationCard.cshtml` sin una segunda consulta a `GetHousingUnitCustomizationsForBuyerUseCase`.
+- `htmx.org`/`Alpine.js` se referencian únicamente desde la sección `Scripts` de `Views/Buyer/HousingUnit.cshtml` (no desde `_Layout.cshtml` compartido), consistente con la decisión de no cargarlos en el panel de la promotora.
+

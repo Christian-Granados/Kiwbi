@@ -1,0 +1,43 @@
+@model Kiwbi.Web.Models.Buyer.CustomizationCardViewModel
+@{
+    var customization = Model.Customization;
+}
+
+<div id="customization-@customization.Id" class="mb-4">
+    <h5>@customization.Name</h5>
+    <ul class="list-group mb-2">
+        @foreach (var option in customization.Options)
+        {
+            <li class="list-group-item d-flex justify-content-between align-items-center @(option.IsEffectiveSelection ? "list-group-item-primary" : string.Empty)">
+                <span>
+                    @option.Name
+                    @if (option.IsDefault)
+                    {
+                        <span class="badge bg-light text-dark">Por defecto</span>
+                    }
+                    @if (option.IsEffectiveSelection)
+                    {
+                        <span class="badge bg-primary">Elección actual</span>
+                    }
+                </span>
+                <span class="d-flex align-items-center gap-2">
+                    <span>@(option.SurchargeAmount > 0 ? $"+{option.SurchargeAmount:0.00} €" : "Sin sobrecoste")</span>
+                    @if (customization.CanSelect && !option.IsEffectiveSelection)
+                    {
+                        <button type="button" class="btn btn-sm btn-outline-primary"
+                                hx-post="@Url.Action("SelectOption", "Buyer")"
+                                hx-vals='{"housingUnitId": "@Model.HousingUnitId", "customizationId": "@customization.Id", "customizationOptionId": "@option.Id"}'
+                                hx-target="#customization-@customization.Id"
+                                hx-swap="outerHTML">
+                            Elegir
+                        </button>
+                    }
+                </span>
+            </li>
+        }
+    </ul>
+    @if (!customization.CanSelect)
+    {
+        <p class="text-muted small">El plazo de selección para este gremio ha finalizado; se aplica la opción indicada arriba.</p>
+    }
+</div>

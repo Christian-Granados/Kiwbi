@@ -49,6 +49,7 @@ using Kiwbi.Application.Onboarding.AcceptBuyerInvitation;
 using Kiwbi.Application.Onboarding.GetHousingUnitBuyersForHousingUnit;
 using Kiwbi.Application.Onboarding.GetHousingUnitsForCurrentBuyer;
 using Kiwbi.Application.Choices.GetHousingUnitCustomizationsForBuyer;
+using Kiwbi.Application.Choices.SelectCustomizationOption;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Kiwbi.Application;
@@ -116,6 +117,7 @@ public static class DependencyInjection
         services.AddScoped<GetHousingUnitBuyersForHousingUnitUseCase>();
         services.AddScoped<GetHousingUnitsForCurrentBuyerUseCase>();
         services.AddScoped<GetHousingUnitCustomizationsForBuyerUseCase>();
+        services.AddScoped<SelectCustomizationOptionUseCase>();
 
         return services;
     }
