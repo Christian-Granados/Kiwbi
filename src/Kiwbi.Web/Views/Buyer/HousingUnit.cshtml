@@ -1,0 +1,62 @@
+@model List<Kiwbi.Web.Models.Buyer.TradeCategoryCustomizationsViewModel>
+@{
+    ViewData["Title"] = "Personalizaciones de la vivienda";
+}
+
+<h1>Personalizaciones de tu vivienda</h1>
+<p>
+    <a asp-controller="Buyer" asp-action="Index" class="btn btn-outline-secondary btn-sm">&larr; Volver a mis viviendas</a>
+</p>
+
+@if (!Model.Any())
+{
+    <p>Esta vivienda todavía no tiene personalizaciones disponibles.</p>
+}
+else
+{
+    @foreach (var tradeCategory in Model)
+    {
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><strong>@tradeCategory.TradeCategoryName</strong></span>
+                @if (tradeCategory.IsExpired)
+                {
+                    <span class="badge bg-secondary">Plazo finalizado (@tradeCategory.SelectionCutOffDateUtc.ToString("dd/MM/yyyy"))</span>
+                }
+                else
+                {
+                    <span class="badge bg-success">Plazo hasta el @tradeCategory.SelectionCutOffDateUtc.ToString("dd/MM/yyyy")</span>
+                }
+            </div>
+            <div class="card-body">
+                @foreach (var customization in tradeCategory.Customizations)
+                {
+                    <h5>@customization.Name</h5>
+                    <ul class="list-group mb-3">
+                        @foreach (var option in customization.Options)
+                        {
+                            <li class="list-group-item d-flex justify-content-between align-items-center @(option.IsEffectiveSelection ? "list-group-item-primary" : string.Empty)">
+                                <span>
+                                    @option.Name
+                                    @if (option.IsDefault)
+                                    {
+                                        <span class="badge bg-light text-dark">Por defecto</span>
+                                    }
+                                    @if (option.IsEffectiveSelection)
+                                    {
+                                        <span class="badge bg-primary">Elección actual</span>
+                                    }
+                                </span>
+                                <span>@(option.SurchargeAmount > 0 ? $"+{option.SurchargeAmount:0.00} €" : "Sin sobrecoste")</span>
+                            </li>
+                        }
+                    </ul>
+                    @if (!customization.CanSelect)
+                    {
+                        <p class="text-muted small">El plazo de selección para este gremio ha finalizado; se aplica la opción indicada arriba.</p>
+                    }
+                }
+            </div>
+        </div>
+    }
+}

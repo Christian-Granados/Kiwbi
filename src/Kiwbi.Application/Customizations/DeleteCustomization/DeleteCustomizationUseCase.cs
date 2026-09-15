@@ -1,4 +1,5 @@
 using Kiwbi.Application.Common;
+using Kiwbi.Domain.Choices;
 using Kiwbi.Domain.Customizations;
 using Kiwbi.Domain.RealEstate;
 
@@ -11,6 +12,7 @@ public class DeleteCustomizationUseCase
     private readonly IHousingPromotionRepository _housingPromotionRepository;
     private readonly ITradeCategoryRepository _tradeCategoryRepository;
     private readonly ICustomizationRepository _customizationRepository;
+    private readonly IHomeCustomizationChoiceRepository _homeCustomizationChoiceRepository;
     private readonly IUnitOfWork _unitOfWork;
 
     public DeleteCustomizationUseCase(
@@ -18,12 +20,14 @@ public class DeleteCustomizationUseCase
         IHousingPromotionRepository housingPromotionRepository,
         ITradeCategoryRepository tradeCategoryRepository,
         ICustomizationRepository customizationRepository,
+        IHomeCustomizationChoiceRepository homeCustomizationChoiceRepository,
         IUnitOfWork unitOfWork)
     {
         _currentUser = currentUser;
         _housingPromotionRepository = housingPromotionRepository;
         _tradeCategoryRepository = tradeCategoryRepository;
         _customizationRepository = customizationRepository;
+        _homeCustomizationChoiceRepository = homeCustomizationChoiceRepository;
         _unitOfWork = unitOfWork;
     }
 
@@ -53,6 +57,11 @@ public class DeleteCustomizationUseCase
         if (promotion is null || promotion.DeveloperCompanyId != developerCompanyId)
         {
             return Result.Failure("No se ha encontrado la personalización.");
+        }
+
+        if (await _homeCustomizationChoiceRepository.ExistsByCustomizationIdAsync(customizationId, cancellationToken))
+        {
+            return Result.Failure("No se puede eliminar la personalización porque ya tiene elecciones de compradores registradas.");
         }
 
         _customizationRepository.Remove(customization);

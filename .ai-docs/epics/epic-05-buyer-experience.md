@@ -2,7 +2,7 @@
 
 ## Estado
 
-- Estado: Propuesto y aprobado por el usuario. Feature 5.1 implementada (251 tests pasando: 117 Domain + 134 Application).
+- Estado: Propuesto y aprobado por el usuario. Feature 5.1 y 5.2 implementadas (265 tests pasando: 122 Domain + 143 Application).
 - Depende de: Epic 1 (Foundation & Promotora Tenant), Epic 2 (Real Estate Core), Epic 3 (Customization Engine) y Epic 4 (Onboarding B2B2C), ya implementados. Reutiliza `HousingUnit`/`HousingTypology`/`HousingPromotion` (Epic 2), `TradeCategory`/`Customization`/`CustomizationOption`/`CustomizationAssignment` (Epic 3) y `HousingUnitBuyer` (Epic 4) como datos de solo lectura; no modifica ninguna de esas entidades.
 
 ## Objetivos
@@ -117,13 +117,13 @@ Todos los casos de uso devuelven `Result`/`Result<T>`, reciben `CancellationToke
 
 ### Feature 5.2 - Visualizador de Personalizaciones
 
-- [ ] Crear `Kiwbi.Domain.Choices`: `HomeCustomizationChoice`, `HomeCustomizationChoiceStatus`, `IHomeCustomizationChoiceRepository`.
-- [ ] Crear la configuración EF Core, `DbSet<HomeCustomizationChoice>` y `HomeCustomizationChoiceRepository`.
-- [ ] Generar y aplicar la migración que incorpora `home_customization_choices`.
-- [ ] Implementar `GetHousingUnitCustomizationsForBuyerUseCase` (resolución de Personalizaciones aplicables agrupadas por Gremio + cálculo de opción efectiva) y sus DTOs.
-- [ ] Añadir `IHomeCustomizationChoiceRepository.ExistsByCustomizationIdAsync` a la comprobación de dependientes de `DeleteCustomizationUseCase` (Epic 3).
-- [ ] Añadir la acción `HousingUnit` a `BuyerController` y su vista, agrupando por Gremio.
-- [ ] Tests de Application: resolución correcta de Personalizaciones por `WholePromotion`/`Typology`/`Unit`; vivienda sin tipología ignora asignaciones de tipología; comprador no vinculado a la vivienda no puede consultarla; cálculo de opción efectiva (elección existente vs. opción por defecto tras cut-off vs. sin elección con Gremio todavía abierto).
+- [x] Crear `Kiwbi.Domain.Choices`: `HomeCustomizationChoice`, `HomeCustomizationChoiceStatus`, `IHomeCustomizationChoiceRepository`.
+- [x] Crear la configuración EF Core, `DbSet<HomeCustomizationChoice>` y `HomeCustomizationChoiceRepository`.
+- [x] Generar y aplicar la migración que incorpora `home_customization_choices`.
+- [x] Implementar `GetHousingUnitCustomizationsForBuyerUseCase` (resolución de Personalizaciones aplicables agrupadas por Gremio + cálculo de opción efectiva) y sus DTOs.
+- [x] Añadir `IHomeCustomizationChoiceRepository.ExistsByCustomizationIdAsync` a la comprobación de dependientes de `DeleteCustomizationUseCase` (Epic 3).
+- [x] Añadir la acción `HousingUnit` a `BuyerController` y su vista, agrupando por Gremio.
+- [x] Tests de Application: resolución correcta de Personalizaciones por `WholePromotion`/`Typology`/`Unit`; vivienda sin tipología ignora asignaciones de tipología; comprador no vinculado a la vivienda no puede consultarla; cálculo de opción efectiva (elección existente vs. opción por defecto tras cut-off vs. sin elección con Gremio todavía abierto).
 
 ### Feature 5.3 - Selección interactiva con HTMX
 

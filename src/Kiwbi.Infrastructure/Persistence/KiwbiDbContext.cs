@@ -1,3 +1,4 @@
+using Kiwbi.Domain.Choices;
 using Kiwbi.Domain.Customizations;
 using Kiwbi.Domain.Developers;
 using Kiwbi.Domain.Onboarding;
@@ -22,6 +23,7 @@ public class KiwbiDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<Customization> Customizations => Set<Customization>();
     public DbSet<BuyerInvitation> BuyerInvitations => Set<BuyerInvitation>();
     public DbSet<HousingUnitBuyer> HousingUnitBuyers => Set<HousingUnitBuyer>();
+    public DbSet<HomeCustomizationChoice> HomeCustomizationChoices => Set<HomeCustomizationChoice>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

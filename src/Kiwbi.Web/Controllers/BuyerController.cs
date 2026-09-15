@@ -1,3 +1,4 @@
+using Kiwbi.Application.Choices.GetHousingUnitCustomizationsForBuyer;
 using Kiwbi.Application.Onboarding.GetHousingUnitsForCurrentBuyer;
 using Kiwbi.Web.Models.Buyer;
 using Microsoft.AspNetCore.Authorization;
@@ -10,10 +11,14 @@ namespace Kiwbi.Web.Controllers;
 public class BuyerController : Controller
 {
     private readonly GetHousingUnitsForCurrentBuyerUseCase _getHousingUnitsForCurrentBuyerUseCase;
+    private readonly GetHousingUnitCustomizationsForBuyerUseCase _getHousingUnitCustomizationsForBuyerUseCase;
 
-    public BuyerController(GetHousingUnitsForCurrentBuyerUseCase getHousingUnitsForCurrentBuyerUseCase)
+    public BuyerController(
+        GetHousingUnitsForCurrentBuyerUseCase getHousingUnitsForCurrentBuyerUseCase,
+        GetHousingUnitCustomizationsForBuyerUseCase getHousingUnitCustomizationsForBuyerUseCase)
     {
         _getHousingUnitsForCurrentBuyerUseCase = getHousingUnitsForCurrentBuyerUseCase;
+        _getHousingUnitCustomizationsForBuyerUseCase = getHousingUnitCustomizationsForBuyerUseCase;
     }
 
     [HttpGet]
@@ -30,4 +35,21 @@ public class BuyerController : Controller
 
         return View(units);
     }
+
+    [HttpGet]
+    public async Task<IActionResult> HousingUnit(Guid id, CancellationToken cancellationToken)
+    {
+        var result = await _getHousingUnitCustomizationsForBuyerUseCase.ExecuteAsync(id, cancellationToken);
+
+        if (result.IsFailure)
+        {
+            return NotFound();
+        }
+
+        ViewData["HousingUnitId"] = id;
+        var tradeCategories = result.Value!.Select(TradeCategoryCustomizationsViewModel.FromDto).ToList();
+
+        return View(tradeCategories);
+    }
 }
+

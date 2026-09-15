@@ -1,6 +1,7 @@
 using FluentAssertions;
 using Kiwbi.Application.Common;
 using Kiwbi.Application.Customizations.DeleteCustomization;
+using Kiwbi.Domain.Choices;
 using Kiwbi.Domain.Customizations;
 using Kiwbi.Domain.RealEstate;
 using NSubstitute;
@@ -13,12 +14,14 @@ public class DeleteCustomizationUseCaseTests
     private readonly IHousingPromotionRepository _promotionRepository = Substitute.For<IHousingPromotionRepository>();
     private readonly ITradeCategoryRepository _tradeCategoryRepository = Substitute.For<ITradeCategoryRepository>();
     private readonly ICustomizationRepository _customizationRepository = Substitute.For<ICustomizationRepository>();
+    private readonly IHomeCustomizationChoiceRepository _homeCustomizationChoiceRepository = Substitute.For<IHomeCustomizationChoiceRepository>();
     private readonly IUnitOfWork _unitOfWork = Substitute.For<IUnitOfWork>();
     private readonly DeleteCustomizationUseCase _useCase;
 
     public DeleteCustomizationUseCaseTests()
     {
-        _useCase = new DeleteCustomizationUseCase(_currentUser, _promotionRepository, _tradeCategoryRepository, _customizationRepository, _unitOfWork);
+        _useCase = new DeleteCustomizationUseCase(
+            _currentUser, _promotionRepository, _tradeCategoryRepository, _customizationRepository, _homeCustomizationChoiceRepository, _unitOfWork);
     }
 
     [Fact]
@@ -50,6 +53,25 @@ public class DeleteCustomizationUseCaseTests
         _customizationRepository.GetByIdAsync(customization.Id, Arg.Any<CancellationToken>()).Returns(customization);
         _tradeCategoryRepository.GetByIdAsync(tradeCategory.Id, Arg.Any<CancellationToken>()).Returns(tradeCategory);
         _promotionRepository.GetByIdAsync(promotion.Id, Arg.Any<CancellationToken>()).Returns(promotion);
+
+        var result = await _useCase.ExecuteAsync(customization.Id);
+
+        result.IsFailure.Should().BeTrue();
+        _customizationRepository.DidNotReceive().Remove(Arg.Any<Customization>());
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_WhenCustomizationHasRegisteredChoices_ShouldReturnFailure()
+    {
+        var developerCompanyId = Guid.NewGuid();
+        var promotion = HousingPromotion.Create(developerCompanyId, "Residencial Acacias", "Madrid", "Calle Mayor 1");
+        var tradeCategory = TradeCategory.Create(promotion.Id, "Carpintería", DateTime.UtcNow.AddMonths(1));
+        var customization = Customization.CreateForWholePromotion(tradeCategory.Id, "Suelo", "Parquet Roble", 0m);
+        _currentUser.DeveloperCompanyId.Returns(developerCompanyId);
+        _customizationRepository.GetByIdAsync(customization.Id, Arg.Any<CancellationToken>()).Returns(customization);
+        _tradeCategoryRepository.GetByIdAsync(tradeCategory.Id, Arg.Any<CancellationToken>()).Returns(tradeCategory);
+        _promotionRepository.GetByIdAsync(promotion.Id, Arg.Any<CancellationToken>()).Returns(promotion);
+        _homeCustomizationChoiceRepository.ExistsByCustomizationIdAsync(customization.Id, Arg.Any<CancellationToken>()).Returns(true);
 
         var result = await _useCase.ExecuteAsync(customization.Id);
 
