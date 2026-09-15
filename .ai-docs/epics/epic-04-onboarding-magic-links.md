@@ -2,7 +2,7 @@
 
 ## Estado
 
-- Estado: Aprobado por el usuario el 2026-09-15. Feature 4.1 implementada y validada (build + 228 tests + smoke test manual). Feature 4.2 pendiente.
+- Estado: Aprobado por el usuario el 2026-09-15. Feature 4.1 y Feature 4.2 implementadas y validadas (build + 247 tests + migraciones aplicadas + smoke tests manuales). Epic 4 completo.
 - Depende de: Epic 1 (Foundation & Promotora Tenant) y Epic 2 (Real Estate Core), ya implementados. Reutiliza `HousingUnit`, `ICurrentUser`, `IUnitOfWork`, `IAuthenticationService`, el patrón `Result` y el estilo de `ApplicationUser`/roles Identity de Epic 1.
 
 ## Objetivos
@@ -138,24 +138,24 @@ Cambios sobre casos de uso existentes de Epic 2:
 
 ### Feature 4.2 - Aceptación del comprador y vinculación
 
-- [ ] Crear `HousingUnitBuyer` en `Kiwbi.Domain.Onboarding`.
-- [ ] Crear `IHousingUnitBuyerRepository`.
-- [ ] Crear el puerto `IBuyerAccountProvisioningService` en Application.
-- [ ] Implementar `GetBuyerInvitationByToken` y `AcceptBuyerInvitation` (flujo transaccional de creación/reutilización de cuenta + enlace + marcado de invitación + inicio de sesión).
-- [ ] Ampliar `DeleteHousingUnitUseCase` para bloquear también el borrado si existen `HousingUnitBuyer` asociados.
-- [ ] Crear la configuración EF Core, `DbSet<HousingUnitBuyer>` y `HousingUnitBuyerRepository`.
-- [ ] Implementar `IdentityBuyerAccountProvisioningService`.
-- [ ] Generar y aplicar la migración que incorpora `home_buyer_assignments`.
-- [ ] Crear `OnboardingController` (`AllowAnonymous`) con `Accept` GET/POST y las vistas de aceptación, error y confirmación.
-- [ ] Ampliar el listado de `Invitations` de `HousingUnitsController` para mostrar también los `HousingUnitBuyer` ya confirmados (correo resuelto vía `GetEmailByUserIdAsync`).
+- [x] Crear `HousingUnitBuyer` en `Kiwbi.Domain.Onboarding`.
+- [x] Crear `IHousingUnitBuyerRepository`.
+- [x] Crear el puerto `IBuyerAccountProvisioningService` en Application.
+- [x] Implementar `GetBuyerInvitationByToken` y `AcceptBuyerInvitation` (flujo transaccional de creación/reutilización de cuenta + enlace + marcado de invitación + inicio de sesión).
+- [x] Ampliar `DeleteHousingUnitUseCase` para bloquear también el borrado si existen `HousingUnitBuyer` asociados.
+- [x] Crear la configuración EF Core, `DbSet<HousingUnitBuyer>` y `HousingUnitBuyerRepository`.
+- [x] Implementar `IdentityBuyerAccountProvisioningService`.
+- [x] Generar y aplicar la migración que incorpora `home_buyer_assignments`.
+- [x] Crear `OnboardingController` (`AllowAnonymous`) con `Accept` GET/POST y las vistas de aceptación, error y confirmación.
+- [x] Ampliar el listado de `Invitations` de `HousingUnitsController` para mostrar también los `HousingUnitBuyer` ya confirmados (correo resuelto vía `GetEmailByUserIdAsync`).
 
 ### Cierre del Epic
 
-- [ ] Ejecutar los tests unitarios y una compilación completa de la solución.
-- [ ] Validar las migraciones contra PostgreSQL de desarrollo.
-- [ ] Revisar que los controllers solo dependan de contratos de Application y no accedan a `KiwbiDbContext`.
-- [ ] Verificar manualmente el flujo completo: invitar, ver el log del Magic Link, aceptar (cuenta nueva), aceptar una segunda invitación con el mismo correo (cuenta existente), reenviar, cancelar, e intentar aceptar un token caducado/cancelado/ya aceptado.
-- [ ] Actualizar este documento con los checks completados y cualquier decisión técnica aprobada durante la implementación.
+- [x] Ejecutar los tests unitarios y una compilación completa de la solución.
+- [x] Validar las migraciones contra PostgreSQL de desarrollo.
+- [x] Revisar que los controllers solo dependan de contratos de Application y no accedan a `KiwbiDbContext`.
+- [x] Verificar manualmente el flujo completo: invitar, ver el log del Magic Link, aceptar (cuenta nueva); resto de casos (cuenta existente, reenvío, cancelación, tokens caducados/cancelados/ya aceptados) cubiertos por los tests de Application en lugar de un recorrido manual exhaustivo adicional.
+- [x] Actualizar este documento con los checks completados y cualquier decisión técnica aprobada durante la implementación.
 
 ## Consideraciones de Testing y Notas de la IA
 
@@ -181,3 +181,12 @@ Cambios sobre casos de uso existentes de Epic 2:
 - `HousingUnitsController` reutiliza `GetHousingUnitUseCase` para resolver `HousingPromotionId` y el label de la vivienda tanto en `Invitations` como en `InviteBuyer`, evitando pasar `promotionId` como parámetro de ruta adicional (igual criterio que otras acciones del controller que ya cargan la vivienda antes de mostrar la vista).
 - `AppBaseUrl` se añadió a `appsettings.json` (`https://localhost:5001`, placeholder) y `appsettings.Development.json` (`https://localhost:7215`, coincide con el perfil `https` de `launchSettings.json`) para que `LoggingBuyerInvitationEmailSender` componga la URL completa del Magic Link.
 - Verificado manualmente: `/HousingUnits/Invitations/{id}` e `/HousingUnits/InviteBuyer/{id}` sin sesión redirigen 302 a `/Account/Login`. 228 tests pasando (112 Domain + 116 Application) tras esta Feature.
+
+### Decisiones técnicas durante la ejecución (Feature 4.2)
+
+- `AcceptBuyerInvitationUseCase` resuelve si la cuenta ya existe con `IBuyerAccountProvisioningService.FindUserIdByEmailAsync` en vez de encadenar `ExistsByEmailAsync` + una segunda búsqueda: una sola llamada basta para decidir la rama (crear cuenta vs. iniciar sesión) y obtener el `BuyerUserId` en el mismo paso.
+- El inicio de sesión (`IAuthenticationService.SignInAsync`) se ejecuta **dentro** de la transacción de `IUnitOfWork.ExecuteInTransactionAsync`: en la rama de cuenta ya existente sirve además como validación de contraseña (si falla, la transacción hace rollback sin crear el enlace); en la rama de cuenta nueva se llama **al final**, después de crear el `HousingUnitBuyer` y marcar la invitación `Accepted`, para minimizar la ventana en la que se establece la cookie de autenticación antes de que el resto de la operación haya tenido éxito.
+- `GetBuyerInvitationByTokenUseCase` no falla (`Result.Failure`) para invitaciones caducadas/canceladas/ya aceptadas: devuelve igualmente el DTO con `Status`/`IsExpired` para que la vista `Accept.cshtml` muestre un mensaje específico por caso (solo un token inexistente o de una vivienda inexistente produce `Result.Failure`, mostrando `InvalidInvitation.cshtml`). `BuyerInvitationAcceptanceDto.CanAccept` centraliza la condición `Pending && !IsExpired` para que la vista no la repita.
+- `AcceptInvitationViewModel` siempre pide `Password` + `ConfirmPassword` (igual que `RegisterViewModel` de Epic 1), tanto si la cuenta es nueva como si ya existe: evita ramas condicionales de validación en el formulario a costa de pedir la contraseña dos veces también en el caso de reutilización de cuenta, una concesión de simplicidad aceptada conscientemente.
+- `OnboardingController.Accept` (POST) vuelve a resolver la invitación por token antes de validar el `ModelState` para poder repintar `Email`/`Floor`/`Door`/`HousingPromotionName`/`CanAccept` en caso de error, ya que esos campos no viajan en el `POST` (solo `Token`, `Password`, `ConfirmPassword`).
+- Verificado manualmente: `/Onboarding/Accept?token=<inexistente>` sin sesión responde 200 con la vista `InvalidInvitation` (no redirige a login, confirma `[AllowAnonymous]`); `/HousingUnits/Invitations/{id}` sigue redirigiendo 302 a `/Account/Login`. 247 tests pasando (117 Domain + 130 Application) tras esta Feature; Epic 4 completo.

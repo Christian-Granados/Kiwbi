@@ -11,6 +11,7 @@ using Kiwbi.Application.Onboarding.InviteBuyerToHousingUnit;
 using Kiwbi.Application.Onboarding.ResendBuyerInvitation;
 using Kiwbi.Application.Onboarding.CancelBuyerInvitation;
 using Kiwbi.Application.Onboarding.GetBuyerInvitationsForHousingUnit;
+using Kiwbi.Application.Onboarding.GetHousingUnitBuyersForHousingUnit;
 using Kiwbi.Domain.RealEstate;
 using Kiwbi.Web.Models.HousingUnits;
 using Kiwbi.Web.Models.Onboarding;
@@ -36,6 +37,7 @@ public class HousingUnitsController : Controller
     private readonly ResendBuyerInvitationUseCase _resendBuyerInvitationUseCase;
     private readonly CancelBuyerInvitationUseCase _cancelBuyerInvitationUseCase;
     private readonly GetBuyerInvitationsForHousingUnitUseCase _getBuyerInvitationsForHousingUnitUseCase;
+    private readonly GetHousingUnitBuyersForHousingUnitUseCase _getHousingUnitBuyersForHousingUnitUseCase;
 
     public HousingUnitsController(
         CreateHousingUnitUseCase createHousingUnitUseCase,
@@ -50,7 +52,8 @@ public class HousingUnitsController : Controller
         InviteBuyerToHousingUnitUseCase inviteBuyerToHousingUnitUseCase,
         ResendBuyerInvitationUseCase resendBuyerInvitationUseCase,
         CancelBuyerInvitationUseCase cancelBuyerInvitationUseCase,
-        GetBuyerInvitationsForHousingUnitUseCase getBuyerInvitationsForHousingUnitUseCase)
+        GetBuyerInvitationsForHousingUnitUseCase getBuyerInvitationsForHousingUnitUseCase,
+        GetHousingUnitBuyersForHousingUnitUseCase getHousingUnitBuyersForHousingUnitUseCase)
     {
         _createHousingUnitUseCase = createHousingUnitUseCase;
         _updateHousingUnitUseCase = updateHousingUnitUseCase;
@@ -65,6 +68,7 @@ public class HousingUnitsController : Controller
         _resendBuyerInvitationUseCase = resendBuyerInvitationUseCase;
         _cancelBuyerInvitationUseCase = cancelBuyerInvitationUseCase;
         _getBuyerInvitationsForHousingUnitUseCase = getBuyerInvitationsForHousingUnitUseCase;
+        _getHousingUnitBuyersForHousingUnitUseCase = getHousingUnitBuyersForHousingUnitUseCase;
     }
 
     [HttpGet]
@@ -245,8 +249,9 @@ public class HousingUnitsController : Controller
         }
 
         var invitationsResult = await _getBuyerInvitationsForHousingUnitUseCase.ExecuteAsync(id, cancellationToken);
+        var buyersResult = await _getHousingUnitBuyersForHousingUnitUseCase.ExecuteAsync(id, cancellationToken);
 
-        if (invitationsResult.IsFailure)
+        if (invitationsResult.IsFailure || buyersResult.IsFailure)
         {
             return Forbid();
         }
@@ -254,6 +259,7 @@ public class HousingUnitsController : Controller
         ViewBag.HousingUnitId = id;
         ViewBag.PromotionId = unitResult.Value!.HousingPromotionId;
         ViewBag.UnitLabel = $"{unitResult.Value.Floor} {unitResult.Value.Door}";
+        ViewBag.Buyers = buyersResult.Value!.Select(HousingUnitBuyerListItemViewModel.FromDto).ToList();
 
         var items = invitationsResult.Value!.Select(BuyerInvitationListItemViewModel.FromDto).ToList();
 

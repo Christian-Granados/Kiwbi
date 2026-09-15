@@ -5,7 +5,7 @@ using Kiwbi.Domain.RealEstate;
 
 namespace Kiwbi.Application.RealEstate.DeleteHousingUnit;
 
-/// <summary>Deletes a HousingUnit whose HousingPromotion is owned by the currently authenticated tenant, blocking deletion if it has customization assignments or buyer invitations.</summary>
+/// <summary>Deletes a HousingUnit whose HousingPromotion is owned by the currently authenticated tenant, blocking deletion if it has customization assignments, buyer invitations or linked buyers.</summary>
 public class DeleteHousingUnitUseCase
 {
     private readonly ICurrentUser _currentUser;
@@ -13,6 +13,7 @@ public class DeleteHousingUnitUseCase
     private readonly IHousingUnitRepository _housingUnitRepository;
     private readonly ICustomizationRepository _customizationRepository;
     private readonly IBuyerInvitationRepository _buyerInvitationRepository;
+    private readonly IHousingUnitBuyerRepository _housingUnitBuyerRepository;
     private readonly IFileStorageService _fileStorageService;
     private readonly IUnitOfWork _unitOfWork;
 
@@ -22,6 +23,7 @@ public class DeleteHousingUnitUseCase
         IHousingUnitRepository housingUnitRepository,
         ICustomizationRepository customizationRepository,
         IBuyerInvitationRepository buyerInvitationRepository,
+        IHousingUnitBuyerRepository housingUnitBuyerRepository,
         IFileStorageService fileStorageService,
         IUnitOfWork unitOfWork)
     {
@@ -30,6 +32,7 @@ public class DeleteHousingUnitUseCase
         _housingUnitRepository = housingUnitRepository;
         _customizationRepository = customizationRepository;
         _buyerInvitationRepository = buyerInvitationRepository;
+        _housingUnitBuyerRepository = housingUnitBuyerRepository;
         _fileStorageService = fileStorageService;
         _unitOfWork = unitOfWork;
     }
@@ -63,6 +66,11 @@ public class DeleteHousingUnitUseCase
         if (await _buyerInvitationRepository.ExistsByHousingUnitIdAsync(unitId, cancellationToken))
         {
             return Result.Failure("No se puede eliminar la vivienda porque tiene invitaciones de comprador asociadas.");
+        }
+
+        if (await _housingUnitBuyerRepository.ExistsByHousingUnitIdAsync(unitId, cancellationToken))
+        {
+            return Result.Failure("No se puede eliminar la vivienda porque tiene compradores vinculados.");
         }
 
         var floorPlanImagePath = unit.FloorPlanImagePath;

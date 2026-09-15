@@ -21,6 +21,7 @@ public class KiwbiDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<TradeCategory> TradeCategories => Set<TradeCategory>();
     public DbSet<Customization> Customizations => Set<Customization>();
     public DbSet<BuyerInvitation> BuyerInvitations => Set<BuyerInvitation>();
+    public DbSet<HousingUnitBuyer> HousingUnitBuyers => Set<HousingUnitBuyer>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {

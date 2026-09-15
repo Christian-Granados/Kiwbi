@@ -3,6 +3,7 @@
     ViewData["Title"] = "Invitaciones de comprador";
     var housingUnitId = (Guid)ViewBag.HousingUnitId;
     var promotionId = (Guid)ViewBag.PromotionId;
+    var buyers = (List<Kiwbi.Web.Models.Onboarding.HousingUnitBuyerListItemViewModel>)ViewBag.Buyers;
 }
 
 <h1>Invitaciones de comprador - Vivienda @ViewBag.UnitLabel</h1>
@@ -16,6 +17,35 @@
     <a asp-controller="HousingUnits" asp-action="InviteBuyer" asp-route-id="@housingUnitId" class="btn btn-primary">Invitar comprador</a>
     <a asp-controller="HousingUnits" asp-action="Index" asp-route-promotionId="@promotionId" class="btn btn-secondary">Volver a viviendas</a>
 </p>
+
+<h2 class="h4">Compradores vinculados</h2>
+
+@if (!buyers.Any())
+{
+    <p>Todavía no hay ningún comprador vinculado a esta vivienda.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Correo electrónico</th>
+                <th>Vinculado el</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var buyer in buyers)
+            {
+                <tr>
+                    <td>@(buyer.Email ?? "-")</td>
+                    <td>@buyer.CreatedAtUtc.ToLocalTime()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<h2 class="h4">Invitaciones</h2>
 
 @if (!Model.Any())
 {

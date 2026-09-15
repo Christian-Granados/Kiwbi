@@ -1,0 +1,64 @@
+@model Kiwbi.Web.Models.Onboarding.AcceptInvitationViewModel
+@{
+    ViewData["Title"] = "Aceptar invitación";
+}
+
+<h1>Bienvenido/a a Kiwbi</h1>
+
+@if (!Model.CanAccept)
+{
+    <div class="alert alert-warning">
+        @if (Model.Status == "Cancelled")
+        {
+            <text>Esta invitación ha sido cancelada por la promotora. Contacta con ella para solicitar una nueva.</text>
+        }
+        else if (Model.Status == "Accepted")
+        {
+            <text>Esta invitación ya fue aceptada anteriormente. Si es tu cuenta, <a asp-controller="Account" asp-action="Login">inicia sesión</a>.</text>
+        }
+        else if (Model.IsExpired)
+        {
+            <text>Este enlace ha caducado. Pide a tu promotora que te reenvíe la invitación.</text>
+        }
+        else
+        {
+            <text>Esta invitación no está disponible.</text>
+        }
+    </div>
+}
+else
+{
+    <p>
+        Vivienda <strong>@Model.Floor @Model.Door</strong> de <strong>@Model.HousingPromotionName</strong>,
+        para el correo <strong>@Model.Email</strong>.
+    </p>
+
+    @if (Model.AccountAlreadyExists)
+    {
+        <p>Ya tienes una cuenta con este correo. Introduce tu contraseña para vincular esta vivienda.</p>
+    }
+    else
+    {
+        <p>Crea una contraseña para acceder a tu cuenta.</p>
+    }
+
+    <div class="row">
+        <div class="col-md-6">
+            <form asp-controller="Onboarding" asp-action="Accept" method="post">
+                <input type="hidden" asp-for="Token" />
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <div class="form-group mb-3">
+                    <label asp-for="Password" class="form-label"></label>
+                    <input asp-for="Password" class="form-control" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+                <div class="form-group mb-3">
+                    <label asp-for="ConfirmPassword" class="form-label"></label>
+                    <input asp-for="ConfirmPassword" class="form-control" />
+                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                </div>
+                <button type="submit" class="btn btn-primary">Confirmar acceso</button>
+            </form>
+        </div>
+    </div>
+}
