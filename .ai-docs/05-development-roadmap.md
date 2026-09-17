@@ -29,7 +29,7 @@ Este documento define el flujo de uso de la aplicación y divide el MVP en "Epic
 
 ## 2. Plan de Desarrollo (Epics del MVP)
 
-El desarrollo debe seguir este orden estricto para no tener bloqueos de dependencias en la base de datos. Los Epics 1 a 6 conforman el núcleo funcional del MVP descrito en el flujo de usuario anterior. Los Epics 7 y 8 son mejoras transversales (navegación e imagen visual) sin dependencias de base de datos entre sí ni con los Epics 1-6; se documentan al final para no interrumpir el avance del núcleo funcional, pero pueden abordarse en el momento que convenga.
+El desarrollo debe seguir este orden estricto para no tener bloqueos de dependencias en la base de datos. Los Epics 1 a 6 conforman el núcleo funcional del MVP descrito en el flujo de usuario anterior. Los Epics 7 y 8 son mejoras transversales (navegación e imagen visual) sin dependencias de base de datos entre sí ni con los Epics 1-6; se documentan al final para no interrumpir el avance del núcleo funcional, pero pueden abordarse en el momento que convenga. El Epic 9 es una tarea de QA manual pendiente sobre la Feature 6.3, sin desarrollo de código previsto salvo corrección de defectos detectados.
 
 ### EPIC 1: Foundation & Promotora Tenant
 - **Feature 1.1:** Setup del proyecto (Clean Architecture, EF Core, PostgreSQL).
@@ -68,4 +68,11 @@ El desarrollo debe seguir este orden estricto para no tener bloqueos de dependen
 - **Feature 8.1:** Investigación y selección de herramienta/enfoque para un sistema de diseño propio de Kiwbi (tema Bootstrap a medida, plantilla open-source, Tailwind CSS, generación asistida por IA, etc.), integrando el *branding* por tenant ya existente (`DeveloperCompany.Branding`).
 - **Feature 8.2:** Implementación del sistema de diseño base (tokens de color/tipografía, layout, componentes comunes) parametrizado por el branding de cada promotora.
 - **Feature 8.3:** Aplicación del rediseño a todas las vistas existentes (Epics 1-7).
+
+### EPIC 9: Verificación Manual de Exportación de Reportes (Cierre de la Feature 6.3)
+La Feature 6.3 (Epic 6) implementó y testeó unitariamente la generación de reportes, mockeando siempre `IHousingPromotionReportGenerator`; la generación real de bytes con ClosedXML/QuestPDF nunca se ejecutó contra datos reales, quedando pendiente en el checklist de cierre de Epic 6. Este Epic cubre en exclusiva esa verificación manual pendiente, sin nuevas features de producto; requiere una instancia de PostgreSQL en ejecución (`docker-compose up`) y datos de prueba variados (Viviendas sin elecciones y elecciones en los cuatro estados `Pending`/`Selected`/`Confirmed`/`Paid`).
+- **Feature 9.1:** Preparar datos de prueba representativos: una Promoción con varias Viviendas, al menos dos Gremios (uno con `SelectionCutOffDateUtc` vencida y otro vigente), Personalizaciones con distintos ámbitos (Promoción/Tipología/Vivienda) y elecciones cubriendo los cuatro estados, incluyendo alguna Vivienda sin ninguna elección.
+- **Feature 9.2:** Verificar manualmente la exportación a Excel (`HousingPromotionChoicesController.ExportExcel`): descargar el `.xlsx`, abrirlo y comprobar agrupación por Gremio/Vivienda, opciones efectivas/sobrecostes/estados correctos, y exclusión de Personalizaciones no aplicables a cada Vivienda.
+- **Feature 9.3:** Verificar manualmente la exportación a PDF (`ExportPdf`): descargar el `.pdf`, abrirlo y comprobar el mismo contenido/agrupación que en 9.2, además de que la maquetación de QuestPDF (tablas, cabeceras, paginación) es legible y no corta contenido.
+- **Feature 9.4:** Corregir cualquier defecto detectado en 9.2/9.3 (en `HousingPromotionReportGenerator`, `ExportHousingPromotionReportUseCase` o el punto que corresponda), repetir la verificación hasta confirmar que ambos ficheros son correctos, y actualizar el checklist de cierre de Epic 6 y la memoria de repositorio con el resultado.
 - Ver `epic-08-visual-redesign.md`.
