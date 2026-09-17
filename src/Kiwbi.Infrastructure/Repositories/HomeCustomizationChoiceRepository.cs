@@ -24,6 +24,11 @@ public class HomeCustomizationChoiceRepository : IHomeCustomizationChoiceReposit
             .Where(c => c.HousingUnitId == housingUnitId)
             .ToListAsync(cancellationToken);
 
+    public async Task<IReadOnlyList<HomeCustomizationChoice>> GetByHousingUnitIdsAsync(IEnumerable<Guid> housingUnitIds, CancellationToken cancellationToken = default) =>
+        await _dbContext.HomeCustomizationChoices
+            .Where(c => housingUnitIds.Contains(c.HousingUnitId))
+            .ToListAsync(cancellationToken);
+
     public Task<HomeCustomizationChoice?> GetByHousingUnitIdAndCustomizationIdAsync(Guid housingUnitId, Guid customizationId, CancellationToken cancellationToken = default) =>
         _dbContext.HomeCustomizationChoices
             .FirstOrDefaultAsync(c => c.HousingUnitId == housingUnitId && c.CustomizationId == customizationId, cancellationToken);

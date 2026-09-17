@@ -1,0 +1,65 @@
+@model List<Kiwbi.Web.Models.HousingPromotionChoices.TradeCategoryChoicesViewModel>
+@using Kiwbi.Domain.Choices
+@{
+    ViewData["Title"] = "Detalle de personalizaciones";
+    var promotionId = (Guid)ViewBag.PromotionId;
+    var housingUnitLabel = (string)ViewBag.HousingUnitLabel;
+}
+
+<h1>Personalizaciones — @housingUnitLabel</h1>
+<p>
+    <a asp-controller="HousingPromotionChoices" asp-action="Index" asp-route-promotionId="@promotionId" class="btn btn-outline-secondary btn-sm">&larr; Volver al progreso de la promoción</a>
+</p>
+
+@if (!Model.Any())
+{
+    <p>Esta vivienda todavía no tiene personalizaciones aplicables.</p>
+}
+else
+{
+    @foreach (var tradeCategory in Model)
+    {
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <span><strong>@tradeCategory.TradeCategoryName</strong></span>
+                @if (tradeCategory.IsExpired)
+                {
+                    <span class="badge bg-secondary">Plazo finalizado (@tradeCategory.SelectionCutOffDateUtc.ToString("dd/MM/yyyy"))</span>
+                }
+                else
+                {
+                    <span class="badge bg-success">Plazo hasta el @tradeCategory.SelectionCutOffDateUtc.ToString("dd/MM/yyyy")</span>
+                }
+            </div>
+            <table class="table mb-0">
+                <thead>
+                    <tr>
+                        <th>Personalización</th>
+                        <th>Opción efectiva</th>
+                        <th>Sobrecoste</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var customization in tradeCategory.Customizations)
+                    {
+                        var (badgeClass, statusLabel) = customization.Status switch
+                        {
+                            HomeCustomizationChoiceStatus.Pending => ("bg-secondary", "Pendiente"),
+                            HomeCustomizationChoiceStatus.Selected => ("bg-info text-dark", "Seleccionada"),
+                            HomeCustomizationChoiceStatus.Confirmed => ("bg-primary", "Confirmada"),
+                            HomeCustomizationChoiceStatus.Paid => ("bg-success", "Pagada"),
+                            _ => ("bg-light text-dark", customization.Status.ToString()),
+                        };
+                        <tr>
+                            <td>@customization.CustomizationName</td>
+                            <td>@(customization.EffectiveOptionName ?? "-")</td>
+                            <td>@(customization.EffectiveOptionSurchargeAmount is { } surcharge ? $"{surcharge:C}" : "-")</td>
+                            <td><span class="badge @badgeClass">@statusLabel</span></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+}

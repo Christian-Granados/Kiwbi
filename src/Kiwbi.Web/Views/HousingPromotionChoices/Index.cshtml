@@ -1,0 +1,50 @@
+@model List<Kiwbi.Web.Models.HousingPromotionChoices.HousingUnitChoicesProgressViewModel>
+@{
+    ViewData["Title"] = "Progreso de personalizaciones";
+    var promotionId = (Guid)ViewBag.PromotionId;
+    var promotionName = (string)ViewBag.PromotionName;
+}
+
+<h1>Progreso de personalizaciones — @promotionName</h1>
+<p>
+    <a asp-controller="HousingPromotions" asp-action="Details" asp-route-id="@promotionId" class="btn btn-outline-secondary btn-sm">&larr; Volver a la promoción</a>
+</p>
+
+@if (!Model.Any())
+{
+    <p>Todavía no hay viviendas dadas de alta en esta promoción.</p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Planta</th>
+                <th>Puerta</th>
+                <th>Tipología</th>
+                <th>Pendientes</th>
+                <th>Seleccionadas</th>
+                <th>Confirmadas</th>
+                <th>Pagadas</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var unit in Model)
+            {
+                <tr>
+                    <td>@unit.Floor</td>
+                    <td>@unit.Door</td>
+                    <td>@(unit.TypologyName ?? "-")</td>
+                    <td><span class="badge bg-secondary">@unit.PendingCount</span></td>
+                    <td><span class="badge bg-info text-dark">@unit.SelectedCount</span></td>
+                    <td><span class="badge bg-primary">@unit.ConfirmedCount</span></td>
+                    <td><span class="badge bg-success">@unit.PaidCount</span></td>
+                    <td>
+                        <a asp-controller="HousingPromotionChoices" asp-action="Details" asp-route-housingUnitId="@unit.HousingUnitId" class="btn btn-outline-primary btn-sm">Ver detalle</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

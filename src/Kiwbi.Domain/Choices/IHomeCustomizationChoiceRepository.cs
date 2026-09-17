@@ -7,6 +7,8 @@ public interface IHomeCustomizationChoiceRepository : IRepository<HomeCustomizat
 {
     Task<IReadOnlyList<HomeCustomizationChoice>> GetByHousingUnitIdAsync(Guid housingUnitId, CancellationToken cancellationToken = default);
 
+    Task<IReadOnlyList<HomeCustomizationChoice>> GetByHousingUnitIdsAsync(IEnumerable<Guid> housingUnitIds, CancellationToken cancellationToken = default);
+
     Task<HomeCustomizationChoice?> GetByHousingUnitIdAndCustomizationIdAsync(Guid housingUnitId, Guid customizationId, CancellationToken cancellationToken = default);
 
     Task<bool> ExistsByCustomizationIdAsync(Guid customizationId, CancellationToken cancellationToken = default);
