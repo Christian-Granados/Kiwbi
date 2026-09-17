@@ -4,6 +4,7 @@ using Kiwbi.Application.Customizations.CreateCustomization;
 using Kiwbi.Application.Customizations.DeleteCustomization;
 using Kiwbi.Application.Customizations.GetCustomization;
 using Kiwbi.Application.Customizations.GetCustomizations;
+using Kiwbi.Application.Customizations.GetTradeCategories;
 using Kiwbi.Application.Customizations.GetTradeCategory;
 using Kiwbi.Application.Customizations.RemoveCustomizationAssignment;
 using Kiwbi.Application.Customizations.RenameCustomization;
@@ -11,6 +12,7 @@ using Kiwbi.Application.Customizations.AddCustomizationOption;
 using Kiwbi.Application.Customizations.UpdateCustomizationOption;
 using Kiwbi.Application.Customizations.SetDefaultCustomizationOption;
 using Kiwbi.Application.Customizations.RemoveCustomizationOption;
+using Kiwbi.Application.RealEstate.GetHousingPromotion;
 using Kiwbi.Application.RealEstate.GetHousingTypologies;
 using Kiwbi.Application.RealEstate.GetHousingUnits;
 using Kiwbi.Web.Models.Customizations;
@@ -29,6 +31,8 @@ public class CustomizationsController : Controller
     private readonly GetCustomizationUseCase _getCustomizationUseCase;
     private readonly GetCustomizationsUseCase _getCustomizationsUseCase;
     private readonly GetTradeCategoryUseCase _getTradeCategoryUseCase;
+    private readonly GetTradeCategoriesUseCase _getTradeCategoriesUseCase;
+    private readonly GetHousingPromotionUseCase _getHousingPromotionUseCase;
     private readonly GetHousingTypologiesUseCase _getHousingTypologiesUseCase;
     private readonly GetHousingUnitsUseCase _getHousingUnitsUseCase;
     private readonly AssignCustomizationToTypologyUseCase _assignCustomizationToTypologyUseCase;
@@ -46,6 +50,8 @@ public class CustomizationsController : Controller
         GetCustomizationUseCase getCustomizationUseCase,
         GetCustomizationsUseCase getCustomizationsUseCase,
         GetTradeCategoryUseCase getTradeCategoryUseCase,
+        GetTradeCategoriesUseCase getTradeCategoriesUseCase,
+        GetHousingPromotionUseCase getHousingPromotionUseCase,
         GetHousingTypologiesUseCase getHousingTypologiesUseCase,
         GetHousingUnitsUseCase getHousingUnitsUseCase,
         AssignCustomizationToTypologyUseCase assignCustomizationToTypologyUseCase,
@@ -62,6 +68,8 @@ public class CustomizationsController : Controller
         _getCustomizationUseCase = getCustomizationUseCase;
         _getCustomizationsUseCase = getCustomizationsUseCase;
         _getTradeCategoryUseCase = getTradeCategoryUseCase;
+        _getTradeCategoriesUseCase = getTradeCategoriesUseCase;
+        _getHousingPromotionUseCase = getHousingPromotionUseCase;
         _getHousingTypologiesUseCase = getHousingTypologiesUseCase;
         _getHousingUnitsUseCase = getHousingUnitsUseCase;
         _assignCustomizationToTypologyUseCase = assignCustomizationToTypologyUseCase;
@@ -74,41 +82,99 @@ public class CustomizationsController : Controller
     }
 
     [HttpGet]
-    public async Task<IActionResult> Index(Guid tradeCategoryId, CancellationToken cancellationToken)
+    public async Task<IActionResult> Index(Guid promotionId, Guid? tradeCategoryId, CancellationToken cancellationToken)
     {
-        var tradeCategoryResult = await _getTradeCategoryUseCase.ExecuteAsync(tradeCategoryId, cancellationToken);
+        var promotionResult = await _getHousingPromotionUseCase.ExecuteAsync(promotionId, cancellationToken);
 
-        if (tradeCategoryResult.IsFailure)
+        if (promotionResult.IsFailure)
         {
             return NotFound();
         }
 
-        var result = await _getCustomizationsUseCase.ExecuteAsync(tradeCategoryId, cancellationToken);
+        var tradeCategoriesResult = await _getTradeCategoriesUseCase.ExecuteAsync(promotionId, cancellationToken);
 
-        if (result.IsFailure)
+        if (tradeCategoriesResult.IsFailure)
         {
             return Forbid();
         }
 
-        ViewBag.TradeCategoryId = tradeCategoryId;
-        ViewBag.TradeCategoryName = tradeCategoryResult.Value!.Name;
-        ViewBag.PromotionId = tradeCategoryResult.Value!.HousingPromotionId;
+        var tradeCategories = tradeCategoriesResult.Value!;
 
-        return View(result.Value!.Select(CustomizationListItemViewModel.FromDto).ToList());
+        ViewBag.PromotionId = promotionId;
+        ViewBag.PromotionName = promotionResult.Value!.Name;
+        ViewBag.HasTradeCategories = tradeCategories.Count > 0;
+
+        if (tradeCategoryId is { } filterId)
+        {
+            var tradeCategory = tradeCategories.FirstOrDefault(t => t.Id == filterId);
+
+            if (tradeCategory is null)
+            {
+                return NotFound();
+            }
+
+            var filteredResult = await _getCustomizationsUseCase.ExecuteAsync(filterId, cancellationToken);
+
+            if (filteredResult.IsFailure)
+            {
+                return Forbid();
+            }
+
+            ViewBag.TradeCategoryId = filterId;
+            ViewBag.TradeCategoryName = tradeCategory.Name;
+
+            return View(filteredResult.Value!.Select(c => CustomizationListItemViewModel.FromDto(c)).ToList());
+        }
+
+        ViewBag.TradeCategoryId = null;
+
+        var items = new List<CustomizationListItemViewModel>();
+
+        foreach (var tradeCategory in tradeCategories)
+        {
+            var result = await _getCustomizationsUseCase.ExecuteAsync(tradeCategory.Id, cancellationToken);
+
+            if (result.IsFailure)
+            {
+                return Forbid();
+            }
+
+            items.AddRange(result.Value!.Select(c => CustomizationListItemViewModel.FromDto(c, tradeCategory.Name)));
+        }
+
+        return View(items);
     }
 
     [HttpGet]
-    public async Task<IActionResult> Create(Guid tradeCategoryId, CancellationToken cancellationToken)
+    public async Task<IActionResult> Create(Guid promotionId, Guid? tradeCategoryId, CancellationToken cancellationToken)
     {
-        var tradeCategoryResult = await _getTradeCategoryUseCase.ExecuteAsync(tradeCategoryId, cancellationToken);
+        var promotionResult = await _getHousingPromotionUseCase.ExecuteAsync(promotionId, cancellationToken);
 
-        if (tradeCategoryResult.IsFailure)
+        if (promotionResult.IsFailure)
         {
             return NotFound();
         }
 
-        var model = new CreateCustomizationViewModel { TradeCategoryId = tradeCategoryId };
-        await PopulateAvailableTargetsAsync(model, tradeCategoryResult.Value!.HousingPromotionId, cancellationToken);
+        var tradeCategoriesResult = await _getTradeCategoriesUseCase.ExecuteAsync(promotionId, cancellationToken);
+
+        if (tradeCategoriesResult.IsFailure)
+        {
+            return Forbid();
+        }
+
+        if (tradeCategoriesResult.Value!.Count == 0)
+        {
+            TempData["Error"] = "Antes de crear una personalización, da de alta al menos un gremio en esta promoción.";
+            return RedirectToAction(nameof(Index), new { promotionId });
+        }
+
+        var model = new CreateCustomizationViewModel
+        {
+            HousingPromotionId = promotionId,
+            TradeCategoryId = tradeCategoryId ?? tradeCategoriesResult.Value!.First().Id,
+        };
+
+        await PopulateCreateFormOptionsAsync(model, promotionId, cancellationToken);
 
         return View(model);
     }
@@ -117,16 +183,16 @@ public class CustomizationsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(CreateCustomizationViewModel model, CancellationToken cancellationToken)
     {
-        var tradeCategoryResult = await _getTradeCategoryUseCase.ExecuteAsync(model.TradeCategoryId, cancellationToken);
+        var promotionResult = await _getHousingPromotionUseCase.ExecuteAsync(model.HousingPromotionId, cancellationToken);
 
-        if (tradeCategoryResult.IsFailure)
+        if (promotionResult.IsFailure)
         {
             return NotFound();
         }
 
         if (!ModelState.IsValid)
         {
-            await PopulateAvailableTargetsAsync(model, tradeCategoryResult.Value!.HousingPromotionId, cancellationToken);
+            await PopulateCreateFormOptionsAsync(model, model.HousingPromotionId, cancellationToken);
             return View(model);
         }
 
@@ -144,11 +210,11 @@ public class CustomizationsController : Controller
         if (result.IsFailure)
         {
             ModelState.AddModelError(string.Empty, result.Error!);
-            await PopulateAvailableTargetsAsync(model, tradeCategoryResult.Value!.HousingPromotionId, cancellationToken);
+            await PopulateCreateFormOptionsAsync(model, model.HousingPromotionId, cancellationToken);
             return View(model);
         }
 
-        return RedirectToAction(nameof(Index), new { tradeCategoryId = model.TradeCategoryId });
+        return RedirectToAction(nameof(Index), new { promotionId = model.HousingPromotionId });
     }
 
     [HttpGet]
@@ -220,7 +286,7 @@ public class CustomizationsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public async Task<IActionResult> Delete(Guid id, Guid tradeCategoryId, CancellationToken cancellationToken)
+    public async Task<IActionResult> Delete(Guid id, Guid promotionId, CancellationToken cancellationToken)
     {
         var result = await _deleteCustomizationUseCase.ExecuteAsync(id, cancellationToken);
 
@@ -229,7 +295,7 @@ public class CustomizationsController : Controller
             TempData["Error"] = result.Error;
         }
 
-        return RedirectToAction(nameof(Index), new { tradeCategoryId });
+        return RedirectToAction(nameof(Index), new { promotionId });
     }
 
     [HttpPost]
@@ -361,6 +427,16 @@ public class CustomizationsController : Controller
         }
 
         return RedirectToAction(nameof(Details), new { id });
+    }
+
+    private async Task PopulateCreateFormOptionsAsync(CreateCustomizationViewModel model, Guid housingPromotionId, CancellationToken cancellationToken)
+    {
+        var tradeCategoriesResult = await _getTradeCategoriesUseCase.ExecuteAsync(housingPromotionId, cancellationToken);
+        model.AvailableTradeCategories = tradeCategoriesResult.IsSuccess
+            ? tradeCategoriesResult.Value!.Select(t => new SelectListItem(t.Name, t.Id.ToString())).ToList()
+            : new List<SelectListItem>();
+
+        await PopulateAvailableTargetsAsync(model, housingPromotionId, cancellationToken);
     }
 
     private async Task PopulateAvailableTargetsAsync(CreateCustomizationViewModel model, Guid housingPromotionId, CancellationToken cancellationToken)

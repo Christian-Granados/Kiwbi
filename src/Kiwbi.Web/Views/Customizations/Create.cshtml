@@ -9,8 +9,14 @@
 <div class="row">
     <div class="col-md-6">
         <form asp-controller="Customizations" asp-action="Create" method="post">
-            <input type="hidden" asp-for="TradeCategoryId" />
+            <input type="hidden" asp-for="HousingPromotionId" />
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group mb-3">
+                <label asp-for="TradeCategoryId" class="form-label"></label>
+                <select asp-for="TradeCategoryId" class="form-select" asp-items="Model.AvailableTradeCategories"></select>
+                <span asp-validation-for="TradeCategoryId" class="text-danger"></span>
+            </div>
 
             <div class="form-group mb-3">
                 <label asp-for="Name" class="form-label"></label>
@@ -52,7 +58,7 @@
             </div>
 
             <button type="submit" class="btn btn-primary">Crear</button>
-            <a asp-controller="Customizations" asp-action="Index" asp-route-tradeCategoryId="@Model.TradeCategoryId" class="btn btn-secondary">Cancelar</a>
+            <a asp-controller="Customizations" asp-action="Index" asp-route-promotionId="@Model.HousingPromotionId" class="btn btn-secondary">Cancelar</a>
         </form>
     </div>
 </div>

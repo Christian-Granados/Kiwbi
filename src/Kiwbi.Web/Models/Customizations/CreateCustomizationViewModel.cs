@@ -6,6 +6,9 @@ namespace Kiwbi.Web.Models.Customizations;
 
 public class CreateCustomizationViewModel
 {
+    public Guid HousingPromotionId { get; set; }
+
+    [Display(Name = "Gremio")]
     public Guid TradeCategoryId { get; set; }
 
     [Required(ErrorMessage = "El nombre es obligatorio.")]
@@ -30,6 +33,8 @@ public class CreateCustomizationViewModel
 
     [Display(Name = "Viviendas")]
     public List<Guid> SelectedHousingUnitIds { get; set; } = new();
+
+    public List<SelectListItem> AvailableTradeCategories { get; set; } = new();
 
     public List<SelectListItem> AvailableTypologies { get; set; } = new();
 

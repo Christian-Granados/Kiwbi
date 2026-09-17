@@ -2,7 +2,7 @@
 
 ## Estado
 
-- Estado: Diseño en revisión — pendiente de aprobación expresa del usuario antes de implementar código (regla de `04-ai-coding-guidelines.md`, sección 5).
+- Estado: IMPLEMENTADO (2026-09-18). Build y suite completa de tests de Domain/Application en verde (131 + 174) tras el cambio; sin regresiones, ya que el cambio es exclusivamente de `Kiwbi.Web`. Smoke test manual (servidor local): `Customizations/Index`, `Customizations/Create` y `TradeCategories/Index` devuelven 302 a `/Account/Login` sin sesión, confirmando que la acción unificada no introduce ambigüedad de rutas.
 - Depende de: Epic 3 (Customization Engine), ya implementado y validado. Es una mejora transversal de navegación sin dependencias de base de datos con los Epics 4, 5 y 6; se documenta y programa después de éstos para no interrumpir el avance del núcleo funcional del MVP, pero no depende de que estén implementados.
 
 ## Contexto y objetivo
@@ -25,26 +25,40 @@ El objetivo de este Epic es que la promotora pueda listar y dar de alta Personal
 
 ### Qué cambia (solo `Kiwbi.Web`)
 
-1. **Listado agregado por Promoción:** nueva acción `Index(Guid promotionId)` en `CustomizationsController` (o una ruta adicional sobre la existente) que:
-   - Llama a `GetTradeCategoriesUseCase.ExecuteAsync(promotionId)` para obtener los Gremios de la promoción.
-   - Llama a `GetCustomizationsUseCase.ExecuteAsync(tradeCategoryId)` por cada Gremio devuelto y agrega los resultados en el Controller.
-   - **Decisión aceptada:** esto son N+1 llamadas a un caso de uso ya existente (no una única consulta optimizada). Es un trade-off consciente: el volumen esperado (unos pocos Gremios por promoción, panel de administración de bajo tráfico) lo hace perfectamente asumible para el MVP, evitando tocar Application/Infrastructure. Si en el futuro esta pantalla se vuelve un cuello de botella real, la mejora natural sería añadir `ICustomizationRepository.GetByHousingPromotionIdAsync` (fuera de alcance de este Epic).
-2. **Alta desde la Promoción:** `Create(Guid promotionId)` sustituye a `Create(Guid tradeCategoryId)` como entrada principal; el formulario incluye un `<select>` de Gremio (poblado con `GetTradeCategoriesUseCase(promotionId)`), igual patrón que el `<select multiple>` de Tipologías/Viviendas ya usado en la Feature 3.2. `CreateCustomizationCommand` no cambia: el Controller simplemente obtiene el `TradeCategoryId` del `<select>` en vez de la URL.
-3. **ViewModel del listado:** `CustomizationListItemViewModel` se amplía con `TradeCategoryName` (o se crea un ViewModel específico para esta vista agregada) para mostrar a qué Gremio pertenece cada fila, ya que ahora conviven Personalizaciones de varios Gremios en una misma tabla.
-4. **Navegación:** `HousingPromotionsController` → vista `Details` añade un enlace directo "Personalizaciones" (mismo patrón que "Tipologías"/"Viviendas"/"Gremios").
-5. **Redirects tras Create/Edit/Delete:** deben apuntar de vuelta al listado a nivel de Promoción. Si se decide mantener también el acceso por Gremio (ver punto siguiente), hay que fijar un criterio único de "vuelta atrás" (recomendado: siempre a nivel de Promoción, para no duplicar lógica de retorno).
-6. **¿Se mantiene el acceso por Gremio?** Se mantiene el enlace "Personalizaciones" en `TradeCategories/Index` como acceso alternativo/filtrado (útil cuando la promotora ya está gestionando un Gremio concreto y quiere ver solo sus Personalizaciones), pero deja de ser el único punto de entrada.
+1. **Listado agregado por Promoción:** `CustomizationsController.Index` pasa a tener la firma `Index(Guid promotionId, Guid? tradeCategoryId = null)` (ver "Decisiones Confirmadas" — no puede coexistir con un segundo método `Index(Guid promotionId)` separado del actual `Index(Guid tradeCategoryId)` porque ambos tendrían la misma firma en C#, un solo parámetro `Guid`, y no compilaría). El Controller:
+   - Llama a `GetTradeCategoriesUseCase.ExecuteAsync(promotionId)` para obtener los Gremios de la promoción (y resuelve el tenant/ownership, igual que hoy).
+   - Si `tradeCategoryId` es `null`, llama a `GetCustomizationsUseCase.ExecuteAsync(tradeCategoryId)` por cada Gremio devuelto y agrega los resultados (N+1 aceptado, ver más abajo). Si `tradeCategoryId` tiene valor, valida que pertenezca a esa promoción y llama a `GetCustomizationsUseCase` solo para ese Gremio (comportamiento equivalente al `Index(Guid tradeCategoryId)` actual, pero como caso particular de la misma acción).
+   - **Decisión aceptada:** en el caso agregado, esto son N+1 llamadas a un caso de uso ya existente (no una única consulta optimizada). Es un trade-off consciente: el volumen esperado (unos pocos Gremios por promoción, panel de administración de bajo tráfico) lo hace perfectamente asumible para el MVP, evitando tocar Application/Infrastructure. Si en el futuro esta pantalla se vuelve un cuello de botella real, la mejora natural sería añadir `ICustomizationRepository.GetByHousingPromotionIdAsync` (fuera de alcance de este Epic).
+2. **Alta desde la Promoción:** por el mismo motivo de colisión de firmas, `Create(Guid tradeCategoryId)` pasa a ser `Create(Guid promotionId, Guid? tradeCategoryId = null)`. El formulario incluye un `<select>` de Gremio poblado con `GetTradeCategoriesUseCase(promotionId)`, preseleccionado si se recibió `tradeCategoryId` (entrada desde el filtro por Gremio), igual patrón que el `<select multiple>` de Tipologías/Viviendas ya usado en la Feature 3.2. `CreateCustomizationCommand` no cambia: el Controller simplemente obtiene el `TradeCategoryId` del `<select>` en vez de la URL. Si la promoción no tiene ningún Gremio dado de alta, esta entrada se deshabilita (ver "Decisiones Confirmadas").
+3. **ViewModel del listado:** `CustomizationListItemViewModel` se amplía con un `TradeCategoryName` opcional/nullable; la vista existente `Customizations/Index.cshtml` muestra la columna "Gremio" solo cuando se accede sin filtro (listado agregado por Promoción), y la oculta cuando se accede filtrado por un Gremio concreto (donde ya es redundante, el Gremio está en el título de la página).
+4. **Navegación:** `HousingPromotionsController` → vista `Details` añade un enlace directo "Personalizaciones" (mismo patrón que "Tipologías"/"Viviendas"/"Gremios"), deshabilitado/con aviso si la promoción no tiene Gremios.
+5. **Redirects tras Create/Edit/Delete:** siempre vuelven al listado agregado por Promoción (`Index(promotionId)`, sin `tradeCategoryId`), independientemente de si se entró filtrado por un Gremio concreto. Ver justificación en "Decisiones Confirmadas".
+6. **¿Se mantiene el acceso por Gremio?** Se mantiene el enlace "Personalizaciones" en `TradeCategories/Index`, que ahora simplemente invoca la misma acción `Index` pasando `tradeCategoryId` como filtro (ya no es una acción ni una ruta distinta), preservando el comportamiento actual de ver solo las Personalizaciones de ese Gremio.
+
+## Decisiones Confirmadas (2026-09-18)
+
+1. **Colisión de firmas Index/Create:** ambas acciones se unifican con un parámetro de filtro opcional — `Index(Guid promotionId, Guid? tradeCategoryId = null)` y `Create(Guid promotionId, Guid? tradeCategoryId = null)` — en lugar de intentar mantener dos acciones separadas (que no compilarían por tener la misma firma) o duplicar la lógica bajo nombres de acción distintos. Ventaja adicional: resuelve el punto 6 (acceso alternativo por Gremio) reutilizando la misma acción en vez de un controlador/ruta paralela.
+2. **Redirect tras Create/Edit/Delete:** siempre al listado agregado por Promoción (`Index(promotionId)`), sin recordar si se entró filtrado por un Gremio. Se prioriza un único criterio de retorno simple de mantener frente a la fidelidad de volver exactamente al filtro de origen (que exigiría propagar `tradeCategoryId` como campo oculto adicional en los formularios).
+3. **Promoción sin Gremios todavía:** la entrada "Nueva personalización" (y el enlace "Personalizaciones" desde `HousingPromotions/Details` si se considera oportuno) se deshabilita o muestra un aviso guiando a crear primero un Gremio, en vez de dejar que el usuario llegue a un `<select>` vacío y falle solo al enviar el formulario.
+4. **Vista/ViewModel del listado agregado:** se reutiliza `Customizations/Index.cshtml` y `CustomizationListItemViewModel` (ampliado con `TradeCategoryName` opcional) en vez de crear una vista/ViewModel dedicados, siguiendo el mismo patrón de vistas con variación condicional ya usado en otras pantallas del proyecto (p.ej. `HousingPromotions/Details`).
 
 ## Plan de Acción (Step-by-Step)
 
-- [ ] Añadir `Index(Guid promotionId)` a `CustomizationsController`, agregando resultados de `GetCustomizationsUseCase` por cada Gremio de la promoción (vía `GetTradeCategoriesUseCase`).
-- [ ] Ampliar `CustomizationListItemViewModel` (o crear uno específico) con el nombre del Gremio.
-- [ ] Adaptar la vista `Customizations/Index.cshtml` para incluir la columna "Gremio" cuando se accede a nivel de Promoción.
-- [ ] Adaptar `Create(Guid promotionId)` GET/POST: `<select>` de Gremio poblado desde `GetTradeCategoriesUseCase`, manteniendo `CreateCustomizationCommand` sin cambios.
-- [ ] Añadir el enlace "Personalizaciones" en `HousingPromotions/Details.cshtml`.
-- [ ] Fijar y documentar el criterio de redirect tras Create/Edit/Delete (recomendado: siempre al listado de Promoción).
-- [ ] Confirmar que el acceso por Gremio (`TradeCategories/Index` → "Personalizaciones") sigue funcionando como filtro alternativo.
-- [ ] Validar manualmente el flujo completo (alta, listado agregado, edición, borrado) y el redirect 302 a login sin sesión.
+- [x] Unificar `Index(Guid tradeCategoryId)` en `Index(Guid promotionId, Guid? tradeCategoryId = null)`: resolver Gremios vía `GetTradeCategoriesUseCase(promotionId)` y, según haya o no `tradeCategoryId`, listar Personalizaciones agregadas (N+1 sobre `GetCustomizationsUseCase`) o filtradas a un único Gremio (validando que pertenezca a la promoción).
+- [x] Ampliar `CustomizationListItemViewModel` con `TradeCategoryName` opcional; adaptar `Customizations/Index.cshtml` para mostrar la columna "Gremio" solo en el caso agregado (sin `tradeCategoryId`).
+- [x] Unificar `Create(Guid tradeCategoryId)` en `Create(Guid promotionId, Guid? tradeCategoryId = null)` GET/POST: `<select>` de Gremio poblado desde `GetTradeCategoriesUseCase(promotionId)`, preseleccionado si llega `tradeCategoryId`; `CreateCustomizationCommand` sin cambios.
+- [x] Deshabilitar/avisar en la entrada "Nueva personalización" (y opcionalmente en el enlace "Personalizaciones" de la Promoción) cuando `GetTradeCategoriesUseCase(promotionId)` devuelva una lista vacía.
+- [x] Actualizar `Delete`, y los enlaces "volver"/"cancelar" de `Details.cshtml`/`Create.cshtml` (hoy apuntan a `Index(tradeCategoryId)`), para redirigir siempre a `Index(promotionId)` sin `tradeCategoryId`.
+- [x] Añadir el enlace "Personalizaciones" en `HousingPromotions/Details.cshtml`, apuntando a `Index(promotionId)`.
+- [x] Actualizar el enlace "Personalizaciones" en `TradeCategories/Index.cshtml` para que pase también `promotionId` (ya disponible en `ViewBag.PromotionId`) además de `tradeCategoryId`, dado que la acción unificada exige `promotionId` como parámetro obligatorio.
+- [x] Validar manualmente el flujo completo (alta desde Promoción, alta desde Gremio, listado agregado, listado filtrado, edición, borrado, caso sin Gremios) y el redirect 302 a login sin sesión.
+
+## Notas de Cierre (2026-09-18)
+
+- `CustomizationsController.Index`/`Create` ahora exigen `promotionId` como parámetro obligatorio; `tradeCategoryId` es opcional y actúa como filtro/preselección. La entrada por Gremio (`TradeCategories/Index` → "Personalizaciones") sigue funcionando, ahora pasando ambos IDs a la misma acción.
+- El guard de "Promoción sin Gremios" se implementó en dos capas: `Create` redirige a `Index` con un `TempData["Error"]` si no hay ningún Gremio (defensa ante navegación directa por URL); `Index`/`Create.cshtml` ocultan el botón "Nueva personalización" y muestran un aviso con enlace a "Crear un gremio" cuando `HasTradeCategories` es `false`.
+- `Details.cshtml` ("Volver al listado") y `Create.cshtml` ("Cancelar") redirigen siempre al listado agregado por Promoción, igual que Delete, siguiendo el criterio único de retorno decidido.
+- No hubo cambios en Domain/Application; 131 tests de Domain y 174 de Application siguen en verde.
 
 ## Consideraciones de Testing y Notas de la IA
 

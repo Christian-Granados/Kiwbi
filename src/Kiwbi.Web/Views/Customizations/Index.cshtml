@@ -1,11 +1,13 @@
 @model List<Kiwbi.Web.Models.Customizations.CustomizationListItemViewModel>
 @{
     ViewData["Title"] = "Personalizaciones";
-    var tradeCategoryId = (Guid)ViewBag.TradeCategoryId;
     var promotionId = (Guid)ViewBag.PromotionId;
+    var promotionName = (string)ViewBag.PromotionName;
+    var tradeCategoryId = (Guid?)ViewBag.TradeCategoryId;
+    var hasTradeCategories = (bool)ViewBag.HasTradeCategories;
 }
 
-<h1>Personalizaciones de @ViewBag.TradeCategoryName</h1>
+<h1>Personalizaciones de @(tradeCategoryId is not null ? (string)ViewBag.TradeCategoryName : promotionName)</h1>
 
 @if (TempData["Error"] is string error)
 {
@@ -13,11 +15,28 @@
 }
 
 <p>
-    <a asp-controller="Customizations" asp-action="Create" asp-route-tradeCategoryId="@tradeCategoryId" class="btn btn-primary">Nueva personalización</a>
-    <a asp-controller="TradeCategories" asp-action="Index" asp-route-promotionId="@promotionId" class="btn btn-secondary">Volver a los gremios</a>
+    @if (hasTradeCategories)
+    {
+        <a asp-controller="Customizations" asp-action="Create" asp-route-promotionId="@promotionId" asp-route-tradeCategoryId="@tradeCategoryId" class="btn btn-primary">Nueva personalización</a>
+    }
+    @if (tradeCategoryId is not null)
+    {
+        <a asp-controller="TradeCategories" asp-action="Index" asp-route-promotionId="@promotionId" class="btn btn-secondary">Volver a los gremios</a>
+    }
+    else
+    {
+        <a asp-controller="HousingPromotions" asp-action="Details" asp-route-id="@promotionId" class="btn btn-secondary">Volver a la promoción</a>
+    }
 </p>
 
-@if (!Model.Any())
+@if (!hasTradeCategories)
+{
+    <p>
+        Todavía no hay gremios dados de alta en esta promoción.
+        <a asp-controller="TradeCategories" asp-action="Create" asp-route-promotionId="@promotionId">Crea uno primero</a> para poder dar de alta personalizaciones.
+    </p>
+}
+else if (!Model.Any())
 {
     <p>Todavía no hay personalizaciones dadas de alta.</p>
 }
@@ -27,6 +46,10 @@ else
         <thead>
             <tr>
                 <th>Nombre</th>
+                @if (tradeCategoryId is null)
+                {
+                    <th>Gremio</th>
+                }
                 <th>Opciones</th>
                 <th>Se aplica a</th>
                 <th></th>
@@ -37,11 +60,15 @@ else
             {
                 <tr>
                     <td>@customization.Name</td>
+                    @if (tradeCategoryId is null)
+                    {
+                        <td>@customization.TradeCategoryName</td>
+                    }
                     <td>@customization.OptionsCount</td>
                     <td>@customization.AssignmentsSummary</td>
                     <td>
                         <a asp-controller="Customizations" asp-action="Details" asp-route-id="@customization.Id" class="btn btn-sm btn-outline-secondary">Detalle</a>
-                        <form asp-controller="Customizations" asp-action="Delete" asp-route-id="@customization.Id" asp-route-tradeCategoryId="@tradeCategoryId" method="post" class="d-inline"
+                        <form asp-controller="Customizations" asp-action="Delete" asp-route-id="@customization.Id" asp-route-promotionId="@promotionId" method="post" class="d-inline"
                               onsubmit="return confirm('¿Seguro que quieres eliminar esta personalización?');">
                             <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
                         </form>

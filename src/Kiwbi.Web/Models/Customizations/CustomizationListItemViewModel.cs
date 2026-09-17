@@ -9,11 +9,15 @@ public class CustomizationListItemViewModel
     public int OptionsCount { get; set; }
     public string AssignmentsSummary { get; set; } = string.Empty;
 
-    public static CustomizationListItemViewModel FromDto(CustomizationDto dto) => new()
+    /// <summary>Only populated in the promotion-level aggregated listing (null when filtered to a single TradeCategory).</summary>
+    public string? TradeCategoryName { get; set; }
+
+    public static CustomizationListItemViewModel FromDto(CustomizationDto dto, string? tradeCategoryName = null) => new()
     {
         Id = dto.Id,
         Name = dto.Name,
         OptionsCount = dto.Options.Count,
         AssignmentsSummary = CustomizationAssignmentSummary.Describe(dto.Assignments),
+        TradeCategoryName = tradeCategoryName,
     };
 }
