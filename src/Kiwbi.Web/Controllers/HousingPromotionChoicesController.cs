@@ -1,4 +1,6 @@
 using Kiwbi.Application.Choices.ConfirmHomeCustomizationChoice;
+using Kiwbi.Application.Choices.ExportHousingPromotionReport;
+using Kiwbi.Application.Choices;
 using Kiwbi.Application.Choices.GetHousingPromotionChoicesProgress;
 using Kiwbi.Application.Choices.GetHousingUnitChoicesDetail;
 using Kiwbi.Application.Choices.MarkHomeCustomizationChoiceAsPaid;
@@ -10,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Kiwbi.Web.Controllers;
 
-/// <summary>Promotora-facing panel over buyers' Customization choices for a HousingPromotion (Feature 6.1/6.2).</summary>
+/// <summary>Promotora-facing panel over buyers' Customization choices for a HousingPromotion (Feature 6.1/6.2/6.3).</summary>
 [Authorize(Roles = "DeveloperAdmin")]
 public class HousingPromotionChoicesController : Controller
 {
@@ -18,6 +20,7 @@ public class HousingPromotionChoicesController : Controller
     private readonly GetHousingUnitChoicesDetailUseCase _getHousingUnitChoicesDetailUseCase;
     private readonly ConfirmHomeCustomizationChoiceUseCase _confirmHomeCustomizationChoiceUseCase;
     private readonly MarkHomeCustomizationChoiceAsPaidUseCase _markHomeCustomizationChoiceAsPaidUseCase;
+    private readonly ExportHousingPromotionReportUseCase _exportHousingPromotionReportUseCase;
     private readonly GetHousingPromotionUseCase _getHousingPromotionUseCase;
     private readonly GetHousingUnitUseCase _getHousingUnitUseCase;
 
@@ -26,6 +29,7 @@ public class HousingPromotionChoicesController : Controller
         GetHousingUnitChoicesDetailUseCase getHousingUnitChoicesDetailUseCase,
         ConfirmHomeCustomizationChoiceUseCase confirmHomeCustomizationChoiceUseCase,
         MarkHomeCustomizationChoiceAsPaidUseCase markHomeCustomizationChoiceAsPaidUseCase,
+        ExportHousingPromotionReportUseCase exportHousingPromotionReportUseCase,
         GetHousingPromotionUseCase getHousingPromotionUseCase,
         GetHousingUnitUseCase getHousingUnitUseCase)
     {
@@ -33,6 +37,7 @@ public class HousingPromotionChoicesController : Controller
         _getHousingUnitChoicesDetailUseCase = getHousingUnitChoicesDetailUseCase;
         _confirmHomeCustomizationChoiceUseCase = confirmHomeCustomizationChoiceUseCase;
         _markHomeCustomizationChoiceAsPaidUseCase = markHomeCustomizationChoiceAsPaidUseCase;
+        _exportHousingPromotionReportUseCase = exportHousingPromotionReportUseCase;
         _getHousingPromotionUseCase = getHousingPromotionUseCase;
         _getHousingUnitUseCase = getHousingUnitUseCase;
     }
@@ -118,4 +123,28 @@ public class HousingPromotionChoicesController : Controller
 
         return RedirectToAction(nameof(Details), new { housingUnitId });
     }
+
+    [HttpGet]
+    public Task<IActionResult> ExportExcel(Guid promotionId, CancellationToken cancellationToken) =>
+        ExportAsync(promotionId, HousingPromotionReportFormat.Excel, cancellationToken);
+
+    [HttpGet]
+    public Task<IActionResult> ExportPdf(Guid promotionId, CancellationToken cancellationToken) =>
+        ExportAsync(promotionId, HousingPromotionReportFormat.Pdf, cancellationToken);
+
+    private async Task<IActionResult> ExportAsync(Guid promotionId, HousingPromotionReportFormat format, CancellationToken cancellationToken)
+    {
+        var command = new ExportHousingPromotionReportCommand(promotionId, format);
+        var result = await _exportHousingPromotionReportUseCase.ExecuteAsync(command, cancellationToken);
+
+        if (result.IsFailure)
+        {
+            return NotFound();
+        }
+
+        var report = result.Value!;
+
+        return File(report.Content, report.ContentType, report.FileName);
+    }
 }
+

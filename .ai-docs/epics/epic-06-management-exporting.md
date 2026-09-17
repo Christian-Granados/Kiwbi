@@ -2,7 +2,7 @@
 
 ## Estado
 
-- Estado: Propuesto, pendiente de aprobación por el usuario.
+- Estado: Aprobado por el usuario (2026-09-17). Features 6.1, 6.2 y 6.3 implementadas y con tests en verde (305 tests: 131 Domain + 174 Application). Pendiente únicamente la verificación manual de apertura de los ficheros Excel/PDF exportados con datos reales (ver checklist de Cierre del Epic).
 - Depende de: Epic 1 (Foundation & Promotora Tenant), Epic 2 (Real Estate Core), Epic 3 (Customization Engine) y Epic 5 (Buyer Experience), ya implementados. Reutiliza `HousingUnit`/`HousingTypology`/`HousingPromotion` (Epic 2), `TradeCategory`/`Customization`/`CustomizationOption`/`CustomizationAssignment` (Epic 3) y `HomeCustomizationChoice` (Epic 5, módulo `Kiwbi.Domain.Choices`) como base; no depende de Epic 4 más allá de que la Vivienda ya tenga comprador vinculado para que existan elecciones que gestionar.
 
 ## Objetivos
@@ -151,38 +151,38 @@ Todos los casos de uso devuelven `Result`/`Result<T>`, reciben `CancellationToke
 
 ### Feature 6.1 - Panel de progreso
 
-- [ ] Añadir `GetByHousingUnitIdsAsync` a `IHomeCustomizationChoiceRepository` + implementación en `HomeCustomizationChoiceRepository`.
-- [ ] Crear `HomeCustomizationChoiceProgressMapper` (interno a `Kiwbi.Application.Choices`).
-- [ ] Crear `GetHousingPromotionChoicesProgressUseCase` + `HousingPromotionChoicesProgressDto`/`HousingUnitChoicesProgressDto`.
-- [ ] Crear `GetHousingUnitChoicesDetailUseCase` + `TradeCategoryChoicesDto`/`CustomizationChoiceDto`.
-- [ ] Crear `HousingPromotionChoicesController` con `Index`/`Details` y sus vistas.
-- [ ] Añadir enlace desde `HousingPromotions/Details.cshtml`.
-- [ ] Tests de Application: promoción sin Viviendas/Personalizaciones da contadores en cero; Vivienda con Personalizaciones mixtas (algunas `Pending`, otras `Selected`) cuenta correctamente; Gremio expirado sin fila cuenta como `Pending` (no se auto-confirma); ownership de otra Promotora rechazado.
+- [x] Añadir `GetByHousingUnitIdsAsync` a `IHomeCustomizationChoiceRepository` + implementación en `HomeCustomizationChoiceRepository`.
+- [x] Crear `HomeCustomizationChoiceProgressMapper` (interno a `Kiwbi.Application.Choices`).
+- [x] Crear `GetHousingPromotionChoicesProgressUseCase` + `HousingPromotionChoicesProgressDto`/`HousingUnitChoicesProgressDto`.
+- [x] Crear `GetHousingUnitChoicesDetailUseCase` + `TradeCategoryChoicesDto`/`CustomizationChoiceDto`.
+- [x] Crear `HousingPromotionChoicesController` con `Index`/`Details` y sus vistas.
+- [x] Añadir enlace desde `HousingPromotions/Details.cshtml`.
+- [x] Tests de Application: promoción sin Viviendas/Personalizaciones da contadores en cero; Vivienda con Personalizaciones mixtas (algunas `Pending`, otras `Selected`) cuenta correctamente; Gremio expirado sin fila cuenta como `Pending` (no se auto-confirma); ownership de otra Promotora rechazado.
 
 ### Feature 6.2 - Gestión de estados manuales
 
-- [ ] Añadir `Confirm(DateTime utcNow)` y `MarkAsPaid(DateTime utcNow)` a `HomeCustomizationChoice` (Domain), con tests de Domain para cada invariante (no confirmar sin opción, no confirmar dos veces, no pagar sin confirmar antes).
-- [ ] Crear `ConfirmHomeCustomizationChoiceUseCase` (con materialización de la opción por defecto si no existe fila) y `MarkHomeCustomizationChoiceAsPaidUseCase`.
-- [ ] Añadir acciones `Confirm`/`MarkAsPaid` a `HousingPromotionChoicesController`, con los botones condicionales en `Details.cshtml`.
-- [ ] Tests de Application: confirmar antes del cut-off rechazado; confirmar tras el cut-off sin elección previa crea la fila con la opción default y la deja `Confirmed`; confirmar una elección ya `Selected` la pasa a `Confirmed` conservando la opción elegida por el comprador; marcar como pagada sin estar `Confirmed` rechazado; ownership de otra Promotora rechazado en ambos casos.
+- [x] Añadir `Confirm(DateTime utcNow)` y `MarkAsPaid(DateTime utcNow)` a `HomeCustomizationChoice` (Domain), con tests de Domain para cada invariante (no confirmar sin opción, no confirmar dos veces, no pagar sin confirmar antes).
+- [x] Crear `ConfirmHomeCustomizationChoiceUseCase` (con materialización de la opción por defecto si no existe fila) y `MarkHomeCustomizationChoiceAsPaidUseCase`.
+- [x] Añadir acciones `Confirm`/`MarkAsPaid` a `HousingPromotionChoicesController`, con los botones condicionales en `Details.cshtml`.
+- [x] Tests de Application: confirmar antes del cut-off rechazado; confirmar tras el cut-off sin elección previa crea la fila con la opción default y la deja `Confirmed`; confirmar una elección ya `Selected` la pasa a `Confirmed` conservando la opción elegida por el comprador; marcar como pagada sin estar `Confirmed` rechazado; ownership de otra Promotora rechazado en ambos casos.
 
 ### Feature 6.3 - Exportación de reportes
 
-- [ ] Añadir paquetes `ClosedXML` y `QuestPDF` a `Kiwbi.Infrastructure`; fijar `QuestPDF.Settings.License = LicenseType.Community`.
-- [ ] Crear el puerto `IHousingPromotionReportGenerator` (Application.Common) y `HousingPromotionReportDto` (con su desglose por Gremio → Vivienda → Personalización).
-- [ ] Crear `ExportHousingPromotionReportUseCase` (reutiliza la misma resolución de aplicabilidad/estado que 6.1, con el detalle completo en vez de solo contadores).
-- [ ] Implementar `HousingPromotionReportGenerator` en `Kiwbi.Infrastructure/Reporting` (ClosedXML para Excel, QuestPDF para PDF).
-- [ ] Registrar el nuevo servicio en `AddInfrastructureServices`.
-- [ ] Añadir acciones `ExportExcel`/`ExportPdf` a `HousingPromotionChoicesController` + enlaces desde `Index.cshtml`.
-- [ ] Tests de Application: el DTO de reporte agrupa correctamente por Gremio y por Vivienda; Personalizaciones no aplicables a una Vivienda quedan excluidas del reporte de esa Vivienda; ownership de otra Promotora rechazado. (La generación de bytes de ClosedXML/QuestPDF en sí no se testea unitariamente — se verifica manualmente que el archivo se abre correctamente, mismo criterio que otros Epics con librerías de terceros).
+- [x] Añadir paquetes `ClosedXML` y `QuestPDF` a `Kiwbi.Infrastructure`; fijar `QuestPDF.Settings.License = LicenseType.Community`.
+- [x] Crear el puerto `IHousingPromotionReportGenerator` (Application.Common) y `HousingPromotionReportDto` (con su desglose por Gremio → Vivienda → Personalización).
+- [x] Crear `ExportHousingPromotionReportUseCase` (reutiliza la misma resolución de aplicabilidad/estado que 6.1, con el detalle completo en vez de solo contadores).
+- [x] Implementar `HousingPromotionReportGenerator` en `Kiwbi.Infrastructure/Reporting` (ClosedXML para Excel, QuestPDF para PDF).
+- [x] Registrar el nuevo servicio en `AddInfrastructureServices`.
+- [x] Añadir acciones `ExportExcel`/`ExportPdf` a `HousingPromotionChoicesController` + enlaces desde `Index.cshtml`.
+- [x] Tests de Application: el DTO de reporte agrupa correctamente por Gremio y por Vivienda; Personalizaciones no aplicables a una Vivienda quedan excluidas del reporte de esa Vivienda; ownership de otra Promotora rechazado. (La generación de bytes de ClosedXML/QuestPDF en sí no se testea unitariamente — se verifica manualmente que el archivo se abre correctamente, mismo criterio que otros Epics con librerías de terceros).
 
 ### Cierre del Epic
 
-- [ ] Ejecutar los tests unitarios y una compilación completa de la solución.
-- [ ] Verificar manualmente: exportar Excel y PDF de una Promoción con datos variados (algunas Viviendas sin elecciones, otras con elecciones `Selected`/`Confirmed`/`Paid`) y confirmar que ambos archivos abren correctamente y muestran los datos esperados.
-- [ ] Revisar que `HousingPromotionChoicesController` solo dependa de contratos de Application y no acceda a `KiwbiDbContext` ni a `ClosedXML`/`QuestPDF` directamente.
-- [ ] Actualizar este documento con los checks completados y cualquier decisión técnica aprobada durante la implementación.
-- [ ] Actualizar la memoria de repositorio (`kiwbi-structure.md`) con un resumen del Epic cerrado, mismo criterio que Epics anteriores.
+- [x] Ejecutar los tests unitarios y una compilación completa de la solución. (305 tests: 131 Domain + 174 Application, todos en verde).
+- [ ] Verificar manualmente: exportar Excel y PDF de una Promoción con datos variados (algunas Viviendas sin elecciones, otras con elecciones `Selected`/`Confirmed`/`Paid`) y confirmar que ambos archivos abren correctamente y muestran los datos esperados. **Pendiente** — requiere una base de datos con datos de prueba cargados; no se ha ejecutado `dotnet run` con Postgres real en esta sesión.
+- [x] Revisar que `HousingPromotionChoicesController` solo dependa de contratos de Application y no acceda a `KiwbiDbContext` ni a `ClosedXML`/`QuestPDF` directamente. Confirmado: solo referencia use cases de `Kiwbi.Application.Choices`/`Kiwbi.Application.RealEstate` y los ViewModels de `Kiwbi.Web.Models`.
+- [x] Actualizar este documento con los checks completados y cualquier decisión técnica aprobada durante la implementación.
+- [x] Actualizar la memoria de repositorio (`kiwbi-structure.md`) con un resumen del Epic cerrado, mismo criterio que Epics anteriores.
 
 ## Consideraciones de Testing y Notas de la IA
 

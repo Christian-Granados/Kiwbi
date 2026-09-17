@@ -8,6 +8,8 @@
 <h1>Progreso de personalizaciones — @promotionName</h1>
 <p>
     <a asp-controller="HousingPromotions" asp-action="Details" asp-route-id="@promotionId" class="btn btn-outline-secondary btn-sm">&larr; Volver a la promoción</a>
+    <a asp-controller="HousingPromotionChoices" asp-action="ExportExcel" asp-route-promotionId="@promotionId" class="btn btn-outline-success btn-sm">Exportar a Excel</a>
+    <a asp-controller="HousingPromotionChoices" asp-action="ExportPdf" asp-route-promotionId="@promotionId" class="btn btn-outline-danger btn-sm">Exportar a PDF</a>
 </p>
 
 @if (!Model.Any())

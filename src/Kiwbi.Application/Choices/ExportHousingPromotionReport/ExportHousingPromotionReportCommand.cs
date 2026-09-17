@@ -1,0 +1,3 @@
+namespace Kiwbi.Application.Choices.ExportHousingPromotionReport;
+
+public sealed record ExportHousingPromotionReportCommand(Guid HousingPromotionId, HousingPromotionReportFormat Format);

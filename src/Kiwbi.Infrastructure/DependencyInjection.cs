@@ -9,6 +9,7 @@ using Kiwbi.Domain.RealEstate;
 using Kiwbi.Infrastructure.Identity;
 using Kiwbi.Infrastructure.Onboarding;
 using Kiwbi.Infrastructure.Persistence;
+using Kiwbi.Infrastructure.Reporting;
 using Kiwbi.Infrastructure.Repositories;
 using Kiwbi.Infrastructure.Storage;
 using Microsoft.AspNetCore.Identity;
@@ -26,6 +27,9 @@ public static class DependencyInjection
 
         services.AddDbContext<KiwbiDbContext>(options =>
             options.UseNpgsql(connectionString));
+
+        // QuestPDF requires the license to be set once per process; Community is free below the revenue threshold this project qualifies for.
+        QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
 
         services
             .AddIdentity<ApplicationUser, IdentityRole>()
@@ -50,6 +54,7 @@ public static class DependencyInjection
         services.AddScoped<IFileStorageService, LocalFileStorageService>();
         services.AddScoped<IEmailSender, LoggingBuyerInvitationEmailSender>();
         services.AddScoped<IBuyerAccountProvisioningService, IdentityBuyerAccountProvisioningService>();
+        services.AddScoped<IHousingPromotionReportGenerator, HousingPromotionReportGenerator>();
 
         return services;
     }

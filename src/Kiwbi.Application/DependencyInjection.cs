@@ -54,6 +54,7 @@ using Kiwbi.Application.Choices.GetHousingPromotionChoicesProgress;
 using Kiwbi.Application.Choices.GetHousingUnitChoicesDetail;
 using Kiwbi.Application.Choices.ConfirmHomeCustomizationChoice;
 using Kiwbi.Application.Choices.MarkHomeCustomizationChoiceAsPaid;
+using Kiwbi.Application.Choices.ExportHousingPromotionReport;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Kiwbi.Application;
@@ -127,6 +128,7 @@ public static class DependencyInjection
         services.AddScoped<GetHousingUnitChoicesDetailUseCase>();
         services.AddScoped<ConfirmHomeCustomizationChoiceUseCase>();
         services.AddScoped<MarkHomeCustomizationChoiceAsPaidUseCase>();
+        services.AddScoped<ExportHousingPromotionReportUseCase>();
 
         return services;
     }
