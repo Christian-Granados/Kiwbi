@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Detalle de personalizaciones";
     var promotionId = (Guid)ViewBag.PromotionId;
+    var housingUnitId = (Guid)ViewBag.HousingUnitId;
     var housingUnitLabel = (string)ViewBag.HousingUnitLabel;
 }
 
@@ -10,6 +11,11 @@
 <p>
     <a asp-controller="HousingPromotionChoices" asp-action="Index" asp-route-promotionId="@promotionId" class="btn btn-outline-secondary btn-sm">&larr; Volver al progreso de la promoción</a>
 </p>
+
+@if (TempData["Error"] is string error)
+{
+    <div class="alert alert-danger">@error</div>
+}
 
 @if (!Model.Any())
 {
@@ -38,6 +44,7 @@ else
                         <th>Opción efectiva</th>
                         <th>Sobrecoste</th>
                         <th>Estado</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -51,11 +58,31 @@ else
                             HomeCustomizationChoiceStatus.Paid => ("bg-success", "Pagada"),
                             _ => ("bg-light text-dark", customization.Status.ToString()),
                         };
+                        var canConfirm = tradeCategory.IsExpired && customization.Status is HomeCustomizationChoiceStatus.Pending or HomeCustomizationChoiceStatus.Selected;
+                        var canMarkAsPaid = customization.Status == HomeCustomizationChoiceStatus.Confirmed;
                         <tr>
                             <td>@customization.CustomizationName</td>
                             <td>@(customization.EffectiveOptionName ?? "-")</td>
                             <td>@(customization.EffectiveOptionSurchargeAmount is { } surcharge ? $"{surcharge:C}" : "-")</td>
                             <td><span class="badge @badgeClass">@statusLabel</span></td>
+                            <td>
+                                @if (canConfirm)
+                                {
+                                    <form asp-controller="HousingPromotionChoices" asp-action="Confirm" method="post" class="d-inline">
+                                        <input type="hidden" name="housingUnitId" value="@housingUnitId" />
+                                        <input type="hidden" name="customizationId" value="@customization.CustomizationId" />
+                                        <button type="submit" class="btn btn-outline-primary btn-sm">Confirmar</button>
+                                    </form>
+                                }
+                                @if (canMarkAsPaid)
+                                {
+                                    <form asp-controller="HousingPromotionChoices" asp-action="MarkAsPaid" method="post" class="d-inline">
+                                        <input type="hidden" name="housingUnitId" value="@housingUnitId" />
+                                        <input type="hidden" name="customizationId" value="@customization.CustomizationId" />
+                                        <button type="submit" class="btn btn-outline-success btn-sm">Marcar como pagada</button>
+                                    </form>
+                                }
+                            </td>
                         </tr>
                     }
                 </tbody>

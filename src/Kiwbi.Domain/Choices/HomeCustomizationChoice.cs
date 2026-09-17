@@ -55,4 +55,31 @@ public class HomeCustomizationChoice : BaseEntity
         SelectedAtUtc = utcNow;
         UpdatedAtUtc = utcNow;
     }
+
+    public void Confirm(DateTime utcNow)
+    {
+        if (SelectedOptionId is null)
+        {
+            throw new DomainException("No se puede confirmar una elección sin una opción fijada.");
+        }
+
+        if (Status is HomeCustomizationChoiceStatus.Confirmed or HomeCustomizationChoiceStatus.Paid)
+        {
+            throw new DomainException("La elección ya ha sido confirmada.");
+        }
+
+        Status = HomeCustomizationChoiceStatus.Confirmed;
+        UpdatedAtUtc = utcNow;
+    }
+
+    public void MarkAsPaid(DateTime utcNow)
+    {
+        if (Status != HomeCustomizationChoiceStatus.Confirmed)
+        {
+            throw new DomainException("Solo se puede marcar como pagada una elección ya confirmada.");
+        }
+
+        Status = HomeCustomizationChoiceStatus.Paid;
+        UpdatedAtUtc = utcNow;
+    }
 }
