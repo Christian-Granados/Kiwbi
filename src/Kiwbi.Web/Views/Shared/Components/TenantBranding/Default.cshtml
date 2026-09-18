@@ -1,0 +1,10 @@
+@model Kiwbi.Web.Components.TenantBrandingViewModel?
+@if (Model is not null)
+{
+    <style>
+        :root {
+            --kiwbi-accent: @Model.PrimaryColor;
+            --kiwbi-accent-2: @(Model.SecondaryColor ?? Model.PrimaryColor);
+        }
+    </style>
+}

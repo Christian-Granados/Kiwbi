@@ -1,4 +1,5 @@
 using Kiwbi.Application.Developers.GetCurrentDeveloperProfile;
+using Kiwbi.Application.Developers.GetBrandingForHousingUnit;
 using Kiwbi.Application.Developers.Login;
 using Kiwbi.Application.Developers.Logout;
 using Kiwbi.Application.Developers.RegisterDeveloper;
@@ -68,6 +69,7 @@ public static class DependencyInjection
         services.AddScoped<LoginUseCase>();
         services.AddScoped<LogoutUseCase>();
         services.AddScoped<GetCurrentDeveloperProfileUseCase>();
+        services.AddScoped<GetBrandingForHousingUnitUseCase>();
         services.AddScoped<UpdateDeveloperProfileUseCase>();
         services.AddScoped<UpdateDeveloperBrandingUseCase>();
 

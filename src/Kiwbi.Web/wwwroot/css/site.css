@@ -29,3 +29,9 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+
+/* Epic 8 (Feature 8.1): minimal proof that TenantBrandingViewComponent's --kiwbi-accent reaches real CSS.
+   Falls back to the default navbar-brand color when no tenant branding applies (variable undefined). */
+.navbar-light .navbar-brand {
+  color: var(--kiwbi-accent, inherit);
+}
