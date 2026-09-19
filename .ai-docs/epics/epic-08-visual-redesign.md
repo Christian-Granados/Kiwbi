@@ -122,11 +122,22 @@ Esto resuelve de facto la "Selección del enfoque de implementación" (más abaj
 - [x] Decidir y documentar el modelo de navegación en dos niveles (global vs. contextual de Promoción) y eliminar "Compradores" del nav.
 - [x] Brief de sincronización: usuario lo pasa a v0.dev sobre el mismo proyecto/hilo para retrofitar las 5 pantallas ya generadas al nuevo modelo de dos niveles, antes de pedir pantallas nuevas.
 - [x] IA revisa el resultado de la sincronización y actualiza los 5 ficheros de `wwwroot/design-preview/` ya existentes.
-- [ ] Usuario genera **Brief D — Resumen/Hub de Promoción** en v0.dev y comparte la carpeta descargada.
-- [ ] IA revisa Brief D, traduce a Bootstrap 5 real, y documenta la dirección final de esa pantalla.
-- [ ] Usuario genera **Brief E — Gremios (listado + alta/edición)** en v0.dev y comparte la carpeta descargada.
-- [ ] IA revisa Brief E, traduce a Bootstrap 5 real, y documenta la dirección final de esa pantalla.
-- [ ] Repetir el ciclo brief → mockup → traducción → validación para el resto de pantallas del inventario (ver tabla en "Ronda 3") según se vayan priorizando en próximas sesiones.
+- [x] Usuario genera **Brief D — Resumen/Hub de Promoción** en v0.dev y comparte la carpeta descargada.
+- [x] IA revisa Brief D, traduce a Bootstrap 5 real, y documenta la dirección final de esa pantalla.
+- [x] Usuario genera **Brief E — Gremios (listado + alta/edición)** en v0.dev y comparte la carpeta descargada.
+- [x] IA revisa Brief E, traduce a Bootstrap 5 real, y documenta la dirección final de esa pantalla.
+- [x] Optimizar los briefs restantes agrupando pantallas relacionadas (ver "Ronda 4 (resto del inventario) — briefs" más abajo): Brief F (Tipologías), Brief G (Vivienda + Invitaciones de comprador), Brief H (Detalle de Personalización), Brief I (Progreso), Brief J (Mi promotora + Crear/Editar Promoción) — 5 briefs en vez de 7, cada uno con al menos una pantalla relacionada, salvo Brief H que se mantiene individual por su complejidad.
+- [x] Usuario genera Brief F en v0.dev y comparte la carpeta descargada.
+- [x] IA revisa Brief F, traduce a Bootstrap 5 real, y documenta la dirección final.
+- [x] Usuario genera Brief G en v0.dev y comparte la carpeta descargada.
+- [x] IA revisa Brief G, traduce a Bootstrap 5 real, y documenta la dirección final.
+- [x] Usuario genera Brief H en v0.dev y comparte la carpeta descargada.
+- [x] IA revisa Brief H, traduce a Bootstrap 5 real, y documenta la dirección final.
+- [x] Usuario genera Brief I en v0.dev y comparte la carpeta descargada.
+- [x] IA revisa Brief I, traduce a Bootstrap 5 real, y documenta la dirección final.
+- [x] Usuario genera Brief J en v0.dev y comparte la carpeta descargada.
+- [x] IA revisa Brief J, traduce a Bootstrap 5 real, y documenta la dirección final.
+- [x] **Inventario completo de pantallas cerrado**: las 13 pantallas del inventario de la Ronda 3 (más Personalizaciones y Viviendas, ya cubiertas antes) están diseñadas, traducidas a Bootstrap 5 y validadas en navegador.
 - [ ] **Regla explícita mientras dure esta Feature: no se pasa a la Feature 8.2 hasta que todo el inventario de pantallas quede diseñado, traducido y validado** (o se decida explícitamente dar por cerrado el alcance del rediseño con lo que haya en ese momento).
 - [ ] Cerrar la Feature 8.1 dejando el PoC + mockups + decisiones documentadas como entrada de la Feature 8.2 (que convertirá esto en tokens/componentes reales integrados en las vistas Razor, con datos reales en vez de contenido de muestra).
 
@@ -173,18 +184,18 @@ El propio mockup ya delataba la mezcla: en `dashboard-promotora.html` el nav mar
 
 | Nivel | Pantalla | Estado |
 | --- | --- | --- |
-| Global | Promociones (listado) | ✅ cubierta (`dashboard-promotora.html`, pendiente de retrofit al nav de 2 niveles) |
-| Global | Mi promotora (perfil + marca) | ❌ pendiente |
-| Promoción | **Resumen/Hub de la Promoción** (`Details`, tabla de viviendas) | ❌ pendiente — **Brief D** |
-| Promoción | Crear/Editar Promoción | ❌ pendiente |
-| Promoción | Tipologías (listado + alta/edición) | ❌ pendiente |
-| Promoción | Viviendas (listado) | ✅ cubierta (`viviendas.html`, pendiente de retrofit) |
-| Promoción | Crear/Editar Vivienda | ❌ pendiente |
-| Promoción | Invitaciones de comprador (por Vivienda) | ❌ pendiente |
-| Promoción | **Gremios** (listado + alta/edición) | ❌ pendiente — **Brief E** |
-| Promoción | Personalizaciones (listado + alta) | ✅ cubiertas (`personalizaciones.html`/`-nueva.html`, pendiente de retrofit) |
-| Promoción | Detalle de Personalización (opciones + asignaciones) | ❌ pendiente |
-| Promoción | Progreso de personalizaciones (agregado + detalle por vivienda) | ❌ pendiente — no aparecía ni en el nav del mockup pese a estar implementada desde Epic 6 |
+| Global | Promociones (listado) | ✅ cubierta (`dashboard-promotora.html`) |
+| Global | Mi promotora (perfil + marca) | ✅ cubierta (`mi-promotora.html`) — **Brief J** |
+| Promoción | **Resumen/Hub de la Promoción** (`Details`, tabla de viviendas) | ✅ cubierta (`promocion-resumen.html`) — **Brief D** |
+| Promoción | Crear/Editar Promoción | ✅ cubierta (`promocion-nueva.html`) — **Brief J** |
+| Promoción | Tipologías (listado + alta/edición) | ✅ cubierta (`tipologias.html`/`tipologias-nueva.html`) — **Brief F** |
+| Promoción | Viviendas (listado) | ✅ cubierta (`viviendas.html`) |
+| Promoción | Crear/Editar Vivienda | ✅ cubierta (`vivienda-editar.html`) — **Brief G** |
+| Promoción | Invitaciones de comprador (por Vivienda) | ✅ cubierta (`vivienda-invitaciones.html`) — **Brief G** |
+| Promoción | **Gremios** (listado + alta/edición) | ✅ cubierta (`gremios.html`/`gremios-nuevo.html`) — **Brief E** |
+| Promoción | Personalizaciones (listado + alta) | ✅ cubiertas (`personalizaciones.html`/`-nueva.html`) |
+| Promoción | Detalle de Personalización (opciones + asignaciones) | ✅ cubierta (`personalizacion-detalle.html`) — **Brief H** |
+| Promoción | Progreso de personalizaciones (agregado + detalle por vivienda) | ✅ cubierta (`progreso.html`/`progreso-detalle.html`) — **Brief I** — no aparecía ni en el nav del mockup pese a estar implementada desde Epic 6 |
 | Comprador | Mis viviendas / Detalle de vivienda | ✅ cubiertas (sin cambios, no llevan sidebar) |
 | Anónimo | Login/Register, aceptación de invitación | Fuera de prioridad por ahora |
 
@@ -260,6 +271,18 @@ Progreso), además de poder Editar o Eliminar la propia Promoción. Contenido:
 Genera un único mockup coherente con la dirección ya acordada.
 ```
 
+#### Brief D — resultado (2026-09-19)
+
+Generado en el mismo proyecto/hilo (`C:\Users\cgran\Documents\identidad-visual-kiwbi`), como `components/kiwbi/promotion-hub.tsx`. Muy fiel al brief y ya usa correctamente el `KiwbiSidebar` de la sincronización (`mode="context"`, `activeLabel="Resumen"`). Incluye, además de lo pedido: una fila de estadísticas (Viviendas totales + Disponibles/Reservadas/Vendidas con un punto de color cada una) entre la cabecera y los botones de acción, y un `checkbox` de demo "Sin plano general" para previsualizar el estado sin plano.
+
+Traducido a `wwwroot/design-preview/promocion-resumen.html`, reutilizando el sidebar/topbar/breadcrumb ya establecidos:
+- Cabecera con badge "Promoción", nombre, dirección+ciudad, fila de 4 estadísticas, botones Editar/Eliminar, y el plano (o placeholder) a la derecha.
+- Rejilla de 5 tarjetas de acceso directo (Tipologías/Viviendas/Gremios/Personalizaciones/Progreso) con icono, hint y chevron; "Viviendas" y "Personalizaciones" ya enlazan a sus páginas reales, el resto a `#` hasta que existan.
+- Tabla resumen de las 8 viviendas de ejemplo con badges de estado comercial: se añadió `.kiwbi-badge-amber` a `kiwbi-preview.css` para "Reservada" (ámbar), reutilizando `.kiwbi-badge-success`/`.kiwbi-badge-neutral` ya existentes para "Disponible"/"Vendida".
+- El enlace "Resumen" del sidebar contextual en `viviendas.html`/`personalizaciones.html`/`personalizaciones-nueva.html` (antes apuntando a `#`) y el botón "Ver" de la tabla de Promociones en `dashboard-promotora.html` ahora apuntan a `promocion-resumen.html`, cerrando el ciclo de navegación entre las 6 pantallas ya traducidas.
+
+Validado en navegador (captura): cabecera, estadísticas, accesos directos y tabla con badges por color coinciden con el mockup.
+
 #### Brief E — Gremios (`TradeCategories/Index` + `TradeCategories/Create`/`Edit`)
 
 ```
@@ -283,8 +306,249 @@ Genera un único mockup coherente con la dirección ya acordada para ambas
 vistas (listado + formulario).
 ```
 
-### Implementación del mecanismo de branding (2026-09-19)
+#### Brief E — resultado (2026-09-20)
 
+Generado en el mismo proyecto/hilo (`C:\Users\cgran\Documents\identidad-visual-kiwbi`), como `components/kiwbi/gremios.tsx` (`Gremios`, con listado y formulario como dos vistas conmutadas por estado de React, igual que hizo con Brief B). Muy fiel al brief: tabla con Nombre (icono+nombre), Fecha límite (fecha+hora con badge "Abierto"/"Vencido" calculado contra una fecha de referencia), columna opcional de Nº de personalizaciones, acciones Editar/Eliminar/más; formulario con Nombre + selectores nativos de fecha y hora separados.
+
+Traducido, siguiendo la misma decisión de arquitectura ya tomada en Brief B (Kiwbi es no-SPA: dos páginas reales enlazadas, no un toggle de estado), a `wwwroot/design-preview/gremios.html` (listado) + `gremios-nuevo.html` (alta, reutilizada también como destino de "Editar" en esta PoC estática, mismo criterio que `personalizaciones-nueva.html`). Reutiliza `.kiwbi-table-card`/`.kiwbi-badge-success` ("Abierto") y `.kiwbi-badge-danger` ya existente ("Vencido", sin necesidad de una clase nueva) para el listado, y `.kiwbi-fieldset`/`.kiwbi-legend` del patrón ya usado en `personalizaciones-nueva.html` para el formulario. Datos de ejemplo (6 gremios con fechas variadas, 2 ya vencidas) tomados de `GREMIOS_ROWS` en `data.ts`.
+
+Cerrado el bucle de navegación: el enlace "Gremios" del sidebar contextual (antes `#`) en `viviendas.html`/`personalizaciones.html`/`personalizaciones-nueva.html`/`promocion-resumen.html`, y la tarjeta de acceso directo "Gremios" de `promocion-resumen.html`, ahora apuntan a `gremios.html`. Validado en navegador (captura): listado y formulario coinciden visualmente con el mockup.
+
+### Ronda 4 (resto del inventario) — briefs (2026-09-20)
+
+Quedan 7 pantallas pendientes del inventario de la Ronda 3. En vez de seguir pidiendo una pantalla por ronda (como D y E), se agrupan aquí en **5 briefs** por afinidad real de dominio — mismo criterio ya usado en Brief C (dos pantallas relacionadas en un solo brief) — para reducir las idas y vueltas con v0.dev sin perder foco: cada brief cubre una única familia de pantallas coherente entre sí, salvo Brief H que se mantiene individual por ser la más compleja (gestión de opciones + reasignación).
+
+| Brief | Pantallas que cubre | Por qué van juntas |
+| --- | --- | --- |
+| **F** | Tipologías (listado + alta/edición) | Es, con diferencia, la pantalla más simple del inventario (una entidad con un único campo, Nombre) — un brief propio y rápido. |
+| **G** | Alta/Edición de Vivienda + Invitaciones de comprador | Ambas giran sobre una misma Vivienda concreta (datos físicos y gestión de sus compradores); tiene sentido diseñarlas como dos pestañas/pantallas del mismo contexto. |
+| **H** | Detalle de Personalización (opciones + asignación) | La más rica de las pendientes (gestión de opciones + reasignación de "se aplica a"); se mantiene sola para no diluir el foco. |
+| **I** | Progreso agregado + Progreso por vivienda | Ya son, en la app real, un Index/Details de un mismo `HousingPromotionChoicesController` — siempre se han diseñado/planteado como pareja. |
+| **J** | Mi promotora (perfil + marca) + Crear/Editar Promoción | Ambas son formularios de metadatos + imagen (logo vs. plano general), uno a nivel global y otro a nivel de Promoción — comparten estructura y son rápidas de revisar juntas. |
+
+#### Brief F — Tipologías (listado + alta/edición)
+
+```
+Dirección ya acordada (no la cambies): sidebar CONTEXTUAL de Promoción
+(Tipologías activo), mismo sistema visual ya usado en Gremios/
+Personalizaciones (paleta Slate, Inter, radios 0.5rem/0.75rem, acento de
+marca solo en logo/nav activo/botón primario/notificación/progreso).
+
+Pantalla a diseñar: las "Tipologías" de Kiwbi. Una Tipología es solo una
+etiqueta que las Viviendas pueden compartir opcionalmente (p. ej. "2 dorm.
+Tipo A") para poder asignarles Personalizaciones "por tipología" en vez de
+una a una - no tiene más campo que el Nombre:
+
+1) Listado: tabla con columnas Nombre y Nº de viviendas que usan esa
+   tipología, acciones Editar/Eliminar por fila. Botón "Nueva tipología"
+   arriba.
+
+2) Formulario de alta/edición: un único campo de texto, el Nombre.
+
+Genera un único mockup coherente para ambas vistas (listado + formulario) -
+es deliberadamente la pantalla más simple de todo el inventario.
+```
+
+#### Brief F — resultado (2026-09-20)
+
+Generado en el mismo proyecto/hilo (`C:\Users\cgran\Documents\identidad-visual-kiwbi`), como `components/kiwbi/tipologias.tsx` (`Tipologias`, listado+formulario conmutados por estado, mismo patrón que Gremios/Personalizaciones). Muy fiel al brief, y deliberadamente la pantalla más simple generada hasta ahora: tabla con Nombre (icono+nombre) y Nº de viviendas, acciones Editar/Eliminar/más; formulario con un único campo de texto (Nombre). Datos de ejemplo `TIPOLOGIAS_ROWS`/`TipologiaRow` añadidos a `data.ts` (5 tipologías: "2 dorm. · Tipo A" (12), "2 dorm. · Tipo B" (8), "3 dorm. · Tipo C" (18), "4 dorm. · Ático" (6), "Bajo con jardín" (4)).
+
+Traducido, con la misma decisión de arquitectura no-SPA ya aplicada a Brief B/E, a `wwwroot/design-preview/tipologias.html` (listado) + `tipologias-nueva.html` (alta, reutilizada también como destino de "Editar"). No hizo falta ninguna clase CSS nueva: reutiliza `.kiwbi-table-card`/`.kiwbi-row-icon` para el listado y `.kiwbi-fieldset`/`.kiwbi-legend` para el formulario, exactamente igual que Gremios.
+
+Cerrado el bucle de navegación: el enlace "Tipologías" del sidebar contextual (antes `#`) en las 6 pantallas que ya lo tenían (`viviendas.html`, `personalizaciones.html`, `personalizaciones-nueva.html`, `gremios.html`, `gremios-nuevo.html`, `promocion-resumen.html`) y la tarjeta de acceso directo "Tipologías" de `promocion-resumen.html`, ahora apuntan a `tipologias.html`. Validado en navegador (captura): listado y formulario coinciden con el mockup.
+
+#### Brief G — Vivienda: alta/edición + invitaciones de comprador
+
+```
+Dirección ya acordada (no la cambies): sidebar CONTEXTUAL de Promoción
+(Viviendas activo en ambas pantallas - el listado ya está diseñado, esto
+añade el formulario de alta/edición y la gestión de invitaciones de una
+vivienda concreta).
+
+Pantalla 1 - Alta/Edición de Vivienda: formulario con Planta, Puerta, un
+<select> de Tipología (opcional, con una opción "Sin tipología asignada"),
+Superficie construida en m² (obligatoria) y Superficie útil en m²
+(opcional, no puede superar la construida), y un campo de subida de imagen
+para el plano de la vivienda (con vista previa si ya existe, placeholder
+si no). El Estado comercial (Disponible/Reservada/Vendida) NO se edita
+aquí junto al resto de campos: muéstralo solo como un badge de solo
+lectura en la cabecera del formulario cuando es edición (se cambia con una
+acción aparte ya implementada, fuera de este brief).
+
+Pantalla 2 - Invitaciones de comprador (de esa misma vivienda): cabecera
+con la vivienda (p. ej. "Vivienda 1º A"), un formulario simple para
+invitar (campo Email + botón "Enviar invitación"), y dos tablas: una de
+invitaciones enviadas (Email, Estado - Pendiente/Aceptada/Cancelada -,
+fecha de caducidad, acciones Reenviar/Cancelar solo disponibles si está
+Pendiente) y otra de compradores ya vinculados a esta vivienda (Email,
+fecha de aceptación).
+
+Genera un mockup coherente por cada una de las dos pantallas.
+```
+
+#### Brief G — resultado (2026-09-20)
+
+Generado en el mismo proyecto/hilo (`C:\Users\cgran\Documents\identidad-visual-kiwbi`), como `components/kiwbi/vivienda-editor.tsx` (`ViviendaEditor`), con las dos pantallas conmutadas por un selector de pestañas de demo ("Alta/Edición" vs. "Invitaciones") sobre el mismo sidebar contextual (`activeLabel="Viviendas"`). Muy fiel al brief en ambas pantallas:
+- **Alta/Edición**: fieldsets "Ubicación" (Planta, Puerta, Tipología con `<select>` poblado desde `TIPOLOGIAS_ROWS`), "Superficies" (construida obligatoria, útil opcional con validación en vivo `useState` de "no puede superar la construida" — solo posible client-side en el mockup, en Razor real será validación de servidor + `data-val` de ASP.NET), "Plano de la vivienda" (preview o placeholder + dropzone de subida + botón "Quitar plano actual"). Badge de Estado comercial (`Reservada`) explícitamente de solo lectura junto al título, con una nota aclaratoria debajo, tal como se pidió.
+- **Invitaciones**: formulario de invitar por email + tabla de invitaciones (`INVITACIONES` en `data.ts`: 2 Pendientes con Reenviar/Cancelar, 1 Cancelada y 1 Aceptada sin acciones) + tabla de compradores vinculados (`COMPRADORES_VINCULADOS`, con avatar de inicial).
+
+Traducido a `wwwroot/design-preview/vivienda-editar.html` + `vivienda-invitaciones.html`, con un nuevo bloque `.kiwbi-seg-tabs`/`.kiwbi-seg-tab` en `kiwbi-preview.css` (dos enlaces reales, no un toggle JS, según la misma regla no-SPA ya aplicada) para navegar entre ambas. Nuevas clases añadidas: `.kiwbi-dropzone` (área de subida con borde discontinuo) y `.kiwbi-plano-preview` (miniatura del plano actual o placeholder); los badges de Pendiente/Aceptada/Cancelada y Disponible/Reservada/Vendida reutilizan `.kiwbi-badge-amber`/`.kiwbi-badge-success`/`.kiwbi-badge-neutral` ya existentes, sin necesitar nada nuevo.
+
+El botón "Nueva vivienda" de `viviendas.html` (antes un `<button>` sin acción) ahora enlaza a `vivienda-editar.html`. Nota pendiente: la tabla de `viviendas.html` (heredada de la Ronda 1, con columnas de progreso de personalización en vez de columnas CRUD reales) todavía no tiene una columna de acciones por fila para enlazar a estas dos pantallas nuevas — ya estaba documentado como una brecha de esa pantalla (estados ilustrativos, no mapeados a los enums reales); se resolverá junto con esa pantalla en la Feature 8.2/8.3, no bloquea Brief G.
+
+Validado en navegador (capturas): formulario con validación de superficie, dropzone, badge de solo lectura, y las dos tablas de invitaciones/compradores coinciden con el mockup.
+
+#### Brief H — Detalle de Personalización (gestión de opciones y asignación)
+
+```
+Dirección ya acordada (no la cambies): sidebar CONTEXTUAL de Promoción
+(Personalizaciones activo) - es la pantalla a la que se llega al pulsar
+"Detalle" desde el listado ya diseñado.
+
+Pantalla a diseñar: el detalle de una Personalización concreta (p. ej.
+"Tipo de suelo" del gremio Pavimentos), con dos bloques:
+
+1) Opciones: tabla/lista de las opciones de esta personalización (Nombre,
+   Sobrecoste en €, y un badge/marca visual sobre cuál es la "opción por
+   defecto"), con acciones Editar/Eliminar por opción y un botón "Añadir
+   opción" que abre un formulario simple (Nombre + Sobrecoste) en la misma
+   pantalla o como modal, a tu criterio. Ten en cuenta al diseñarlo (no
+   hace falta que lo bloquees visualmente, es solo contexto): una opción
+   no se puede eliminar si es la única que queda, ni si es la opción por
+   defecto actual sin marcar antes otra como tal.
+
+2) Asignación ("se aplica a"): reutiliza el mismo selector de 3 opciones ya
+   usado en el alta (Toda la promoción / Tipología / Vivienda) para
+   mostrar y poder cambiar a qué tipologías o viviendas concretas se
+   aplica esta personalización, con los mismos chips/pills de selección
+   múltiple ya usados en el formulario de alta.
+
+Genera un único mockup coherente con la dirección ya acordada.
+```
+
+#### Brief H — resultado (2026-09-20)
+
+Generado en el mismo proyecto/hilo (`C:\Users\cgran\Documents\identidad-visual-kiwbi`), como `components/kiwbi/personalizacion-detalle.tsx` (`PersonalizacionDetalle`), sidebar contextual con "Personalizaciones" activo. Muy fiel al brief, con los dos bloques pedidos:
+- **Opciones**: lista con un marcador de estrella para "opción por defecto" (rellena y coloreada con el acento si lo es, hueca si no — clic para marcarla), badge "Por defecto" junto al nombre, sobrecoste en € (o "Incluido" si es 0), acciones Editar/Eliminar por opción con las reglas de bloqueo ya pedidas (no se puede eliminar la única opción restante, ni la opción por defecto actual sin marcar otra antes — reflejado con el botón Eliminar deshabilitado + `title` explicativo), y un formulario "Añadir opción" (Nombre + Sobrecoste).
+- **Se aplica a**: reutiliza EXACTAMENTE el mismo selector de 3 opciones y las pills multi-selección ya construidos en `personalizaciones-nueva.html` (Brief B) — sin inventar nada nuevo, tal como pedía el brief.
+
+Datos de ejemplo `PERSONALIZACION_DETAIL`/`OpcionRow` añadidos a `data.ts` ("Tipo de suelo" del gremio Pavimentos, ámbito `tipologia` con "3 dorm. · Tipo C" y "4 dorm. · Ático" ya seleccionadas, 4 opciones con Roble natural como opción por defecto).
+
+Traducido a `wwwroot/design-preview/personalizacion-detalle.html`, con 3 nuevas clases en `kiwbi-preview.css`: `.kiwbi-option-row` (fila de opción), `.kiwbi-option-star`/`.is-default` (marcador de opción por defecto) y `.kiwbi-badge-accent` (badge "Por defecto"); el bloque "Se aplica a" reutiliza `.kiwbi-scope-option`/`.kiwbi-pill` ya existentes sin cambios. El formulario "Añadir opción" se muestra siempre visible en esta PoC estática (sin el toggle `useState` del mockup, ya que no hay JS de estado en estas páginas) — decisión de traducción menor, no afecta al contenido.
+
+Cerrado el bucle de navegación: los 6 botones "Detalle" de `personalizaciones.html` (antes `<button>` sin acción) ahora enlazan todos a `personalizacion-detalle.html`, reutilizada como página representativa única (mismo criterio ya aplicado a `gremios-nuevo.html`/`tipologias-nueva.html` para "Editar").
+
+Validado en navegador (capturas): lista de opciones con badge/estrella de opción por defecto y sobrecostes, y el bloque "Se aplica a" con el scope "Tipología" activo y sus dos pills preseleccionadas, coinciden con el mockup.
+
+#### Brief I — Progreso de personalizaciones (agregado + detalle por vivienda)
+
+```
+Dirección ya acordada (no la cambies): sidebar CONTEXTUAL de Promoción
+(Progreso activo en ambas pantallas).
+
+Pantalla 1 - Progreso agregado: tabla con una fila por Vivienda de la
+promoción (Planta, Puerta, Tipología) y 4 columnas de recuento -
+Pendientes / Seleccionadas / Confirmadas / Pagadas - en las que se reparte
+el total de Personalizaciones aplicables a esa vivienda, con una barra de
+progreso visual combinando los 4 recuentos por fila, y una acción "Ver
+detalle" por fila.
+
+Pantalla 2 - Detalle por vivienda: cabecera con la vivienda, y debajo sus
+Personalizaciones agrupadas por Gremio (mismo patrón visual que la pantalla
+de comprador ya diseñada, pero orientado a la promotora): cada fila
+muestra el nombre de la Personalización, la opción actualmente efectiva,
+un badge de estado (Pendiente/Seleccionada/Confirmada/Pagada), y botones de
+acción "Confirmar" (solo si el gremio ya venció y hay una opción elegida) o
+"Marcar como pagada" (solo si ya está Confirmada), según corresponda fila a
+fila.
+
+Genera un mockup coherente por cada una de las dos pantallas.
+```
+
+#### Brief I — resultado (2026-09-20)
+
+Generado en el mismo proyecto/hilo (`C:\Users\cgran\Documents\identidad-visual-kiwbi`), como `components/kiwbi/progreso.tsx` (`Progreso`), sidebar contextual con "Progreso" activo. Muy fiel al brief, con una decisión de diseño explícita y acertada que conviene conservar: **los 4 colores de estado (Pendiente/Seleccionada/Confirmada/Pagada) son fijos y NO usan el acento del tenant** — deben leerse igual en cualquier promotora, al ser estados de negocio reales (`HomeCustomizationChoiceStatus`), no un elemento de marca.
+
+- **Pantalla 1 (agregado)**: leyenda con los 4 estados + sus recuentos totales de la promoción y el total general, y una tabla con una fila por Vivienda (Planta·Puerta, Tipología, 4 columnas de recuento, una barra apilada "Reparto" combinando los 4 colores proporcionalmente, y "Ver detalle" por fila).
+- **Pantalla 2 (detalle)**: cabecera con la vivienda + 4 chips de recuento (mismo color que la leyenda), y sus Personalizaciones agrupadas por Gremio reutilizando `.kiwbi-gremio-badge-open`/`.kiwbi-gremio-badge-expired` ya existentes (Abierto/Cerrado); cada línea muestra Nombre + opción efectiva, un badge de estado, y la acción correspondiente calculada con las reglas exactas pedidas: "Confirmar" solo si el gremio venció y hay opción elegida (`Seleccionada`), "Marcar como pagada" solo si está `Confirmada`, o "Cerrada"/"Sin acciones" en el resto de casos.
+
+Datos de ejemplo `PROGRESO_VIVIENDAS`/`PROGRESO_ORDER`/`progresoCounts()` añadidos a `data.ts` (4 viviendas de ejemplo con distintas combinaciones de estado, incluyendo una que demuestra "Marcar como pagada" y otra con el estado `Seleccionada` ya vencido).
+
+Traducido a `wwwroot/design-preview/progreso.html` (agregado) + `progreso-detalle.html` (detalle de la vivienda "1ª A", la que mejor combina los 4 estados y las dos acciones), con 3 grupos de clases nuevas en `kiwbi-preview.css`: `.kiwbi-status-dot`/`.kiwbi-stacked-bar` (leyenda y barra de reparto), `.kiwbi-badge-pendiente/-seleccionada/-confirmada/-pagada` (colores fijos, iguales a los del mockup) y `.kiwbi-progreso-chip` (chips de recuento de la cabecera de detalle); el bloque de Gremio reutiliza `.kiwbi-gremio-badge-open`/`.kiwbi-gremio-badge-expired` sin cambios.
+
+Cerrado el bucle de navegación: el enlace "Progreso" del sidebar contextual (antes `#`) en las 10 pantallas que lo tenían, y la tarjeta de acceso directo "Progreso" de `promocion-resumen.html`, ahora apuntan a `progreso.html`; solo la fila "1ª · A" del agregado enlaza a `progreso-detalle.html` (única vivienda con página de detalle traducida en esta PoC), el resto de filas mantienen un botón "Ver detalle" sin acción.
+
+Validado en navegador (capturas): leyenda + tabla con barras de reparto proporcionales, y la cabecera de detalle con chips + los 3 gremios (cerrado con "Cerrada", cerrado con "Marcar como pagada" x2, abierto con "Sin acciones") coinciden con el mockup.
+
+**Con Brief I se completa todo el inventario de pantallas de la Ronda 3/4 salvo Brief J (Mi promotora + Crear/Editar Promoción), el último pendiente.**
+
+#### Brief J — Mi promotora (perfil + marca) y Crear/Editar Promoción
+
+```
+Dirección ya acordada (no la cambies): Mi promotora usa el sidebar GLOBAL
+("Mi promotora" activo); Crear/Editar Promoción usa el sidebar GLOBAL si es
+alta (se crea desde el listado de Promociones) o el CONTEXTUAL con
+"Resumen" activo si es edición (se edita desde el hub de una promoción ya
+existente) - el contenido del formulario es el mismo en ambos casos, solo
+cambia qué sidebar lo envuelve; no hace falta que dupliques el mockup por
+eso si prefieres mostrar una sola variante de sidebar.
+
+Pantalla 1 - Mi promotora: formulario con Nombre de la promotora, un campo
+de subida de Logo (con vista previa, y un fallback tipo "iniciales sobre
+color" si todavía no hay logo, igual que ya se ve en el sidebar), y dos
+selectores de color (Color primario / Color secundario) con una vista
+previa en vivo de cómo quedaría el acento de marca sobre un botón y un item
+de navegación de ejemplo (reutiliza la idea ya validada del selector de
+tenant que aparece en las pantallas ya generadas).
+
+Pantalla 2 - Crear/Editar Promoción: formulario con Nombre, Ciudad,
+Dirección, y un campo de subida de imagen para el plano general (con vista
+previa si ya existe, placeholder si no).
+
+Genera un mockup coherente por cada una de las dos pantallas.
+```
+
+#### Brief J — resultado (2026-09-20)
+
+Generado en el mismo proyecto/hilo (`C:\Users\cgran\Documents\identidad-visual-kiwbi`), como `components/kiwbi/promotora-settings.tsx` (`PromotoraSettings`), sidebar GLOBAL para ambas pantallas (tal y como se pidió: "Mi promotora" activo en la primera, "Panel" activo en la segunda porque la alta se dispara desde el listado). Muy fiel al brief, con dos añadidos propios que merece la pena conservar:
+- **Paletas rápidas**: en el bloque de Colores de marca, un grupo de "pills" reutilizando los 4 tenants de muestra ya usados en el interruptor de marca del sidebar, para aplicar de un clic una combinación primario/secundario ya probada.
+- **Vista previa en vivo**: dentro del mismo bloque, una previsualización en miniatura de un item de nav activo + botón primario/secundario + dos barras de progreso, todo coloreado con los valores actuales de primario/secundario — refuerza visualmente el alcance ya decidido del acento de marca (nav activo/botón/progreso) antes de guardar.
+- **Mi promotora**: Nombre, Logo (preview con fallback de iniciales sobre color, igual que el ya usado en el sidebar, + dropzone de subida + "Quitar logo"), y los dos selectores de color descritos arriba.
+- **Crear/Editar Promoción**: Nombre, Ciudad, Dirección, y un dropzone para el plano general (con preview-o-placeholder), igual que se pidió.
+
+Traducido a `wwwroot/design-preview/mi-promotora.html` + `promocion-nueva.html`, ambas con la sidebar GLOBAL. Nuevas clases en `kiwbi-preview.css`: `.kiwbi-color-field`/`.kiwbi-color-swatch`/`.kiwbi-color-hex` (selector de color nativo + hex editable), `.kiwbi-palette-pill`/`.kiwbi-palette-swatch` (paletas rápidas) y `.kiwbi-logo-preview` (logo o iniciales); la vista previa en vivo reutiliza patrones ya existentes (`.kiwbi-progress` con `background` de la barra sobrescrito inline para primario/secundario). `promocion-nueva.html` reutiliza `.kiwbi-dropzone` ya creado en Brief G.
+
+Cerrado el bucle de navegación: "Mi promotora" (antes `#`) en `dashboard-promotora.html` ahora enlaza a `mi-promotora.html`; el botón "Nueva promoción" de `dashboard-promotora.html` (antes sin acción) y el botón "Editar promoción" de `promocion-resumen.html` (antes sin acción) ahora enlazan ambos a `promocion-nueva.html`, reutilizada como página representativa única para alta y edición (mismo criterio ya aplicado en briefs anteriores).
+
+Validado en navegador (capturas): formulario de Mi promotora con paletas rápidas y vista previa en vivo coloreada correctamente, y el formulario de Nueva promoción con el dropzone del plano general, coinciden con el mockup.
+
+**Con Brief J se completa el inventario íntegro de pantallas de las Rondas 3 y 4.** Quedan fuera de este inventario, deliberadamente, las pantallas de Login/Register/aceptación de invitación (marcadas "fuera de prioridad" desde la Ronda 3) — el resto de pantallas de Kiwbi ya está diseñado, traducido a Bootstrap 5 y validado en navegador.
+
+### Ronda 5 (auditoría de coherencia previa al cierre) — 2026-09-20
+
+Antes de dar por cerrada la Feature 8.1, se hizo una auditoría exhaustiva cruzando cada uno de los 19 ficheros de `wwwroot/design-preview/` contra: (a) el grafo de navegación completo (todos los `href` internos), y (b) el código real de Controllers/Application/Domain que cada pantalla representa — no solo el aspecto visual, sino la lógica de negocio y los flujos tal y como están implementados hoy. Objetivo: detectar antes de la Feature 8.2 cualquier caso en el que el mockup se haya desviado de cómo funciona realmente Kiwbi.
+
+**Grafo de navegación: cerrado correctamente.** De los ~150 enlaces internos revisados, los únicos `href="#"` restantes son los 3 del item de nav "Ajustes" (ver hallazgo 7 más abajo) — ninguna otra pantalla del inventario tiene un enlace roto o pendiente sin justificar.
+
+**Hallazgos que requieren decisión o corrección antes/durante la Feature 8.2:**
+
+1. **Detalle de Personalización — "Se aplica a" (Brief H) no refleja el flujo real.** El mockup reutilizó el patrón de selector de scope + pills + "Guardar asignación" en bloque del formulario de alta (Brief B). La `Details.cshtml` real (`CustomizationsController.Details`, ya implementada desde Epic 3) funciona de forma bien distinta: una tabla de asignaciones actuales con un botón "Quitar" individual por fila, más dos mini-formularios separados "Añadir tipología" / "Añadir vivienda" (cada uno con su propio `<select>` + botón, una asignación a la vez vía `AddTypologyAssignment`/`AddUnitAssignment`/`RemoveAssignment`). Además, **no existe ningún caso de uso para convertir una personalización ya creada a "Toda la promoción"** — el dominio (`EnsureCanAddSpecificAssignment`) solo impide añadir asignaciones concretas si ya es de toda la promoción, pero no hay operación inversa. Antes de aplicar el sistema de diseño a la vista real, hay que rehacer el layout de este bloque siguiendo el patrón añadir/quitar granular, no el de scope-selector.
+2. **Progreso — la condición de "Confirmar" en el brief y el mockup es más restrictiva que la real.** Escribí (y v0 implementó fielmente) `canConfirm = gremio.venció && hasChoice && estado === 'Seleccionada'`. La regla real (`Details.cshtml` de `HousingPromotionChoicesController`, y el propio `ConfirmHomeCustomizationChoiceUseCase`) es `tradeCategory.IsExpired && status is Pending or Selected` — es decir, **también se puede Confirmar una personalización en estado Pendiente** si su gremio ya venció (el caso de uso asigna automáticamente la opción por defecto antes de confirmar). Los datos de ejemplo de `progreso.html`/`progreso-detalle.html` no llegan a exponer visualmente este caso (ninguna vivienda de muestra tiene un gremio vencido con línea Pendiente), así que no hay una pantalla "rota", pero la regla tal y como quedó escrita en el brief es incorrecta y debe corregirse antes de que se use como referencia en la Feature 8.2.
+3. **Tipologías — la columna "Nº de viviendas" no tiene datos reales detrás.** `HousingTypologyDto`/`GetHousingTypologiesUseCase` solo exponen `Id`, `Name`, fechas — ningún recuento de viviendas asociadas. La Feature 8.2 necesitará añadir esa capacidad (nuevo cálculo en el use case o una consulta agregada), no es solo un cambio de estilos.
+4. **Gremios — el formulario real usa un único campo `datetime-local`**, no Fecha y Hora por separado como en `gremios-nuevo.html`. Diferencia menor (mismo dato, distinta composición de inputs) pero hay que reconciliarla al construir la vista Razor real.
+5. **Mi promotora — el upload de logo NO está implementado hoy.** `UpdateDeveloperBrandingCommand(PrimaryColor, SecondaryColor, LogoPath)` recibe `LogoPath` como `string`, sin subida de fichero real (a diferencia del patrón ya usado para plano de Vivienda/Promoción con `IFileStorageService`). El dropzone de `mi-promotora.html` anticipa una capacidad que **no existe en Application/Infrastructure todavía** y que, además, excede el alcance declarado de este Epic ("100% Kiwbi.Web"). Requiere una decisión explícita: (a) ampliar `UpdateDeveloperBrandingUseCase` para aceptar un fichero (pequeño cambio de Application/Infrastructure, análogo al ya existente para planos), o (b) recortar esta pantalla a un campo de texto/URL en la Feature 8.2 y dejar la subida real de logo para otro Epic.
+6. **Invitaciones de comprador — faltan un estado visual y una columna.** La vista real (`Invitations.cshtml`) distingue **4 estados**, no 3: Aceptada / Cancelada / **Caducada** (`IsExpired`, calculado, distinto de Pendiente aunque el dominio solo persiste Pending/Accepted/Cancelled) / Pendiente — `vivienda-invitaciones.html` solo modela Pendiente/Aceptada/Cancelada, sin el badge "Caducada". También falta la columna "Enviada" (`CreatedAtUtc`) junto a "Caduca" (`ExpiresAtUtc`). Los botones Reenviar/Cancelar sí están bien acotados (dependen del `Status` de dominio = Pending, no de si venció, así que una invitación caducada-pero-Pending real seguiría siendo reenviable/cancelable — esto sí coincide con el mockup).
+7. **El nav item "Ajustes" no corresponde a ninguna pantalla del inventario.** Aparece en el sidebar GLOBAL de las 3 pantallas que lo llevan (`dashboard-promotora.html`, `mi-promotora.html`, `promocion-nueva.html`) apuntando a `#`, heredado de la Ronda 1 sin que la Ronda 3 lo evaluara ni le asignara un brief — a diferencia de Login/Register/aceptación de invitación, esto **no fue una exclusión deliberada**, es un hueco del propio inventario. No hay ningún Controller/pantalla real de "Ajustes" en Kiwbi hoy. Requiere decisión: quitarlo del nav (lo más simple, ya que no representa nada implementado) o documentarlo como backlog futuro (p. ej. dentro de Epic 9, preferencias de cuenta/seguridad).
+
+**Sin incidencias (verificado explícitamente):**
+- Viviendas — alta/edición (`vivienda-editar.html`): campos y flujo (Planta/Puerta/Tipología/Superficies/Plano en un único formulario, Estado comercial como acción aparte) coinciden exactamente con `HousingUnitsController.Create/Edit`.
+- Promociones — alta/edición (`promocion-nueva.html`): Nombre/Ciudad/Dirección/Plano en un único formulario, coincide con `HousingPromotionsController.Create`.
+- Personalizaciones — opciones (bloque "Opciones" de `personalizacion-detalle.html`): reglas de "no eliminar la única opción" / "no eliminar la opción por defecto sin fijar otra antes" coinciden con `Customization.RemoveOption` en Domain.
+- El resto del grafo de navegación (Resumen/Tipologías/Viviendas/Gremios/Personalizaciones/Progreso, y las páginas "representativas únicas" reutilizadas para Editar/Detalle en varias filas de una tabla) es una simplificación consciente y ya documentada del PoC estático, no una incoherencia — se resolverá de forma natural cuando la Feature 8.2 use rutas reales con `id`.
+
+**Decisión pendiente del usuario:** cuáles de los hallazgos 1-7 se corrigen ahora (en los ficheros estáticos, para que la Feature 8.2 parta de una referencia ya correcta) y cuáles se dejan como nota para resolver directamente al construir la vista Razor real.
+
+### Implementación del mecanismo de branding (2026-09-19)
 
 El mecanismo decidido arriba ya está implementado y validado, por delante del resto de la Feature 8.1 (no requería esperar a más mockups, era puramente técnico):
 

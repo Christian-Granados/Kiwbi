@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Kiwbi · PoC visual — Nueva personalización</title>
+<title>Kiwbi · PoC visual — Nueva tipología</title>
 <link rel="stylesheet" href="../lib/bootstrap/dist/css/bootstrap.min.css" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -35,7 +35,7 @@
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
         <span class="kiwbi-nav-label">Resumen</span>
       </a>
-      <a class="kiwbi-nav-item" href="tipologias.html" title="Tipologías">
+      <a class="kiwbi-nav-item active" href="tipologias.html" title="Tipologías">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
         <span class="kiwbi-nav-label">Tipologías</span>
       </a>
@@ -47,7 +47,7 @@
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 1.4 1.4l3-3a1 1 0 0 0-1.4-1.4l-3 3ZM3 21l7-7M7 21H3v-4l9.5-9.5a2.1 2.1 0 0 1 3 3L5 21Z"/></svg>
         <span class="kiwbi-nav-label">Gremios</span>
       </a>
-      <a class="kiwbi-nav-item active" href="personalizaciones.html" title="Personalizaciones">
+      <a class="kiwbi-nav-item" href="personalizaciones.html" title="Personalizaciones">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="9" cy="10" r="1"/><circle cx="14" cy="8" r="1"/><circle cx="15" cy="13" r="1"/></svg>
         <span class="kiwbi-nav-label">Personalizaciones</span>
       </a>
@@ -79,7 +79,7 @@
       </button>
       <div class="kiwbi-search">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        Buscar personalización, gremio…
+        Buscar tipología…
       </div>
       <button type="button" class="kiwbi-icon-btn">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
@@ -93,109 +93,32 @@
     </header>
 
     <div class="kiwbi-content">
-      <div class="mx-auto" style="max-width: 42rem;">
-        <a href="personalizaciones.html" class="d-inline-flex align-items-center gap-1 small text-muted text-decoration-none mb-2">
+      <div class="mx-auto" style="max-width: 38rem;">
+        <a href="tipologias.html" class="d-inline-flex align-items-center gap-1 small text-muted text-decoration-none mb-2">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
           Volver al listado
         </a>
-        <h1 class="h4 mb-1" style="font-weight:600;">Nueva personalización</h1>
-        <p class="small text-muted mb-4">Define la personalización, su opción por defecto y a qué viviendas se aplica</p>
+        <h1 class="h4 mb-1" style="font-weight:600;">Nueva tipología</h1>
+        <p class="small text-muted mb-4">Una tipología es solo un nombre. Las viviendas que la compartan podrán recibir personalizaciones en bloque.</p>
 
         <form class="d-flex flex-column gap-3">
-          <!-- Sección 1: datos generales -->
           <div class="kiwbi-fieldset">
-            <div class="kiwbi-legend">Datos generales</div>
+            <div class="kiwbi-legend">Datos de la tipología</div>
             <div class="row g-3">
-              <div class="col-sm-6">
-                <label for="gremio" class="form-label small fw-medium">Gremio</label>
-                <select id="gremio" class="form-select form-select-sm">
-                  <option value="" selected disabled>Selecciona un gremio…</option>
-                  <option>Pavimentos</option>
-                  <option>Fontanería</option>
-                  <option>Carpintería</option>
-                  <option>Electricidad</option>
-                  <option>Alicatados</option>
-                  <option>Cocina</option>
-                </select>
-              </div>
-              <div class="col-sm-6">
-                <label for="nombre" class="form-label small fw-medium">Nombre de la personalización</label>
-                <input id="nombre" type="text" class="form-control form-control-sm" placeholder="p. ej. Tipo de suelo" />
-              </div>
-            </div>
-          </div>
-
-          <!-- Sección 2: opción por defecto (visualmente diferenciada) -->
-          <div class="kiwbi-fieldset kiwbi-fieldset-accent">
-            <div class="kiwbi-legend kiwbi-legend-accent">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-              Opción por defecto
-            </div>
-            <p class="small text-muted mb-3">Es la opción incluida sin sobrecoste que verá el comprador por defecto.</p>
-            <div class="row g-3">
-              <div class="col-sm-6">
-                <label for="opcion-nombre" class="form-label small fw-medium">Nombre de la opción</label>
-                <input id="opcion-nombre" type="text" class="form-control form-control-sm" placeholder="p. ej. Roble natural" />
-              </div>
-              <div class="col-sm-6">
-                <label for="opcion-coste" class="form-label small fw-medium">Sobrecoste</label>
-                <div class="input-group input-group-sm">
-                  <span class="input-group-text">€</span>
-                  <input id="opcion-coste" type="number" min="0" value="0" class="form-control" />
-                </div>
-                <div class="form-text">0 € para la opción incluida por defecto</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Sección 3: alcance -->
-          <div class="kiwbi-fieldset">
-            <div class="kiwbi-legend">Se aplica a</div>
-            <div class="row row-cols-1 row-cols-sm-3 g-2">
-              <div class="col">
-                <button type="button" class="kiwbi-scope-option active" data-scope="promocion">
-                  <span><span class="kiwbi-scope-radio"></span>Toda la promoción</span>
-                  <span class="kiwbi-scope-hint">Todas las viviendas</span>
-                </button>
-              </div>
-              <div class="col">
-                <button type="button" class="kiwbi-scope-option" data-scope="tipologia">
-                  <span><span class="kiwbi-scope-radio"></span>Tipología</span>
-                  <span class="kiwbi-scope-hint">Por tipo de vivienda</span>
-                </button>
-              </div>
-              <div class="col">
-                <button type="button" class="kiwbi-scope-option" data-scope="vivienda">
-                  <span><span class="kiwbi-scope-radio"></span>Vivienda</span>
-                  <span class="kiwbi-scope-hint">Viviendas concretas</span>
-                </button>
-              </div>
-            </div>
-
-            <div data-scope-panel="tipologia" hidden class="mt-3 p-3 rounded-3" style="background:var(--kiwbi-bg); border:1px solid var(--kiwbi-border);">
-              <label class="form-label small fw-medium">Selecciona las tipologías</label>
-              <div class="d-flex flex-wrap gap-2">
-                <button type="button" class="kiwbi-pill">2 dorm. · Tipo A</button>
-                <button type="button" class="kiwbi-pill">2 dorm. · Tipo B</button>
-                <button type="button" class="kiwbi-pill">3 dorm. · Tipo C</button>
-                <button type="button" class="kiwbi-pill">4 dorm. · Ático</button>
-              </div>
-            </div>
-            <div data-scope-panel="vivienda" hidden class="mt-3 p-3 rounded-3" style="background:var(--kiwbi-bg); border:1px solid var(--kiwbi-border);">
-              <label class="form-label small fw-medium">Selecciona las viviendas</label>
-              <div class="d-flex flex-wrap gap-2">
-                <button type="button" class="kiwbi-pill">MV-A-2B</button>
-                <button type="button" class="kiwbi-pill">MV-A-3A</button>
-                <button type="button" class="kiwbi-pill">MV-B-1C</button>
-                <button type="button" class="kiwbi-pill">PT-2-4D</button>
-                <button type="button" class="kiwbi-pill">PT-1-BJ</button>
+              <div class="col-12">
+                <label for="nombre" class="form-label small fw-medium">Nombre</label>
+                <input id="nombre" type="text" class="form-control form-control-sm" placeholder="p. ej. 2 dorm. · Tipo A" autofocus />
+                <p class="small text-muted mb-0 mt-1">Un identificador reconocible para el equipo comercial y de obra.</p>
               </div>
             </div>
           </div>
 
           <div class="d-flex justify-content-end gap-2 pb-2">
-            <a href="personalizaciones.html" class="btn btn-sm btn-outline-secondary">Cancelar</a>
-            <button type="submit" class="btn btn-kiwbi-primary btn-sm">Guardar personalización</button>
+            <a href="tipologias.html" class="btn btn-sm btn-outline-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-kiwbi-primary btn-sm d-flex align-items-center gap-1">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+              Crear tipología
+            </button>
           </div>
         </form>
       </div>

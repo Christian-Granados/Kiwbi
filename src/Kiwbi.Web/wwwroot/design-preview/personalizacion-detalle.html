@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kiwbi · PoC visual — Detalle de personalización</title>
+<link rel="stylesheet" href="../lib/bootstrap/dist/css/bootstrap.min.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="kiwbi-preview.css" />
+</head>
+<body>
+
+<div class="kiwbi-shell">
+  <aside class="kiwbi-sidebar" id="kiwbiSidebar">
+    <div class="kiwbi-brand">
+      <span class="kiwbi-mark" id="kiwbiMark">H</span>
+      <div class="kiwbi-brand-text">
+        <div class="kiwbi-brand-name" id="kiwbiTenantName">Hábitat Verde</div>
+        <div class="kiwbi-brand-sub">vía Kiwbi</div>
+      </div>
+    </div>
+
+    <a class="kiwbi-context-indicator" href="dashboard-promotora.html">
+      <span class="label">Estás dentro de</span>
+      <span class="name">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        <span>Residencial Miravalle</span>
+      </span>
+    </a>
+
+    <nav class="kiwbi-nav">
+      <a class="kiwbi-nav-item" href="promocion-resumen.html" title="Resumen">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        <span class="kiwbi-nav-label">Resumen</span>
+      </a>
+      <a class="kiwbi-nav-item" href="tipologias.html" title="Tipologías">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+        <span class="kiwbi-nav-label">Tipologías</span>
+      </a>
+      <a class="kiwbi-nav-item" href="viviendas.html" title="Viviendas">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
+        <span class="kiwbi-nav-label">Viviendas</span>
+      </a>
+      <a class="kiwbi-nav-item" href="gremios.html" title="Gremios">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 1.4 1.4l3-3a1 1 0 0 0-1.4-1.4l-3 3ZM3 21l7-7M7 21H3v-4l9.5-9.5a2.1 2.1 0 0 1 3 3L5 21Z"/></svg>
+        <span class="kiwbi-nav-label">Gremios</span>
+      </a>
+      <a class="kiwbi-nav-item active" href="personalizaciones.html" title="Personalizaciones">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="9" cy="10" r="1"/><circle cx="14" cy="8" r="1"/><circle cx="15" cy="13" r="1"/></svg>
+        <span class="kiwbi-nav-label">Personalizaciones</span>
+      </a>
+      <a class="kiwbi-nav-item" href="progreso.html" title="Progreso">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M18 17V9"/><path d="M13 17V5"/><path d="M8 17v-3"/></svg>
+        <span class="kiwbi-nav-label">Progreso</span>
+      </a>
+    </nav>
+
+    <div class="kiwbi-sidebar-footer">
+      <div class="kiwbi-plan-widget">
+        <strong>Plan Promotora</strong>
+        184 de 250 viviendas
+      </div>
+    </div>
+
+    <div class="kiwbi-tenant-switcher" title="Cambiar color de marca del tenant (demo)">
+      <button type="button" class="kiwbi-swatch" style="background:#2f7d5b" data-name="Hábitat Verde" data-initial="H" data-accent="#2f7d5b" data-accent2="#1c5540"></button>
+      <button type="button" class="kiwbi-swatch" style="background:#2563a8" data-name="Nova Residencial" data-initial="N" data-accent="#2563a8" data-accent2="#173f6b"></button>
+      <button type="button" class="kiwbi-swatch" style="background:#c05621" data-name="Terracota Homes" data-initial="T" data-accent="#c05621" data-accent2="#8a3d17"></button>
+      <button type="button" class="kiwbi-swatch" style="background:#5b4bc4" data-name="Duomo Living" data-initial="D" data-accent="#5b4bc4" data-accent2="#3b2f8a"></button>
+    </div>
+  </aside>
+
+  <div class="kiwbi-main">
+    <header class="kiwbi-topbar">
+      <button type="button" class="kiwbi-collapse-btn" id="kiwbiCollapseBtn" title="Contraer/expandir menú">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <div class="kiwbi-search">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Buscar personalización, gremio…
+      </div>
+      <button type="button" class="kiwbi-icon-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+        <span class="dot"></span>
+      </button>
+      <div class="kiwbi-avatar-chip">
+        <span class="kiwbi-avatar">CG</span>
+        <span class="kiwbi-avatar-name d-none d-sm-inline">Carmen G.</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </header>
+
+    <div class="kiwbi-content">
+      <div class="mx-auto" style="max-width: 46rem;">
+        <a href="personalizaciones.html" class="d-inline-flex align-items-center gap-1 small text-muted text-decoration-none mb-2">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          Volver al listado
+        </a>
+
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
+          <div class="d-flex align-items-center gap-2">
+            <span class="kiwbi-row-icon" style="width:2.25rem;height:2.25rem;background:var(--kiwbi-accent);color:#fff;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="9" cy="10" r="1"/><circle cx="14" cy="8" r="1"/><circle cx="15" cy="13" r="1"/></svg>
+            </span>
+            <div>
+              <h1 class="h5 mb-0" style="font-weight:600;">Tipo de suelo</h1>
+              <span class="kiwbi-chip">Pavimentos</span>
+            </div>
+          </div>
+          <button type="button" class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>
+            Editar personalización
+          </button>
+        </div>
+
+        <!-- Bloque 1: Opciones -->
+        <div class="kiwbi-table-card mb-4">
+          <div class="kiwbi-table-card-header">
+            <div>
+              <span class="title">Opciones</span>
+              <div class="small text-muted" style="font-size:.7rem;">La opción por defecto es la incluida sin sobrecoste</div>
+            </div>
+            <button type="button" class="btn btn-kiwbi-primary btn-sm d-flex align-items-center gap-1">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Añadir opción
+            </button>
+          </div>
+
+          <div class="kiwbi-option-row">
+            <button type="button" class="kiwbi-option-star is-default" disabled title="Opción por defecto">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="1"><polygon points="12 2 15 9 22 9.5 17 14.5 18.5 22 12 18 5.5 22 7 14.5 2 9.5 9 9 12 2"/></svg>
+            </button>
+            <div class="flex-fill d-flex align-items-center gap-2">
+              <span class="fw-medium">Roble natural</span>
+              <span class="kiwbi-badge-accent"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg> Por defecto</span>
+            </div>
+            <span class="small text-muted me-2">Incluido</span>
+            <div class="d-flex gap-1">
+              <button type="button" class="btn btn-sm btn-outline-secondary" aria-label="Editar Roble natural">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>
+              </button>
+              <button type="button" class="btn btn-sm btn-outline-danger" disabled title="Marca otra como opción por defecto antes de eliminarla" aria-label="Eliminar Roble natural">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="kiwbi-option-row">
+            <button type="button" class="kiwbi-option-star" title="Marcar como opción por defecto">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15 9 22 9.5 17 14.5 18.5 22 12 18 5.5 22 7 14.5 2 9.5 9 9 12 2"/></svg>
+            </button>
+            <div class="flex-fill"><span class="fw-medium">Roble ceniza</span></div>
+            <span class="small fw-semibold me-2" style="color:var(--kiwbi-accent);">+320 €</span>
+            <div class="d-flex gap-1">
+              <button type="button" class="btn btn-sm btn-outline-secondary" aria-label="Editar Roble ceniza">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>
+              </button>
+              <button type="button" class="btn btn-sm btn-outline-danger" aria-label="Eliminar Roble ceniza">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="kiwbi-option-row">
+            <button type="button" class="kiwbi-option-star" title="Marcar como opción por defecto">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15 9 22 9.5 17 14.5 18.5 22 12 18 5.5 22 7 14.5 2 9.5 9 9 12 2"/></svg>
+            </button>
+            <div class="flex-fill"><span class="fw-medium">Porcelánico gris</span></div>
+            <span class="small fw-semibold me-2" style="color:var(--kiwbi-accent);">+540 €</span>
+            <div class="d-flex gap-1">
+              <button type="button" class="btn btn-sm btn-outline-secondary" aria-label="Editar Porcelánico gris">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>
+              </button>
+              <button type="button" class="btn btn-sm btn-outline-danger" aria-label="Eliminar Porcelánico gris">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="kiwbi-option-row">
+            <button type="button" class="kiwbi-option-star" title="Marcar como opción por defecto">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15 9 22 9.5 17 14.5 18.5 22 12 18 5.5 22 7 14.5 2 9.5 9 9 12 2"/></svg>
+            </button>
+            <div class="flex-fill"><span class="fw-medium">Nogal ahumado</span></div>
+            <span class="small fw-semibold me-2" style="color:var(--kiwbi-accent);">+610 €</span>
+            <div class="d-flex gap-1">
+              <button type="button" class="btn btn-sm btn-outline-secondary" aria-label="Editar Nogal ahumado">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 0 1 3 3L12 15l-4 1 1-4Z"/></svg>
+              </button>
+              <button type="button" class="btn btn-sm btn-outline-danger" aria-label="Eliminar Nogal ahumado">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+              </button>
+            </div>
+          </div>
+
+          <!-- Formulario inline de alta de opción (siempre visible en esta PoC estática) -->
+          <div class="kiwbi-option-add">
+            <div class="small text-uppercase text-muted mb-2" style="font-size:.65rem;letter-spacing:.04em;font-weight:600;">Nueva opción</div>
+            <div class="row g-2 align-items-end">
+              <div class="col-sm-6">
+                <label for="opt-nombre" class="form-label small fw-medium">Nombre de la opción</label>
+                <input id="opt-nombre" type="text" class="form-control form-control-sm" placeholder="p. ej. Porcelánico beige" />
+              </div>
+              <div class="col-sm-3">
+                <label for="opt-coste" class="form-label small fw-medium">Sobrecoste</label>
+                <div class="input-group input-group-sm">
+                  <span class="input-group-text">€</span>
+                  <input id="opt-coste" type="number" min="0" class="form-control" value="0" />
+                </div>
+              </div>
+              <div class="col-sm-3">
+                <button type="button" class="btn btn-kiwbi-primary btn-sm w-100 d-flex align-items-center justify-content-center gap-1">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  Añadir
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bloque 2: Se aplica a -->
+        <div class="kiwbi-fieldset">
+          <div class="kiwbi-legend">Se aplica a</div>
+          <p class="small text-muted mb-3" style="margin-top:-0.4rem;">Define a qué viviendas de la promoción afecta esta personalización</p>
+
+          <div class="row g-2">
+            <div class="col">
+              <button type="button" class="kiwbi-scope-option" data-scope="promocion">
+                <span><span class="kiwbi-scope-radio"></span>Toda la promoción</span>
+                <span class="kiwbi-scope-hint">Todas las viviendas</span>
+              </button>
+            </div>
+            <div class="col">
+              <button type="button" class="kiwbi-scope-option active" data-scope="tipologia">
+                <span><span class="kiwbi-scope-radio"></span>Tipología</span>
+                <span class="kiwbi-scope-hint">Por tipo de vivienda</span>
+              </button>
+            </div>
+            <div class="col">
+              <button type="button" class="kiwbi-scope-option" data-scope="vivienda">
+                <span><span class="kiwbi-scope-radio"></span>Vivienda</span>
+                <span class="kiwbi-scope-hint">Viviendas concretas</span>
+              </button>
+            </div>
+          </div>
+
+          <div data-scope-panel="tipologia" class="mt-3 p-3 rounded-3" style="background:var(--kiwbi-bg); border:1px solid var(--kiwbi-border);">
+            <label class="form-label small fw-medium">Selecciona las tipologías</label>
+            <div class="d-flex flex-wrap gap-2">
+              <button type="button" class="kiwbi-pill">2 dorm. · Tipo A</button>
+              <button type="button" class="kiwbi-pill">2 dorm. · Tipo B</button>
+              <button type="button" class="kiwbi-pill active">3 dorm. · Tipo C</button>
+              <button type="button" class="kiwbi-pill active">4 dorm. · Ático</button>
+            </div>
+          </div>
+          <div data-scope-panel="vivienda" hidden class="mt-3 p-3 rounded-3" style="background:var(--kiwbi-bg); border:1px solid var(--kiwbi-border);">
+            <label class="form-label small fw-medium">Selecciona las viviendas</label>
+            <div class="d-flex flex-wrap gap-2">
+              <button type="button" class="kiwbi-pill">MV-A-2B</button>
+              <button type="button" class="kiwbi-pill">MV-A-3A</button>
+              <button type="button" class="kiwbi-pill">MV-B-1C</button>
+              <button type="button" class="kiwbi-pill">PT-2-4D</button>
+              <button type="button" class="kiwbi-pill">PT-1-BJ</button>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-end gap-2 mt-3">
+            <button type="button" class="btn btn-sm btn-outline-secondary">Descartar cambios</button>
+            <button type="button" class="btn btn-kiwbi-primary btn-sm d-flex align-items-center gap-1">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+              Guardar asignación
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="kiwbi-preview.js"></script>
+</body>
+</html>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kiwbi · PoC visual — Mi promotora</title>
+<link rel="stylesheet" href="../lib/bootstrap/dist/css/bootstrap.min.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="kiwbi-preview.css" />
+</head>
+<body>
+
+<div class="kiwbi-shell">
+  <aside class="kiwbi-sidebar" id="kiwbiSidebar">
+    <div class="kiwbi-brand">
+      <span class="kiwbi-mark" id="kiwbiMark">H</span>
+      <div class="kiwbi-brand-text">
+        <div class="kiwbi-brand-name" id="kiwbiTenantName">Hábitat Verde</div>
+        <div class="kiwbi-brand-sub">vía Kiwbi</div>
+      </div>
+    </div>
+
+    <!-- Sidebar GLOBAL (Ronda 3): fuera del contexto de una Promoción concreta. -->
+    <nav class="kiwbi-nav">
+      <a class="kiwbi-nav-item" href="dashboard-promotora.html" title="Panel">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        <span class="kiwbi-nav-label">Panel</span>
+      </a>
+      <a class="kiwbi-nav-item active" href="mi-promotora.html" title="Mi promotora">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M6 21V7l6-4 6 4v14M10 21v-6h4v6"/></svg>
+        <span class="kiwbi-nav-label">Mi promotora</span>
+      </a>
+      <a class="kiwbi-nav-item" href="#" title="Ajustes">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>
+        <span class="kiwbi-nav-label">Ajustes</span>
+      </a>
+    </nav>
+
+    <div class="kiwbi-sidebar-footer">
+      <div class="kiwbi-plan-widget">
+        <strong>Plan Promotora</strong>
+        184 de 250 viviendas
+      </div>
+    </div>
+
+    <div class="kiwbi-tenant-switcher" title="Cambiar color de marca del tenant (demo)">
+      <button type="button" class="kiwbi-swatch" style="background:#2f7d5b" data-name="Hábitat Verde" data-initial="H" data-accent="#2f7d5b" data-accent2="#1c5540"></button>
+      <button type="button" class="kiwbi-swatch" style="background:#2563a8" data-name="Nova Residencial" data-initial="N" data-accent="#2563a8" data-accent2="#173f6b"></button>
+      <button type="button" class="kiwbi-swatch" style="background:#c05621" data-name="Terracota Homes" data-initial="T" data-accent="#c05621" data-accent2="#8a3d17"></button>
+      <button type="button" class="kiwbi-swatch" style="background:#5b4bc4" data-name="Duomo Living" data-initial="D" data-accent="#5b4bc4" data-accent2="#3b2f8a"></button>
+    </div>
+  </aside>
+
+  <div class="kiwbi-main">
+    <header class="kiwbi-topbar">
+      <button type="button" class="kiwbi-collapse-btn" id="kiwbiCollapseBtn" title="Contraer/expandir menú">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <div class="kiwbi-search">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Buscar promoción, vivienda…
+      </div>
+      <button type="button" class="kiwbi-icon-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+        <span class="dot"></span>
+      </button>
+      <div class="kiwbi-avatar-chip">
+        <span class="kiwbi-avatar">CG</span>
+        <span class="kiwbi-avatar-name d-none d-sm-inline">Carmen G.</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </header>
+
+    <div class="kiwbi-content">
+      <div class="mx-auto" style="max-width: 46rem;">
+        <div class="kiwbi-breadcrumb mb-1">
+          <span>Kiwbi</span>
+          <span>/</span>
+          <span class="current">Mi promotora</span>
+        </div>
+        <h1 class="h4 mb-1" style="font-weight:600;">Mi promotora</h1>
+        <p class="small text-muted mb-4">Datos de marca que se aplican a todo el espacio de trabajo y al portal del comprador.</p>
+
+        <form class="d-flex flex-column gap-3">
+          <div class="kiwbi-fieldset">
+            <div class="kiwbi-legend">Datos generales</div>
+            <label for="promo-nombre" class="form-label small fw-medium">Nombre de la promotora</label>
+            <input id="promo-nombre" type="text" class="form-control form-control-sm" value="Hábitat Verde" placeholder="p. ej. Hábitat Verde" />
+          </div>
+
+          <div class="kiwbi-fieldset">
+            <div class="kiwbi-legend">Logo</div>
+            <div class="row g-3 align-items-center">
+              <div class="col-auto d-flex align-items-center gap-3">
+                <span class="kiwbi-logo-preview" style="background:#2f7d5b;">H</span>
+                <div class="small text-muted" style="font-size:.7rem;">Sin logo aún.<br>Se usan las iniciales sobre el color primario.</div>
+              </div>
+              <div class="col">
+                <label for="logo-upload" class="kiwbi-dropzone" style="padding:0.9rem;">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                  <strong>Subir logo</strong>
+                  <span class="small">SVG, PNG o JPG · máx. 2 MB</span>
+                  <input id="logo-upload" type="file" accept="image/*" class="visually-hidden" />
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div class="kiwbi-fieldset">
+            <div class="kiwbi-legend">Colores de marca</div>
+            <div class="row g-3">
+              <div class="col-sm-6">
+                <label class="form-label small fw-medium">Color primario</label>
+                <div class="kiwbi-color-field">
+                  <input type="color" value="#2f7d5b" class="kiwbi-color-swatch" aria-label="Color primario" />
+                  <input type="text" value="#2F7D5B" class="kiwbi-color-hex" spellcheck="false" />
+                </div>
+                <p class="small text-muted mb-0 mt-1" style="font-size:.7rem;">Botones, navegación activa, acentos.</p>
+              </div>
+              <div class="col-sm-6">
+                <label class="form-label small fw-medium">Color secundario</label>
+                <div class="kiwbi-color-field">
+                  <input type="color" value="#1c5540" class="kiwbi-color-swatch" aria-label="Color secundario" />
+                  <input type="text" value="#1C5540" class="kiwbi-color-hex" spellcheck="false" />
+                </div>
+                <p class="small text-muted mb-0 mt-1" style="font-size:.7rem;">Estados hover y degradados sutiles.</p>
+              </div>
+            </div>
+
+            <div class="mt-3">
+              <div class="text-uppercase text-muted mb-2" style="font-size:.65rem;letter-spacing:.04em;font-weight:600;">Paletas rápidas</div>
+              <div class="d-flex flex-wrap gap-2">
+                <button type="button" class="kiwbi-palette-pill active">
+                  <span class="kiwbi-palette-swatch"><span style="background:#2f7d5b;"></span><span style="background:#1c5540;"></span></span>
+                  Hábitat Verde
+                </button>
+                <button type="button" class="kiwbi-palette-pill">
+                  <span class="kiwbi-palette-swatch"><span style="background:#2563a8;"></span><span style="background:#173f6b;"></span></span>
+                  Nova Residencial
+                </button>
+                <button type="button" class="kiwbi-palette-pill">
+                  <span class="kiwbi-palette-swatch"><span style="background:#c05621;"></span><span style="background:#8a3d17;"></span></span>
+                  Terracota Homes
+                </button>
+                <button type="button" class="kiwbi-palette-pill">
+                  <span class="kiwbi-palette-swatch"><span style="background:#5b4bc4;"></span><span style="background:#3b2f8a;"></span></span>
+                  Duomo Living
+                </button>
+              </div>
+            </div>
+
+            <div class="mt-4 p-3 rounded-3" style="background:var(--kiwbi-bg); border:1px solid var(--kiwbi-border);">
+              <div class="text-uppercase text-muted mb-3" style="font-size:.65rem;letter-spacing:.04em;font-weight:600;">Vista previa en vivo</div>
+              <div class="row g-3 align-items-center">
+                <div class="col-sm-4">
+                  <div class="border rounded-3 bg-white p-2" style="border-color:var(--kiwbi-border) !important;">
+                    <div class="d-flex align-items-center gap-2 rounded-2 px-2 py-2 text-white small fw-medium" style="background:#2f7d5b;">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                      Panel
+                    </div>
+                    <div class="d-flex align-items-center gap-2 rounded-2 px-2 py-2 small text-muted">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
+                      Viviendas
+                    </div>
+                  </div>
+                </div>
+                <div class="col-sm-4 d-flex flex-column gap-2">
+                  <button type="button" class="btn btn-sm text-white d-flex align-items-center justify-content-center gap-1" style="background:#2f7d5b;">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                    Guardar cambios
+                  </button>
+                  <button type="button" class="btn btn-sm" style="border:1px solid #2f7d5b; color:#2f7d5b;">Botón secundario</button>
+                </div>
+                <div class="col-sm-4">
+                  <div class="d-flex justify-content-between small text-muted mb-1" style="font-size:.7rem;">
+                    <span>Progreso de obra</span><span>74%</span>
+                  </div>
+                  <span class="kiwbi-progress" style="width:100%;"><span style="width:74%;background:#2f7d5b;"></span></span>
+                  <span class="kiwbi-progress mt-2 d-block" style="width:100%;"><span style="width:48%;background:#1c5540;"></span></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="d-flex justify-content-end gap-2 pb-2">
+            <button type="button" class="btn btn-sm btn-outline-secondary">Descartar</button>
+            <button type="submit" class="btn btn-kiwbi-primary btn-sm d-flex align-items-center gap-1">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+              Guardar cambios
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="kiwbi-preview.js"></script>
+</body>
+</html>

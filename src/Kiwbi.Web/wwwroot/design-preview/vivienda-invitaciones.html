@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Kiwbi · PoC visual — Viviendas</title>
+<title>Kiwbi · PoC visual — Invitaciones de comprador</title>
 <link rel="stylesheet" href="../lib/bootstrap/dist/css/bootstrap.min.css" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -12,7 +12,6 @@
 <body>
 
 <div class="kiwbi-shell">
-  <!-- Sidebar: expandido = Operativo · Sidebar denso; colapsado (icon-rail) = Blueprint · Técnico -->
   <aside class="kiwbi-sidebar" id="kiwbiSidebar">
     <div class="kiwbi-brand">
       <span class="kiwbi-mark" id="kiwbiMark">H</span>
@@ -22,7 +21,6 @@
       </div>
     </div>
 
-    <!-- Sidebar CONTEXTUAL (Ronda 3): dentro de una Promoción concreta. -->
     <a class="kiwbi-context-indicator" href="dashboard-promotora.html">
       <span class="label">Estás dentro de</span>
       <span class="name">
@@ -80,7 +78,7 @@
       </button>
       <div class="kiwbi-search">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        Buscar vivienda, comprador…
+        Buscar vivienda…
       </div>
       <button type="button" class="kiwbi-icon-btn">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
@@ -93,85 +91,121 @@
       </div>
     </header>
 
+    <div class="kiwbi-seg-tabs">
+      <a class="kiwbi-seg-tab" href="vivienda-editar.html">Alta / Edición</a>
+      <a class="kiwbi-seg-tab active" href="vivienda-invitaciones.html">Invitaciones</a>
+    </div>
+
     <div class="kiwbi-content">
-      <div class="kiwbi-breadcrumb"><span>Residencial Miravalle</span><span>/</span><span class="current">Viviendas</span></div>
-      <div class="d-flex align-items-center justify-content-between mb-4">
-        <div>
-          <h1 class="h4 mb-0" style="font-weight:600;">Viviendas</h1>
-          <div class="small text-muted">Residencial Miravalle · Fase II</div>
+      <div class="mx-auto" style="max-width: 56rem;">
+        <div class="kiwbi-breadcrumb mb-1">
+          <span>Residencial Miravalle</span>
+          <span>/</span>
+          <span>Viviendas</span>
+          <span>/</span>
+          <span class="current">Vivienda 1º A</span>
         </div>
-        <a href="vivienda-editar.html" class="btn btn-kiwbi-primary btn-sm d-flex align-items-center gap-1">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Nueva vivienda
-        </a>
-      </div>
+        <h1 class="h4 mb-1" style="font-weight:600;">Invitaciones · Vivienda 1º A</h1>
+        <p class="small text-muted mb-4">Invita a los compradores de esta vivienda para que accedan a su portal de personalización.</p>
 
-      <div class="row row-cols-2 row-cols-lg-4 g-3 mb-4">
-        <div class="col"><div class="kiwbi-kpi"><div class="kiwbi-kpi-label">Promociones activas</div><div class="kiwbi-kpi-value">6</div><div class="kiwbi-kpi-delta">+1 este mes</div></div></div>
-        <div class="col"><div class="kiwbi-kpi"><div class="kiwbi-kpi-label">Viviendas en curso</div><div class="kiwbi-kpi-value">184</div><div class="kiwbi-kpi-delta">72% asignadas</div></div></div>
-        <div class="col"><div class="kiwbi-kpi"><div class="kiwbi-kpi-label">Personalizaciones pendientes</div><div class="kiwbi-kpi-value">47</div><div class="kiwbi-kpi-delta">12 vencen esta semana</div></div></div>
-        <div class="col"><div class="kiwbi-kpi"><div class="kiwbi-kpi-label">Gremios coordinados</div><div class="kiwbi-kpi-value">9</div><div class="kiwbi-kpi-delta">2 con retraso</div></div></div>
-      </div>
-
-      <div class="kiwbi-table-card">
-        <div class="kiwbi-table-card-header">
-          <span class="title">Listado de viviendas</span>
-          <span class="count">184 resultados</span>
+        <div class="kiwbi-fieldset mb-3">
+          <div class="row g-2 align-items-end">
+            <div class="col-sm-9">
+              <label for="invite-email" class="form-label small fw-medium">Invitar comprador por email</label>
+              <input id="invite-email" type="email" class="form-control form-control-sm" placeholder="nombre@correo.com" />
+            </div>
+            <div class="col-sm-3">
+              <button type="button" class="btn btn-kiwbi-primary btn-sm w-100 d-flex align-items-center justify-content-center gap-1">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                Enviar invitación
+              </button>
+            </div>
+          </div>
         </div>
-        <table class="kiwbi-table">
-          <thead>
-            <tr>
-              <th>Vivienda</th>
-              <th>Comprador</th>
-              <th class="kiwbi-col-optional">Pendiente</th>
-              <th>Estado</th>
-              <th class="kiwbi-col-optional">Progreso</th>
-              <th>Límite</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td><div class="kiwbi-row-title">MV-A-2B</div><div class="kiwbi-row-detail">Bloque A · 2º B · 3 dorm.</div></td>
-              <td>Laura Giménez</td>
-              <td class="kiwbi-col-optional text-muted">Suelos, Grifería</td>
-              <td><span class="kiwbi-badge kiwbi-badge-info"><span class="kiwbi-dot"></span>En progreso</span></td>
-              <td class="kiwbi-col-optional"><span class="kiwbi-progress"><span style="width:60%"></span></span> <span class="small text-muted">60%</span></td>
-              <td>22 sep</td>
-            </tr>
-            <tr>
-              <td><div class="kiwbi-row-title">MV-A-3A</div><div class="kiwbi-row-detail">Bloque A · 3º A · 2 dorm.</div></td>
-              <td>Marc Ortí</td>
-              <td class="kiwbi-col-optional text-muted">—</td>
-              <td><span class="kiwbi-badge kiwbi-badge-success"><span class="kiwbi-dot"></span>Completada</span></td>
-              <td class="kiwbi-col-optional"><span class="kiwbi-progress"><span style="width:100%"></span></span> <span class="small text-muted">100%</span></td>
-              <td>15 sep</td>
-            </tr>
-            <tr>
-              <td><div class="kiwbi-row-title">MV-B-1C</div><div class="kiwbi-row-detail">Bloque B · 1º C · 4 dorm.</div></td>
-              <td>Familia Roig</td>
-              <td class="kiwbi-col-optional text-muted">Carpintería</td>
-              <td><span class="kiwbi-badge kiwbi-badge-danger"><span class="kiwbi-dot"></span>Vencida</span></td>
-              <td class="kiwbi-col-optional"><span class="kiwbi-progress"><span style="width:45%"></span></span> <span class="small text-muted">45%</span></td>
-              <td>19 sep</td>
-            </tr>
-            <tr>
-              <td><div class="kiwbi-row-title">PT-2-4D</div><div class="kiwbi-row-detail">Escalera 2 · 4º D · 3 dorm.</div></td>
-              <td>Nuria Campos</td>
-              <td class="kiwbi-col-optional text-muted">Todas</td>
-              <td><span class="kiwbi-badge kiwbi-badge-neutral"><span class="kiwbi-dot"></span>Sin iniciar</span></td>
-              <td class="kiwbi-col-optional"><span class="kiwbi-progress"><span style="width:0%"></span></span> <span class="small text-muted">0%</span></td>
-              <td>05 oct</td>
-            </tr>
-            <tr>
-              <td><div class="kiwbi-row-title">PT-1-BJ</div><div class="kiwbi-row-detail">Escalera 1 · Bajo · 2 dorm.</div></td>
-              <td>Sergio Belda</td>
-              <td class="kiwbi-col-optional text-muted">Alicatados</td>
-              <td><span class="kiwbi-badge kiwbi-badge-info"><span class="kiwbi-dot"></span>En progreso</span></td>
-              <td class="kiwbi-col-optional"><span class="kiwbi-progress"><span style="width:78%"></span></span> <span class="small text-muted">78%</span></td>
-              <td>30 sep</td>
-            </tr>
-          </tbody>
-        </table>
+
+        <div class="kiwbi-table-card mb-3">
+          <div class="kiwbi-table-card-header">
+            <span class="title">Invitaciones enviadas</span>
+            <span class="count">4</span>
+          </div>
+          <table class="kiwbi-table">
+            <thead>
+              <tr>
+                <th>Email</th>
+                <th>Estado</th>
+                <th>Caduca</th>
+                <th class="text-end">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="kiwbi-row-title">laura.marti@gmail.com</td>
+                <td><span class="kiwbi-badge kiwbi-badge-amber">Pendiente</span></td>
+                <td class="text-muted">27 sep 2026</td>
+                <td class="text-end">
+                  <button type="button" class="btn btn-sm btn-outline-secondary">Reenviar</button>
+                  <button type="button" class="btn btn-sm btn-outline-danger">Cancelar</button>
+                </td>
+              </tr>
+              <tr>
+                <td class="kiwbi-row-title">j.ferrer@outlook.com</td>
+                <td><span class="kiwbi-badge kiwbi-badge-amber">Pendiente</span></td>
+                <td class="text-muted">24 sep 2026</td>
+                <td class="text-end">
+                  <button type="button" class="btn btn-sm btn-outline-secondary">Reenviar</button>
+                  <button type="button" class="btn btn-sm btn-outline-danger">Cancelar</button>
+                </td>
+              </tr>
+              <tr>
+                <td class="kiwbi-row-title">antiguo.correo@gmail.com</td>
+                <td><span class="kiwbi-badge kiwbi-badge-neutral">Cancelada</span></td>
+                <td class="text-muted">10 sep 2026</td>
+                <td class="text-end"><span class="small text-muted">Sin acciones</span></td>
+              </tr>
+              <tr>
+                <td class="kiwbi-row-title">noelia.sanz@gmail.com</td>
+                <td><span class="kiwbi-badge kiwbi-badge-success">Aceptada</span></td>
+                <td class="text-muted">5 sep 2026</td>
+                <td class="text-end"><span class="small text-muted">Sin acciones</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="kiwbi-table-card">
+          <div class="kiwbi-table-card-header">
+            <span class="title">Compradores vinculados</span>
+            <span class="count">2</span>
+          </div>
+          <table class="kiwbi-table">
+            <thead>
+              <tr>
+                <th>Email</th>
+                <th>Aceptada</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="kiwbi-avatar" style="background:var(--kiwbi-accent);">N</span>
+                    <span class="kiwbi-row-title">noelia.sanz@gmail.com</span>
+                  </div>
+                </td>
+                <td class="text-muted">4 sep 2026 · 18:22</td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="kiwbi-avatar" style="background:var(--kiwbi-accent);">P</span>
+                    <span class="kiwbi-row-title">pareja.sanz.lopez@gmail.com</span>
+                  </div>
+                </td>
+                <td class="text-muted">4 sep 2026 · 18:40</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>

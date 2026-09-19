@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Kiwbi · PoC visual — Personalizaciones</title>
+<title>Kiwbi · PoC visual — Gremios</title>
 <link rel="stylesheet" href="../lib/bootstrap/dist/css/bootstrap.min.css" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -43,11 +43,11 @@
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
         <span class="kiwbi-nav-label">Viviendas</span>
       </a>
-      <a class="kiwbi-nav-item" href="gremios.html" title="Gremios">
+      <a class="kiwbi-nav-item active" href="gremios.html" title="Gremios">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 1.4 1.4l3-3a1 1 0 0 0-1.4-1.4l-3 3ZM3 21l7-7M7 21H3v-4l9.5-9.5a2.1 2.1 0 0 1 3 3L5 21Z"/></svg>
         <span class="kiwbi-nav-label">Gremios</span>
       </a>
-      <a class="kiwbi-nav-item active" href="personalizaciones.html" title="Personalizaciones">
+      <a class="kiwbi-nav-item" href="personalizaciones.html" title="Personalizaciones">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="9" cy="10" r="1"/><circle cx="14" cy="8" r="1"/><circle cx="15" cy="13" r="1"/></svg>
         <span class="kiwbi-nav-label">Personalizaciones</span>
       </a>
@@ -79,7 +79,7 @@
       </button>
       <div class="kiwbi-search">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        Buscar personalización, gremio…
+        Buscar gremio…
       </div>
       <button type="button" class="kiwbi-icon-btn">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
@@ -93,36 +93,33 @@
     </header>
 
     <div class="kiwbi-content">
-      <div class="kiwbi-breadcrumb"><span>Residencial Miravalle</span><span>/</span><span class="current">Personalizaciones</span></div>
-      <div class="d-flex flex-wrap align-items-end justify-content-between gap-3 mb-4">
+      <div class="d-flex flex-wrap align-items-end justify-content-between gap-3 mb-3">
         <div>
-          <h1 class="h4 mb-0" style="font-weight:600;">Personalizaciones</h1>
-          <div class="small text-muted">Opciones que tus compradores podrán elegir, agrupadas por gremio</div>
+          <div class="kiwbi-breadcrumb mb-1">
+            <span>Residencial Miravalle</span>
+            <span>/</span>
+            <span class="current">Gremios</span>
+          </div>
+          <h1 class="h4 mb-1" style="font-weight:600;">Gremios</h1>
+          <p class="small text-muted mb-0">Partidas de obra con fecha límite de selección. Al vencer, sus personalizaciones se bloquean para el comprador.</p>
         </div>
-        <div class="text-end">
-          <a href="personalizaciones-nueva.html" class="btn btn-kiwbi-primary btn-sm d-flex align-items-center gap-1">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Nueva personalización
-          </a>
-          <!-- Estado sin Gremios: sustituir el <a> de arriba por este botón deshabilitado + aviso.
-          <button type="button" class="btn btn-kiwbi-primary btn-sm" disabled>Nueva personalización</button>
-          <div class="small mt-1" style="color:#b45309;">Da de alta un gremio antes de crear personalizaciones</div>
-          -->
-        </div>
+        <a href="gremios-nuevo.html" class="btn btn-kiwbi-primary btn-sm d-flex align-items-center gap-1">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Nuevo gremio
+        </a>
       </div>
 
       <div class="kiwbi-table-card">
         <div class="kiwbi-table-card-header">
-          <span class="title">Todas las personalizaciones</span>
-          <span class="count">6 elementos</span>
+          <span class="title">Todos los gremios</span>
+          <span class="count">6 gremios</span>
         </div>
         <table class="kiwbi-table">
           <thead>
             <tr>
               <th>Nombre</th>
-              <th>Gremio</th>
-              <th class="text-end">Nº opciones</th>
-              <th class="kiwbi-col-optional">Se aplica a</th>
+              <th>Fecha límite de selección</th>
+              <th class="text-end d-none d-sm-table-cell">Personalizaciones</th>
               <th class="text-end">Acciones</th>
             </tr>
           </thead>
@@ -130,90 +127,114 @@
             <tr>
               <td>
                 <div class="d-flex align-items-center gap-2">
-                  <span class="kiwbi-row-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="9" cy="10" r="1"/><circle cx="14" cy="8" r="1"/><circle cx="15" cy="13" r="1"/></svg></span>
-                  <span class="kiwbi-row-title">Tipo de suelo</span>
+                  <span class="kiwbi-row-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 1.4 1.4l3-3a1 1 0 0 0-1.4-1.4l-3 3ZM3 21l7-7M7 21H3v-4l9.5-9.5a2.1 2.1 0 0 1 3 3L5 21Z"/></svg></span>
+                  <span class="kiwbi-row-title">Pavimentos</span>
                 </div>
               </td>
-              <td><span class="kiwbi-chip">Pavimentos</span></td>
-              <td class="text-end fw-medium">4</td>
-              <td class="kiwbi-col-optional text-muted">Toda la promoción</td>
+              <td>
+                <div class="d-flex flex-wrap align-items-center gap-2">
+                  <span class="text-muted small">25 oct 2026 · 14:00</span>
+                  <span class="kiwbi-badge kiwbi-badge-success">Abierto</span>
+                </div>
+              </td>
+              <td class="text-end d-none d-sm-table-cell">2</td>
               <td class="text-end">
-                <a href="personalizacion-detalle.html" class="btn btn-sm btn-outline-secondary">Detalle</a>
+                <a href="gremios-nuevo.html" class="btn btn-sm btn-outline-secondary">Editar</a>
                 <button type="button" class="btn btn-sm btn-outline-danger">Eliminar</button>
               </td>
             </tr>
             <tr>
               <td>
                 <div class="d-flex align-items-center gap-2">
-                  <span class="kiwbi-row-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="9" cy="10" r="1"/><circle cx="14" cy="8" r="1"/><circle cx="15" cy="13" r="1"/></svg></span>
-                  <span class="kiwbi-row-title">Grifería de baño</span>
+                  <span class="kiwbi-row-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 1.4 1.4l3-3a1 1 0 0 0-1.4-1.4l-3 3ZM3 21l7-7M7 21H3v-4l9.5-9.5a2.1 2.1 0 0 1 3 3L5 21Z"/></svg></span>
+                  <span class="kiwbi-row-title">Carpintería</span>
                 </div>
               </td>
-              <td><span class="kiwbi-chip">Fontanería</span></td>
-              <td class="text-end fw-medium">3</td>
-              <td class="kiwbi-col-optional text-muted">2 tipologías</td>
+              <td>
+                <div class="d-flex flex-wrap align-items-center gap-2">
+                  <span class="text-muted small">30 oct 2026 · 12:00</span>
+                  <span class="kiwbi-badge kiwbi-badge-success">Abierto</span>
+                </div>
+              </td>
+              <td class="text-end d-none d-sm-table-cell">3</td>
               <td class="text-end">
-                <a href="personalizacion-detalle.html" class="btn btn-sm btn-outline-secondary">Detalle</a>
+                <a href="gremios-nuevo.html" class="btn btn-sm btn-outline-secondary">Editar</a>
                 <button type="button" class="btn btn-sm btn-outline-danger">Eliminar</button>
               </td>
             </tr>
             <tr>
               <td>
                 <div class="d-flex align-items-center gap-2">
-                  <span class="kiwbi-row-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="9" cy="10" r="1"/><circle cx="14" cy="8" r="1"/><circle cx="15" cy="13" r="1"/></svg></span>
-                  <span class="kiwbi-row-title">Puertas de paso</span>
+                  <span class="kiwbi-row-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 1.4 1.4l3-3a1 1 0 0 0-1.4-1.4l-3 3ZM3 21l7-7M7 21H3v-4l9.5-9.5a2.1 2.1 0 0 1 3 3L5 21Z"/></svg></span>
+                  <span class="kiwbi-row-title">Cocina</span>
                 </div>
               </td>
-              <td><span class="kiwbi-chip">Carpintería</span></td>
-              <td class="text-end fw-medium">3</td>
-              <td class="kiwbi-col-optional text-muted">Toda la promoción</td>
+              <td>
+                <div class="d-flex flex-wrap align-items-center gap-2">
+                  <span class="text-muted small">5 nov 2026 · 18:00</span>
+                  <span class="kiwbi-badge kiwbi-badge-success">Abierto</span>
+                </div>
+              </td>
+              <td class="text-end d-none d-sm-table-cell">1</td>
               <td class="text-end">
-                <a href="personalizacion-detalle.html" class="btn btn-sm btn-outline-secondary">Detalle</a>
+                <a href="gremios-nuevo.html" class="btn btn-sm btn-outline-secondary">Editar</a>
                 <button type="button" class="btn btn-sm btn-outline-danger">Eliminar</button>
               </td>
             </tr>
             <tr>
               <td>
                 <div class="d-flex align-items-center gap-2">
-                  <span class="kiwbi-row-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="9" cy="10" r="1"/><circle cx="14" cy="8" r="1"/><circle cx="15" cy="13" r="1"/></svg></span>
-                  <span class="kiwbi-row-title">Frentes de armario</span>
+                  <span class="kiwbi-row-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 1.4 1.4l3-3a1 1 0 0 0-1.4-1.4l-3 3ZM3 21l7-7M7 21H3v-4l9.5-9.5a2.1 2.1 0 0 1 3 3L5 21Z"/></svg></span>
+                  <span class="kiwbi-row-title">Fontanería</span>
                 </div>
               </td>
-              <td><span class="kiwbi-chip">Carpintería</span></td>
-              <td class="text-end fw-medium">5</td>
-              <td class="kiwbi-col-optional text-muted">3 viviendas</td>
+              <td>
+                <div class="d-flex flex-wrap align-items-center gap-2">
+                  <span class="text-muted small">15 sep 2026 · 10:00</span>
+                  <span class="kiwbi-badge kiwbi-badge-danger">Vencido</span>
+                </div>
+              </td>
+              <td class="text-end d-none d-sm-table-cell">1</td>
               <td class="text-end">
-                <a href="personalizacion-detalle.html" class="btn btn-sm btn-outline-secondary">Detalle</a>
+                <a href="gremios-nuevo.html" class="btn btn-sm btn-outline-secondary">Editar</a>
                 <button type="button" class="btn btn-sm btn-outline-danger">Eliminar</button>
               </td>
             </tr>
             <tr>
               <td>
                 <div class="d-flex align-items-center gap-2">
-                  <span class="kiwbi-row-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="9" cy="10" r="1"/><circle cx="14" cy="8" r="1"/><circle cx="15" cy="13" r="1"/></svg></span>
-                  <span class="kiwbi-row-title">Puntos de luz extra</span>
+                  <span class="kiwbi-row-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 1.4 1.4l3-3a1 1 0 0 0-1.4-1.4l-3 3ZM3 21l7-7M7 21H3v-4l9.5-9.5a2.1 2.1 0 0 1 3 3L5 21Z"/></svg></span>
+                  <span class="kiwbi-row-title">Alicatados</span>
                 </div>
               </td>
-              <td><span class="kiwbi-chip">Electricidad</span></td>
-              <td class="text-end fw-medium">2</td>
-              <td class="kiwbi-col-optional text-muted">Toda la promoción</td>
+              <td>
+                <div class="d-flex flex-wrap align-items-center gap-2">
+                  <span class="text-muted small">12 sep 2026 · 09:00</span>
+                  <span class="kiwbi-badge kiwbi-badge-danger">Vencido</span>
+                </div>
+              </td>
+              <td class="text-end d-none d-sm-table-cell">2</td>
               <td class="text-end">
-                <a href="personalizacion-detalle.html" class="btn btn-sm btn-outline-secondary">Detalle</a>
+                <a href="gremios-nuevo.html" class="btn btn-sm btn-outline-secondary">Editar</a>
                 <button type="button" class="btn btn-sm btn-outline-danger">Eliminar</button>
               </td>
             </tr>
             <tr>
               <td>
                 <div class="d-flex align-items-center gap-2">
-                  <span class="kiwbi-row-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="9" cy="10" r="1"/><circle cx="14" cy="8" r="1"/><circle cx="15" cy="13" r="1"/></svg></span>
-                  <span class="kiwbi-row-title">Encimera de cocina</span>
+                  <span class="kiwbi-row-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 1.4 1.4l3-3a1 1 0 0 0-1.4-1.4l-3 3ZM3 21l7-7M7 21H3v-4l9.5-9.5a2.1 2.1 0 0 1 3 3L5 21Z"/></svg></span>
+                  <span class="kiwbi-row-title">Electricidad</span>
                 </div>
               </td>
-              <td><span class="kiwbi-chip">Cocina</span></td>
-              <td class="text-end fw-medium">4</td>
-              <td class="kiwbi-col-optional text-muted">Toda la promoción</td>
+              <td>
+                <div class="d-flex flex-wrap align-items-center gap-2">
+                  <span class="text-muted small">20 nov 2026 · 17:30</span>
+                  <span class="kiwbi-badge kiwbi-badge-success">Abierto</span>
+                </div>
+              </td>
+              <td class="text-end d-none d-sm-table-cell">1</td>
               <td class="text-end">
-                <a href="personalizacion-detalle.html" class="btn btn-sm btn-outline-secondary">Detalle</a>
+                <a href="gremios-nuevo.html" class="btn btn-sm btn-outline-secondary">Editar</a>
                 <button type="button" class="btn btn-sm btn-outline-danger">Eliminar</button>
               </td>
             </tr>

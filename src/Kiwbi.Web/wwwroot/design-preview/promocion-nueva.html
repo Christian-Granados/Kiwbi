@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kiwbi · PoC visual — Nueva promoción</title>
+<link rel="stylesheet" href="../lib/bootstrap/dist/css/bootstrap.min.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="kiwbi-preview.css" />
+</head>
+<body>
+
+<div class="kiwbi-shell">
+  <aside class="kiwbi-sidebar" id="kiwbiSidebar">
+    <div class="kiwbi-brand">
+      <span class="kiwbi-mark" id="kiwbiMark">H</span>
+      <div class="kiwbi-brand-text">
+        <div class="kiwbi-brand-name" id="kiwbiTenantName">Hábitat Verde</div>
+        <div class="kiwbi-brand-sub">vía Kiwbi</div>
+      </div>
+    </div>
+
+    <!-- Sidebar GLOBAL (Ronda 3): la alta de Promoción se dispara desde el listado global. -->
+    <nav class="kiwbi-nav">
+      <a class="kiwbi-nav-item active" href="dashboard-promotora.html" title="Panel">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+        <span class="kiwbi-nav-label">Panel</span>
+      </a>
+      <a class="kiwbi-nav-item" href="mi-promotora.html" title="Mi promotora">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M6 21V7l6-4 6 4v14M10 21v-6h4v6"/></svg>
+        <span class="kiwbi-nav-label">Mi promotora</span>
+      </a>
+      <a class="kiwbi-nav-item" href="#" title="Ajustes">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z"/></svg>
+        <span class="kiwbi-nav-label">Ajustes</span>
+      </a>
+    </nav>
+
+    <div class="kiwbi-sidebar-footer">
+      <div class="kiwbi-plan-widget">
+        <strong>Plan Promotora</strong>
+        184 de 250 viviendas
+      </div>
+    </div>
+
+    <div class="kiwbi-tenant-switcher" title="Cambiar color de marca del tenant (demo)">
+      <button type="button" class="kiwbi-swatch" style="background:#2f7d5b" data-name="Hábitat Verde" data-initial="H" data-accent="#2f7d5b" data-accent2="#1c5540"></button>
+      <button type="button" class="kiwbi-swatch" style="background:#2563a8" data-name="Nova Residencial" data-initial="N" data-accent="#2563a8" data-accent2="#173f6b"></button>
+      <button type="button" class="kiwbi-swatch" style="background:#c05621" data-name="Terracota Homes" data-initial="T" data-accent="#c05621" data-accent2="#8a3d17"></button>
+      <button type="button" class="kiwbi-swatch" style="background:#5b4bc4" data-name="Duomo Living" data-initial="D" data-accent="#5b4bc4" data-accent2="#3b2f8a"></button>
+    </div>
+  </aside>
+
+  <div class="kiwbi-main">
+    <header class="kiwbi-topbar">
+      <button type="button" class="kiwbi-collapse-btn" id="kiwbiCollapseBtn" title="Contraer/expandir menú">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <div class="kiwbi-search">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        Buscar promoción, vivienda…
+      </div>
+      <button type="button" class="kiwbi-icon-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+        <span class="dot"></span>
+      </button>
+      <div class="kiwbi-avatar-chip">
+        <span class="kiwbi-avatar">CG</span>
+        <span class="kiwbi-avatar-name d-none d-sm-inline">Carmen G.</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+    </header>
+
+    <div class="kiwbi-content">
+      <div class="mx-auto" style="max-width: 40rem;">
+        <a href="dashboard-promotora.html" class="d-inline-flex align-items-center gap-1 small text-muted text-decoration-none mb-2">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+          Volver a Promociones
+        </a>
+        <h1 class="h4 mb-1" style="font-weight:600;">Nueva promoción</h1>
+        <p class="small text-muted mb-4">Al editar una promoción existente este mismo formulario se abre dentro de ella (sidebar contextual con «Resumen» activo).</p>
+
+        <form class="d-flex flex-column gap-3">
+          <div class="kiwbi-fieldset">
+            <div class="kiwbi-legend">Datos de la promoción</div>
+            <div class="row g-3">
+              <div class="col-12">
+                <label for="p-nombre" class="form-label small fw-medium">Nombre</label>
+                <div class="input-group input-group-sm">
+                  <span class="input-group-text"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M6 21V7l6-4 6 4v14M10 21v-6h4v6"/></svg></span>
+                  <input id="p-nombre" type="text" class="form-control" placeholder="p. ej. Residencial Miravalle" />
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <label for="p-ciudad" class="form-label small fw-medium">Ciudad</label>
+                <input id="p-ciudad" type="text" class="form-control form-control-sm" placeholder="p. ej. Valencia" />
+              </div>
+              <div class="col-sm-6">
+                <label for="p-dir" class="form-label small fw-medium">Dirección</label>
+                <div class="input-group input-group-sm">
+                  <span class="input-group-text"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-6.5-7-11.5A7 7 0 0 1 19 9.5C19 14.5 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/></svg></span>
+                  <input id="p-dir" type="text" class="form-control" placeholder="Av. de Aragón 112 · Fase II" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="kiwbi-fieldset">
+            <div class="kiwbi-legend">Plano general</div>
+            <label for="plano-general-upload" class="kiwbi-dropzone" style="padding:2rem 1rem;">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>
+              <strong>Arrastra el plano o haz clic para subirlo</strong>
+              <span class="small">PNG o JPG · máx. 8 MB</span>
+              <input id="plano-general-upload" type="file" accept="image/*" class="visually-hidden" />
+            </label>
+            <p class="small text-muted mb-0 mt-2" style="font-size:.7rem;">Opcional. Podrás actualizarlo más adelante desde el hub de la promoción.</p>
+          </div>
+
+          <div class="d-flex justify-content-end gap-2 pb-2">
+            <a href="dashboard-promotora.html" class="btn btn-sm btn-outline-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-kiwbi-primary btn-sm d-flex align-items-center gap-1">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+              Crear promoción
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="kiwbi-preview.js"></script>
+</body>
+</html>

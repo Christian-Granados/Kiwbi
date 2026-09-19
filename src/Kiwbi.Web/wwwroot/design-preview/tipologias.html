@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Kiwbi · PoC visual — Viviendas</title>
+<title>Kiwbi · PoC visual — Tipologías</title>
 <link rel="stylesheet" href="../lib/bootstrap/dist/css/bootstrap.min.css" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -12,7 +12,6 @@
 <body>
 
 <div class="kiwbi-shell">
-  <!-- Sidebar: expandido = Operativo · Sidebar denso; colapsado (icon-rail) = Blueprint · Técnico -->
   <aside class="kiwbi-sidebar" id="kiwbiSidebar">
     <div class="kiwbi-brand">
       <span class="kiwbi-mark" id="kiwbiMark">H</span>
@@ -36,11 +35,11 @@
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
         <span class="kiwbi-nav-label">Resumen</span>
       </a>
-      <a class="kiwbi-nav-item" href="tipologias.html" title="Tipologías">
+      <a class="kiwbi-nav-item active" href="tipologias.html" title="Tipologías">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
         <span class="kiwbi-nav-label">Tipologías</span>
       </a>
-      <a class="kiwbi-nav-item active" href="viviendas.html" title="Viviendas">
+      <a class="kiwbi-nav-item" href="viviendas.html" title="Viviendas">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
         <span class="kiwbi-nav-label">Viviendas</span>
       </a>
@@ -80,7 +79,7 @@
       </button>
       <div class="kiwbi-search">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        Buscar vivienda, comprador…
+        Buscar tipología…
       </div>
       <button type="button" class="kiwbi-icon-btn">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
@@ -94,81 +93,100 @@
     </header>
 
     <div class="kiwbi-content">
-      <div class="kiwbi-breadcrumb"><span>Residencial Miravalle</span><span>/</span><span class="current">Viviendas</span></div>
-      <div class="d-flex align-items-center justify-content-between mb-4">
+      <div class="d-flex flex-wrap align-items-end justify-content-between gap-3 mb-3">
         <div>
-          <h1 class="h4 mb-0" style="font-weight:600;">Viviendas</h1>
-          <div class="small text-muted">Residencial Miravalle · Fase II</div>
+          <div class="kiwbi-breadcrumb mb-1">
+            <span>Residencial Miravalle</span>
+            <span>/</span>
+            <span class="current">Tipologías</span>
+          </div>
+          <h1 class="h4 mb-1" style="font-weight:600;">Tipologías</h1>
+          <p class="small text-muted mb-0">Etiquetas que las viviendas pueden compartir para asignar personalizaciones por tipología en lugar de una a una.</p>
         </div>
-        <a href="vivienda-editar.html" class="btn btn-kiwbi-primary btn-sm d-flex align-items-center gap-1">
+        <a href="tipologias-nueva.html" class="btn btn-kiwbi-primary btn-sm d-flex align-items-center gap-1">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Nueva vivienda
+          Nueva tipología
         </a>
-      </div>
-
-      <div class="row row-cols-2 row-cols-lg-4 g-3 mb-4">
-        <div class="col"><div class="kiwbi-kpi"><div class="kiwbi-kpi-label">Promociones activas</div><div class="kiwbi-kpi-value">6</div><div class="kiwbi-kpi-delta">+1 este mes</div></div></div>
-        <div class="col"><div class="kiwbi-kpi"><div class="kiwbi-kpi-label">Viviendas en curso</div><div class="kiwbi-kpi-value">184</div><div class="kiwbi-kpi-delta">72% asignadas</div></div></div>
-        <div class="col"><div class="kiwbi-kpi"><div class="kiwbi-kpi-label">Personalizaciones pendientes</div><div class="kiwbi-kpi-value">47</div><div class="kiwbi-kpi-delta">12 vencen esta semana</div></div></div>
-        <div class="col"><div class="kiwbi-kpi"><div class="kiwbi-kpi-label">Gremios coordinados</div><div class="kiwbi-kpi-value">9</div><div class="kiwbi-kpi-delta">2 con retraso</div></div></div>
       </div>
 
       <div class="kiwbi-table-card">
         <div class="kiwbi-table-card-header">
-          <span class="title">Listado de viviendas</span>
-          <span class="count">184 resultados</span>
+          <span class="title">Todas las tipologías</span>
+          <span class="count">5 tipologías</span>
         </div>
         <table class="kiwbi-table">
           <thead>
             <tr>
-              <th>Vivienda</th>
-              <th>Comprador</th>
-              <th class="kiwbi-col-optional">Pendiente</th>
-              <th>Estado</th>
-              <th class="kiwbi-col-optional">Progreso</th>
-              <th>Límite</th>
+              <th>Nombre</th>
+              <th class="text-end">Viviendas</th>
+              <th class="text-end">Acciones</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td><div class="kiwbi-row-title">MV-A-2B</div><div class="kiwbi-row-detail">Bloque A · 2º B · 3 dorm.</div></td>
-              <td>Laura Giménez</td>
-              <td class="kiwbi-col-optional text-muted">Suelos, Grifería</td>
-              <td><span class="kiwbi-badge kiwbi-badge-info"><span class="kiwbi-dot"></span>En progreso</span></td>
-              <td class="kiwbi-col-optional"><span class="kiwbi-progress"><span style="width:60%"></span></span> <span class="small text-muted">60%</span></td>
-              <td>22 sep</td>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <span class="kiwbi-row-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></span>
+                  <span class="kiwbi-row-title">2 dorm. · Tipo A</span>
+                </div>
+              </td>
+              <td class="text-end">12</td>
+              <td class="text-end">
+                <a href="tipologias-nueva.html" class="btn btn-sm btn-outline-secondary">Editar</a>
+                <button type="button" class="btn btn-sm btn-outline-danger">Eliminar</button>
+              </td>
             </tr>
             <tr>
-              <td><div class="kiwbi-row-title">MV-A-3A</div><div class="kiwbi-row-detail">Bloque A · 3º A · 2 dorm.</div></td>
-              <td>Marc Ortí</td>
-              <td class="kiwbi-col-optional text-muted">—</td>
-              <td><span class="kiwbi-badge kiwbi-badge-success"><span class="kiwbi-dot"></span>Completada</span></td>
-              <td class="kiwbi-col-optional"><span class="kiwbi-progress"><span style="width:100%"></span></span> <span class="small text-muted">100%</span></td>
-              <td>15 sep</td>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <span class="kiwbi-row-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></span>
+                  <span class="kiwbi-row-title">2 dorm. · Tipo B</span>
+                </div>
+              </td>
+              <td class="text-end">8</td>
+              <td class="text-end">
+                <a href="tipologias-nueva.html" class="btn btn-sm btn-outline-secondary">Editar</a>
+                <button type="button" class="btn btn-sm btn-outline-danger">Eliminar</button>
+              </td>
             </tr>
             <tr>
-              <td><div class="kiwbi-row-title">MV-B-1C</div><div class="kiwbi-row-detail">Bloque B · 1º C · 4 dorm.</div></td>
-              <td>Familia Roig</td>
-              <td class="kiwbi-col-optional text-muted">Carpintería</td>
-              <td><span class="kiwbi-badge kiwbi-badge-danger"><span class="kiwbi-dot"></span>Vencida</span></td>
-              <td class="kiwbi-col-optional"><span class="kiwbi-progress"><span style="width:45%"></span></span> <span class="small text-muted">45%</span></td>
-              <td>19 sep</td>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <span class="kiwbi-row-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></span>
+                  <span class="kiwbi-row-title">3 dorm. · Tipo C</span>
+                </div>
+              </td>
+              <td class="text-end">18</td>
+              <td class="text-end">
+                <a href="tipologias-nueva.html" class="btn btn-sm btn-outline-secondary">Editar</a>
+                <button type="button" class="btn btn-sm btn-outline-danger">Eliminar</button>
+              </td>
             </tr>
             <tr>
-              <td><div class="kiwbi-row-title">PT-2-4D</div><div class="kiwbi-row-detail">Escalera 2 · 4º D · 3 dorm.</div></td>
-              <td>Nuria Campos</td>
-              <td class="kiwbi-col-optional text-muted">Todas</td>
-              <td><span class="kiwbi-badge kiwbi-badge-neutral"><span class="kiwbi-dot"></span>Sin iniciar</span></td>
-              <td class="kiwbi-col-optional"><span class="kiwbi-progress"><span style="width:0%"></span></span> <span class="small text-muted">0%</span></td>
-              <td>05 oct</td>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <span class="kiwbi-row-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></span>
+                  <span class="kiwbi-row-title">4 dorm. · Ático</span>
+                </div>
+              </td>
+              <td class="text-end">6</td>
+              <td class="text-end">
+                <a href="tipologias-nueva.html" class="btn btn-sm btn-outline-secondary">Editar</a>
+                <button type="button" class="btn btn-sm btn-outline-danger">Eliminar</button>
+              </td>
             </tr>
             <tr>
-              <td><div class="kiwbi-row-title">PT-1-BJ</div><div class="kiwbi-row-detail">Escalera 1 · Bajo · 2 dorm.</div></td>
-              <td>Sergio Belda</td>
-              <td class="kiwbi-col-optional text-muted">Alicatados</td>
-              <td><span class="kiwbi-badge kiwbi-badge-info"><span class="kiwbi-dot"></span>En progreso</span></td>
-              <td class="kiwbi-col-optional"><span class="kiwbi-progress"><span style="width:78%"></span></span> <span class="small text-muted">78%</span></td>
-              <td>30 sep</td>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <span class="kiwbi-row-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg></span>
+                  <span class="kiwbi-row-title">Bajo con jardín</span>
+                </div>
+              </td>
+              <td class="text-end">4</td>
+              <td class="text-end">
+                <a href="tipologias-nueva.html" class="btn btn-sm btn-outline-secondary">Editar</a>
+                <button type="button" class="btn btn-sm btn-outline-danger">Eliminar</button>
+              </td>
             </tr>
           </tbody>
         </table>

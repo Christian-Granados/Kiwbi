@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Kiwbi · PoC visual — Nueva personalización</title>
+<title>Kiwbi · PoC visual — Editar vivienda</title>
 <link rel="stylesheet" href="../lib/bootstrap/dist/css/bootstrap.min.css" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -21,7 +21,6 @@
       </div>
     </div>
 
-    <!-- Sidebar CONTEXTUAL (Ronda 3): dentro de una Promoción concreta. -->
     <a class="kiwbi-context-indicator" href="dashboard-promotora.html">
       <span class="label">Estás dentro de</span>
       <span class="name">
@@ -39,7 +38,7 @@
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
         <span class="kiwbi-nav-label">Tipologías</span>
       </a>
-      <a class="kiwbi-nav-item" href="viviendas.html" title="Viviendas">
+      <a class="kiwbi-nav-item active" href="viviendas.html" title="Viviendas">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
         <span class="kiwbi-nav-label">Viviendas</span>
       </a>
@@ -47,7 +46,7 @@
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 1.4 1.4l3-3a1 1 0 0 0-1.4-1.4l-3 3ZM3 21l7-7M7 21H3v-4l9.5-9.5a2.1 2.1 0 0 1 3 3L5 21Z"/></svg>
         <span class="kiwbi-nav-label">Gremios</span>
       </a>
-      <a class="kiwbi-nav-item active" href="personalizaciones.html" title="Personalizaciones">
+      <a class="kiwbi-nav-item" href="personalizaciones.html" title="Personalizaciones">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="9" cy="10" r="1"/><circle cx="14" cy="8" r="1"/><circle cx="15" cy="13" r="1"/></svg>
         <span class="kiwbi-nav-label">Personalizaciones</span>
       </a>
@@ -79,7 +78,7 @@
       </button>
       <div class="kiwbi-search">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        Buscar personalización, gremio…
+        Buscar vivienda…
       </div>
       <button type="button" class="kiwbi-icon-btn">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
@@ -92,110 +91,100 @@
       </div>
     </header>
 
+    <div class="kiwbi-seg-tabs">
+      <a class="kiwbi-seg-tab active" href="vivienda-editar.html">Alta / Edición</a>
+      <a class="kiwbi-seg-tab" href="vivienda-invitaciones.html">Invitaciones</a>
+    </div>
+
     <div class="kiwbi-content">
-      <div class="mx-auto" style="max-width: 42rem;">
-        <a href="personalizaciones.html" class="d-inline-flex align-items-center gap-1 small text-muted text-decoration-none mb-2">
+      <div class="mx-auto" style="max-width: 48rem;">
+        <a href="viviendas.html" class="d-inline-flex align-items-center gap-1 small text-muted text-decoration-none mb-2">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
-          Volver al listado
+          Volver a Viviendas
         </a>
-        <h1 class="h4 mb-1" style="font-weight:600;">Nueva personalización</h1>
-        <p class="small text-muted mb-4">Define la personalización, su opción por defecto y a qué viviendas se aplica</p>
+        <div class="d-flex flex-wrap align-items-center gap-2">
+          <h1 class="h4 mb-0" style="font-weight:600;">Editar vivienda · 1º A</h1>
+          <span class="kiwbi-badge kiwbi-badge-amber">Reservada <span class="opacity-75 fw-normal">· solo lectura</span></span>
+        </div>
+        <p class="small text-muted mb-4">El estado comercial se gestiona desde una acción aparte, no en este formulario.</p>
 
         <form class="d-flex flex-column gap-3">
-          <!-- Sección 1: datos generales -->
           <div class="kiwbi-fieldset">
-            <div class="kiwbi-legend">Datos generales</div>
+            <div class="kiwbi-legend">Ubicación</div>
             <div class="row g-3">
-              <div class="col-sm-6">
-                <label for="gremio" class="form-label small fw-medium">Gremio</label>
-                <select id="gremio" class="form-select form-select-sm">
-                  <option value="" selected disabled>Selecciona un gremio…</option>
-                  <option>Pavimentos</option>
-                  <option>Fontanería</option>
-                  <option>Carpintería</option>
-                  <option>Electricidad</option>
-                  <option>Alicatados</option>
-                  <option>Cocina</option>
+              <div class="col-sm-4">
+                <label for="planta" class="form-label small fw-medium">Planta <span class="text-danger">*</span></label>
+                <input id="planta" type="text" class="form-control form-control-sm" value="1ª" placeholder="p. ej. 1ª" />
+              </div>
+              <div class="col-sm-4">
+                <label for="puerta" class="form-label small fw-medium">Puerta <span class="text-danger">*</span></label>
+                <input id="puerta" type="text" class="form-control form-control-sm" value="A" placeholder="p. ej. A" />
+              </div>
+              <div class="col-sm-4">
+                <label for="tipologia" class="form-label small fw-medium d-flex justify-content-between">Tipología <span class="text-muted fw-normal small">Opcional</span></label>
+                <select id="tipologia" class="form-select form-select-sm">
+                  <option value="">Sin tipología asignada</option>
+                  <option>2 dorm. · Tipo A</option>
+                  <option>2 dorm. · Tipo B</option>
+                  <option selected>3 dorm. · Tipo C</option>
+                  <option>4 dorm. · Ático</option>
+                  <option>Bajo con jardín</option>
                 </select>
               </div>
-              <div class="col-sm-6">
-                <label for="nombre" class="form-label small fw-medium">Nombre de la personalización</label>
-                <input id="nombre" type="text" class="form-control form-control-sm" placeholder="p. ej. Tipo de suelo" />
-              </div>
             </div>
           </div>
 
-          <!-- Sección 2: opción por defecto (visualmente diferenciada) -->
-          <div class="kiwbi-fieldset kiwbi-fieldset-accent">
-            <div class="kiwbi-legend kiwbi-legend-accent">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-              Opción por defecto
-            </div>
-            <p class="small text-muted mb-3">Es la opción incluida sin sobrecoste que verá el comprador por defecto.</p>
+          <div class="kiwbi-fieldset">
+            <div class="kiwbi-legend">Superficies</div>
             <div class="row g-3">
               <div class="col-sm-6">
-                <label for="opcion-nombre" class="form-label small fw-medium">Nombre de la opción</label>
-                <input id="opcion-nombre" type="text" class="form-control form-control-sm" placeholder="p. ej. Roble natural" />
+                <label for="construida" class="form-label small fw-medium">Superficie construida <span class="text-danger">*</span></label>
+                <div class="input-group input-group-sm">
+                  <input id="construida" type="number" min="0" class="form-control" value="96" />
+                  <span class="input-group-text">m²</span>
+                </div>
               </div>
               <div class="col-sm-6">
-                <label for="opcion-coste" class="form-label small fw-medium">Sobrecoste</label>
+                <label for="util" class="form-label small fw-medium d-flex justify-content-between">Superficie útil <span class="text-muted fw-normal small">Opcional</span></label>
                 <div class="input-group input-group-sm">
-                  <span class="input-group-text">€</span>
-                  <input id="opcion-coste" type="number" min="0" value="0" class="form-control" />
+                  <input id="util" type="number" min="0" class="form-control" value="81" />
+                  <span class="input-group-text">m²</span>
                 </div>
-                <div class="form-text">0 € para la opción incluida por defecto</div>
+                <p class="small text-danger mb-0 mt-1 d-none" id="utilError">No puede superar la construida</p>
               </div>
             </div>
           </div>
 
-          <!-- Sección 3: alcance -->
           <div class="kiwbi-fieldset">
-            <div class="kiwbi-legend">Se aplica a</div>
-            <div class="row row-cols-1 row-cols-sm-3 g-2">
-              <div class="col">
-                <button type="button" class="kiwbi-scope-option active" data-scope="promocion">
-                  <span><span class="kiwbi-scope-radio"></span>Toda la promoción</span>
-                  <span class="kiwbi-scope-hint">Todas las viviendas</span>
+            <div class="kiwbi-legend">Plano de la vivienda</div>
+            <div class="row g-3 align-items-start">
+              <div class="col-sm-5">
+                <div class="kiwbi-plano-preview">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/></svg>
+                  <span class="small">Plano actual (demo)</span>
+                </div>
+              </div>
+              <div class="col-sm-7 d-flex flex-column gap-2">
+                <label class="kiwbi-dropzone" for="plano-upload">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 14.9A5 5 0 0 1 6 5.3a6.5 6.5 0 0 1 12.6 2A4.5 4.5 0 0 1 18 16H7a3 3 0 0 1-3-3Z"/><path d="M12 12v6M9 15l3-3 3 3"/></svg>
+                  <strong>Arrastra una imagen o haz clic para subir</strong>
+                  <span class="small">PNG o JPG · hasta 5 MB</span>
+                  <input id="plano-upload" type="file" accept="image/png,image/jpeg" class="visually-hidden" />
+                </label>
+                <button type="button" class="btn btn-sm btn-outline-danger align-self-start d-flex align-items-center gap-1">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+                  Quitar plano actual
                 </button>
-              </div>
-              <div class="col">
-                <button type="button" class="kiwbi-scope-option" data-scope="tipologia">
-                  <span><span class="kiwbi-scope-radio"></span>Tipología</span>
-                  <span class="kiwbi-scope-hint">Por tipo de vivienda</span>
-                </button>
-              </div>
-              <div class="col">
-                <button type="button" class="kiwbi-scope-option" data-scope="vivienda">
-                  <span><span class="kiwbi-scope-radio"></span>Vivienda</span>
-                  <span class="kiwbi-scope-hint">Viviendas concretas</span>
-                </button>
-              </div>
-            </div>
-
-            <div data-scope-panel="tipologia" hidden class="mt-3 p-3 rounded-3" style="background:var(--kiwbi-bg); border:1px solid var(--kiwbi-border);">
-              <label class="form-label small fw-medium">Selecciona las tipologías</label>
-              <div class="d-flex flex-wrap gap-2">
-                <button type="button" class="kiwbi-pill">2 dorm. · Tipo A</button>
-                <button type="button" class="kiwbi-pill">2 dorm. · Tipo B</button>
-                <button type="button" class="kiwbi-pill">3 dorm. · Tipo C</button>
-                <button type="button" class="kiwbi-pill">4 dorm. · Ático</button>
-              </div>
-            </div>
-            <div data-scope-panel="vivienda" hidden class="mt-3 p-3 rounded-3" style="background:var(--kiwbi-bg); border:1px solid var(--kiwbi-border);">
-              <label class="form-label small fw-medium">Selecciona las viviendas</label>
-              <div class="d-flex flex-wrap gap-2">
-                <button type="button" class="kiwbi-pill">MV-A-2B</button>
-                <button type="button" class="kiwbi-pill">MV-A-3A</button>
-                <button type="button" class="kiwbi-pill">MV-B-1C</button>
-                <button type="button" class="kiwbi-pill">PT-2-4D</button>
-                <button type="button" class="kiwbi-pill">PT-1-BJ</button>
               </div>
             </div>
           </div>
 
           <div class="d-flex justify-content-end gap-2 pb-2">
-            <a href="personalizaciones.html" class="btn btn-sm btn-outline-secondary">Cancelar</a>
-            <button type="submit" class="btn btn-kiwbi-primary btn-sm">Guardar personalización</button>
+            <a href="viviendas.html" class="btn btn-sm btn-outline-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-kiwbi-primary btn-sm d-flex align-items-center gap-1">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+              Guardar cambios
+            </button>
           </div>
         </form>
       </div>
