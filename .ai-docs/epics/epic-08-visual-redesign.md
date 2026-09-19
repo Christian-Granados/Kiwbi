@@ -118,7 +118,16 @@ Esto resuelve de facto la "Selección del enfoque de implementación" (más abaj
 - [x] Redactar los briefs del resto del subconjunto priorizado de pantallas (ver "Ronda 2 (pantallas priorizadas) — briefs" más abajo): Brief A (Dashboard Promotora), Brief B (CRUD de Personalizaciones), Brief C (Portal del Comprador).
 - [x] Usuario genera los mockups de Brief A/B/C en v0.dev (mismo proyecto/hilo, un solo mockup coherente por pantalla) y comparte la carpeta descargada.
 - [x] IA revisa Brief A/B/C, traduce las 5 pantallas a Bootstrap 5 real bajo `wwwroot/design-preview/`, y documenta la dirección final por pantalla (ver "Ronda 2 (pantallas priorizadas) — resultado" más abajo).
-- [ ] Revisión conjunta usuario + IA de las 5 pantallas ya traducidas (Viviendas, Dashboard Promotora, Personalizaciones listado + alta, Buyer Index + Detalle de Vivienda) para confirmar que el resultado es el esperado antes de decidir si hacen falta más diseños o se cierra la Feature 8.1.
+- [x] Revisión conjunta usuario + IA de las 5 pantallas ya traducidas: se detecta un problema de arquitectura de navegación (ver "Ronda 3" más abajo) — no se cierra la Feature 8.1 todavía, sigue habiendo pantallas pendientes de diseñar.
+- [x] Decidir y documentar el modelo de navegación en dos niveles (global vs. contextual de Promoción) y eliminar "Compradores" del nav.
+- [x] Brief de sincronización: usuario lo pasa a v0.dev sobre el mismo proyecto/hilo para retrofitar las 5 pantallas ya generadas al nuevo modelo de dos niveles, antes de pedir pantallas nuevas.
+- [x] IA revisa el resultado de la sincronización y actualiza los 5 ficheros de `wwwroot/design-preview/` ya existentes.
+- [ ] Usuario genera **Brief D — Resumen/Hub de Promoción** en v0.dev y comparte la carpeta descargada.
+- [ ] IA revisa Brief D, traduce a Bootstrap 5 real, y documenta la dirección final de esa pantalla.
+- [ ] Usuario genera **Brief E — Gremios (listado + alta/edición)** en v0.dev y comparte la carpeta descargada.
+- [ ] IA revisa Brief E, traduce a Bootstrap 5 real, y documenta la dirección final de esa pantalla.
+- [ ] Repetir el ciclo brief → mockup → traducción → validación para el resto de pantallas del inventario (ver tabla en "Ronda 3") según se vayan priorizando en próximas sesiones.
+- [ ] **Regla explícita mientras dure esta Feature: no se pasa a la Feature 8.2 hasta que todo el inventario de pantallas quede diseñado, traducido y validado** (o se decida explícitamente dar por cerrado el alcance del rediseño con lo que haya en ese momento).
 - [ ] Cerrar la Feature 8.1 dejando el PoC + mockups + decisiones documentadas como entrada de la Feature 8.2 (que convertirá esto en tokens/componentes reales integrados en las vistas Razor, con datos reales en vez de contenido de muestra).
 
 ### Ronda 2 (pantallas priorizadas) — resultado (2026-09-19)
@@ -143,6 +152,136 @@ El usuario generó los tres briefs en el **mismo proyecto/hilo de v0.dev** que l
 **Decisión de arquitectura tomada al traducir Brief B a Razor real:** en el mockup de v0.dev, listado y formulario son dos vistas que se conmutan en el cliente (estado de React). Como Kiwbi es explícitamente no-SPA (páginas Razor renderizadas en servidor, `02-architecture-and-stack.md`), se tradujeron como **dos páginas reales enlazadas** (`personalizaciones.html` → `personalizaciones-nueva.html`, con un enlace `<a>`, no un `<button>` con estado JS) — más fiel a como ya funciona `CustomizationsController.Index`/`Create` (Epic 7) que replicar el patrón de un solo componente con estado interno.
 
 **Refactor técnico realizado sobre el PoC (no visible en los mockups, decisión propia al traducir):** con 5 pantallas ya comparten el mismo shell (sidebar/topbar/KPIs/tabla/badges/formularios), se extrajo el CSS y JS que antes vivían inline en `viviendas.html` a dos ficheros compartidos — `wwwroot/design-preview/kiwbi-preview.css` y `kiwbi-preview.js` — para evitar que cada nueva pantalla duplicara y pudiera desincronizar esas reglas. `viviendas.html` se adaptó para referenciarlos (mismo resultado visual, verificado de nuevo tras el cambio). El JS compartido añade además los manejadores genéricos para el selector "Se aplica a" (`.kiwbi-scope-option` + `[data-scope-panel]`), las pills de selección múltiple (`.kiwbi-pill`) y las tarjetas de opción seleccionables (`[data-option-group]`), reutilizables en cualquier pantalla futura sin JS adicional.
+
+### Ronda 3 (arquitectura de navegación e inventario de pantallas) — 2026-09-19
+
+Al revisar conjuntamente las 5 pantallas de la ronda 2, el usuario detectó una inconsistencia de fondo en el nav del sidebar (heredado tal cual de los mockups de v0 desde la ronda 1): mezclaba elementos de **dos niveles distintos** bajo una única lista plana. Se verificó contra los 11 Controllers reales de `Kiwbi.Web`, confirmando la sospecha:
+
+- **Nivel global (promotora, sin una Promoción concreta):** `HousingPromotionsController.Index` (listado de Promociones — es literalmente lo que el nav llamaba "Panel") y `DeveloperProfileController` (perfil + marca — "Mi promotora").
+- **Nivel Promoción (todo Controller exige `promotionId`):** `HousingPromotionsController.Details/Edit`, `HousingTypologiesController`, `HousingUnitsController`, `TradeCategoriesController`, `CustomizationsController`, `HousingPromotionChoicesController`.
+
+El propio mockup ya delataba la mezcla: en `dashboard-promotora.html` el nav marcaba "Panel" como activo mientras el *breadcrumb* decía "Panel / Promociones" y el contenido era el listado de Promociones — dos cosas tratadas como una.
+
+**Además, "Compradores" no corresponde a ninguna pantalla real:** no existe ningún listado agregado de compradores (ni global ni por Promoción) en ningún Controller, ni aparece en `.ai-docs/01-business-context.md` ni en el resto de documentos de negocio. Lo único que existe es `HousingUnitsController.Invitations/InviteBuyer`, gestión de invitaciones **por Vivienda concreta**. Confirmado: fue un añadido genérico de v0, no un requisito de Kiwbi.
+
+**Decisiones tomadas (2026-09-19):**
+1. **Navegación en dos niveles.** Sidebar global (fuera del contexto de una Promoción): Panel (= listado de Promociones), Mi promotora, Ajustes. Sidebar contextual (al entrar en una Promoción concreta, desde `Details` o cualquier subpantalla): Resumen, Tipologías, Viviendas, Gremios, Personalizaciones, Progreso de personalizaciones — con un enlace de vuelta a Promociones. No es una idea nueva: es lo que ya hace hoy `HousingPromotions/Details.cshtml` con su fila de botones, llevado al sidebar.
+2. **"Compradores" desaparece del nav.** Se sigue gestionando exclusivamente desde la Vivienda concreta (pantalla "Invitaciones de comprador", pendiente de diseñar, ver inventario).
+3. **Regla de proceso:** no se avanza a la Feature 8.2 (aplicar el sistema a las vistas Razor reales) hasta cerrar el diseño de todo el inventario de pantallas de abajo, o decidir explícitamente recortar el alcance.
+
+**Inventario completo de pantallas** (Global / Promoción / Comprador / Anónimo), cruzado con lo ya cubierto:
+
+| Nivel | Pantalla | Estado |
+| --- | --- | --- |
+| Global | Promociones (listado) | ✅ cubierta (`dashboard-promotora.html`, pendiente de retrofit al nav de 2 niveles) |
+| Global | Mi promotora (perfil + marca) | ❌ pendiente |
+| Promoción | **Resumen/Hub de la Promoción** (`Details`, tabla de viviendas) | ❌ pendiente — **Brief D** |
+| Promoción | Crear/Editar Promoción | ❌ pendiente |
+| Promoción | Tipologías (listado + alta/edición) | ❌ pendiente |
+| Promoción | Viviendas (listado) | ✅ cubierta (`viviendas.html`, pendiente de retrofit) |
+| Promoción | Crear/Editar Vivienda | ❌ pendiente |
+| Promoción | Invitaciones de comprador (por Vivienda) | ❌ pendiente |
+| Promoción | **Gremios** (listado + alta/edición) | ❌ pendiente — **Brief E** |
+| Promoción | Personalizaciones (listado + alta) | ✅ cubiertas (`personalizaciones.html`/`-nueva.html`, pendiente de retrofit) |
+| Promoción | Detalle de Personalización (opciones + asignaciones) | ❌ pendiente |
+| Promoción | Progreso de personalizaciones (agregado + detalle por vivienda) | ❌ pendiente — no aparecía ni en el nav del mockup pese a estar implementada desde Epic 6 |
+| Comprador | Mis viviendas / Detalle de vivienda | ✅ cubiertas (sin cambios, no llevan sidebar) |
+| Anónimo | Login/Register, aceptación de invitación | Fuera de prioridad por ahora |
+
+**Priorizado para continuar ahora mismo:** primero un brief de "sincronización" (retrofit del nav en las 5 pantallas ya generadas, para no arrastrar inconsistencias a las pantallas nuevas), después Brief D (Resumen/Hub de Promoción) y Brief E (Gremios). El resto del inventario se aborda en próximas sesiones según se priorice.
+
+#### Sincronización — resultado (2026-09-19)
+
+El usuario pasó el brief de sincronización en el **mismo proyecto/hilo original de v0.dev** (`C:\Users\cgran\Documents\identidad-visual-kiwbi`, el de la ronda 1 — no el de la ronda 2). El resultado fue muy fiel y, de hecho, mejor estructurado de lo pedido: en vez de duplicar el sidebar en cada componente, v0 extrajo un componente compartido `KiwbiSidebar` (`components/kiwbi/sidebar.tsx`) con una prop `mode: 'global' | 'context'`, más `GLOBAL_NAV`/`CONTEXT_NAV` (arrays de nav separados en `data.ts`, sin "Compradores" en ninguno de los dos) y un `contextName`/`onBack` para el indicador "Estás dentro de". Verificado leyendo el código fuente de `dashboard-promotora.tsx` (`mode="global"`), `personalizaciones.tsx` y `variation-operativo.tsx`/Viviendas (ambos `mode="context"` con `contextName="Residencial Miravalle"`) — los tres coinciden exactamente con lo pedido.
+
+**Retrofit aplicado a los 4 ficheros reales ya existentes** (`dashboard-promotora.html`, `viviendas.html`, `personalizaciones.html`, `personalizaciones-nueva.html`) bajo `wwwroot/design-preview/`:
+- `dashboard-promotora.html` pasa a la sidebar **global**: solo Panel (activo) / Mi promotora / Ajustes; breadcrumb simplificado a "Panel" (ya no "Panel / Promociones", redundante).
+- Los otros tres pasan a la sidebar **contextual**: nuevo bloque `.kiwbi-context-indicator` ("Estás dentro de: Residencial Miravalle", con flecha y enlace de vuelta a `dashboard-promotora.html`, colapsable a solo la flecha en modo icon-rail) + nav Resumen/Tipologías/Viviendas/Gremios/Personalizaciones/Progreso (dos iconos nuevos añadidos a `kiwbi-preview.css`/inline SVG: capas para Tipologías, gráfico de barras para Progreso). "Resumen" y "Gremios" enlazan a `#` por ahora (pendientes de Brief D y Brief E); breadcrumbs actualizados a "Residencial Miravalle / Viviendas" y "Residencial Miravalle / Personalizaciones".
+- Nueva regla CSS `.kiwbi-context-indicator` añadida a `kiwbi-preview.css` (compartida, ningún cambio en `kiwbi-preview.js`: el colapso de sidebar ya funcionaba igual).
+
+**Validado en navegador** (capturas + interacción): sidebar global de `dashboard-promotora.html` muestra únicamente 3 items; sidebar contextual de `viviendas.html`/`personalizaciones.html`/`personalizaciones-nueva.html` muestra el indicador "Estás dentro de" (expandido y colapsado) y los 6 items correctos, sin "Compradores" en ningún caso. Build de `Kiwbi.Web` en verde tras el retrofit (no se tocó ningún `.cs`, solo HTML/CSS de `wwwroot/design-preview/`).
+
+#### Brief de sincronización (retrofit del nav en las 5 pantallas existentes)
+
+```
+Dirección ya acordada (no la cambies): sistema "Operativo + sidebar híbrido" ya
+generado (paleta Slate, Inter, radios 0.5rem/0.75rem, acento de marca solo en
+logo/nav activo/botón primario/notificación/progreso).
+
+CAMBIO DE ARQUITECTURA DE NAVEGACIÓN (aplícalo a los 5 componentes que ya
+generamos: dashboard-promotora, personalizaciones [listado y formulario] y el
+layout de viviendas): el sidebar deja de ser una única lista plana y pasa a
+tener DOS NIVELES:
+
+1) Sidebar GLOBAL (cuando NO se está dentro de ninguna Promoción concreta —
+   úsalo en dashboard-promotora, que es el listado de Promociones): solo
+   3 items — "Panel" (activo, es el propio listado de Promociones), "Mi
+   promotora" y "Ajustes". Nada de Viviendas/Gremios/Personalización aquí:
+   no tienen sentido sin haber elegido antes una Promoción.
+
+2) Sidebar CONTEXTUAL (cuando SÍ se está dentro de una Promoción concreta —
+   úsalo en Viviendas y en Personalización [listado y formulario]): además
+   del logo/marca de la promotora, muestra debajo un pequeño indicador de
+   "estás dentro de: Residencial Miravalle" con un enlace/flecha para volver
+   al listado de Promociones, y DESPUÉS el nav con: Resumen, Tipologías,
+   Viviendas, Gremios, Personalizaciones, Progreso. Quita el item "Panel" de
+   este sidebar (ya no aplica, estás dentro de una Promoción).
+
+Elimina por completo el item de nav "Compradores" de ambos sidebars: no
+corresponde a ninguna pantalla real, se gestiona de otra forma (a nivel de
+cada vivienda concreta, fuera de este nav).
+
+Regenera los 5 componentes ya existentes con este nav corregido, sin cambiar
+nada más de lo ya diseñado en cada uno (mismo contenido de cada pantalla).
+```
+
+#### Brief D — Resumen/Hub de Promoción (`HousingPromotions/Details`)
+
+```
+Dirección ya acordada (no la cambies): igual que en briefs anteriores, con el
+sidebar CONTEXTUAL de Promoción ya corregido en el brief de sincronización
+(Resumen activo en este caso, con el indicador "estás dentro de: X" arriba).
+
+Pantalla a diseñar: el "hub" de una Promoción concreta — es la pantalla a la
+que se llega al pulsar "Ver" desde el listado de Promociones, y desde la que
+se accede a todo lo demás (Tipologías, Viviendas, Gremios, Personalizaciones,
+Progreso), además de poder Editar o Eliminar la propia Promoción. Contenido:
+
+- Cabecera con Nombre de la promoción, Ciudad, Dirección, y el plano general
+  (imagen) si existe, o un placeholder neutro si no.
+- Una fila de accesos directos a las secciones contextuales (Tipologías,
+  Viviendas, Gremios, Personalizaciones, Progreso) — puede ser redundante con
+  el propio sidebar contextual, está bien que lo sea, refuerza la navegación.
+- Una tabla resumen de las Viviendas de esta promoción: Planta, Puerta,
+  Tipología, Superficie construida, Superficie útil, Estado comercial (badge:
+  Disponible/Reservada/Vendida).
+- Botones de "Editar" y "Eliminar" la promoción.
+
+Genera un único mockup coherente con la dirección ya acordada.
+```
+
+#### Brief E — Gremios (`TradeCategories/Index` + `TradeCategories/Create`/`Edit`)
+
+```
+Dirección ya acordada (no la cambies): igual que en briefs anteriores, sidebar
+CONTEXTUAL de Promoción (Gremios activo).
+
+Pantalla a diseñar: los "Gremios" de Kiwbi (piensa en ellos como partidas de
+obra — electricidad, fontanería, carpintería... — cada uno con una fecha
+límite a partir de la cual sus Personalizaciones asociadas quedan bloqueadas
+para el comprador):
+
+1) Listado: tabla con columnas Nombre y Fecha límite de selección (fecha +
+   hora), y acciones Editar/Eliminar por fila. Si la fecha límite ya pasó,
+   indícalo visualmente (p. ej. un badge "Vencido" junto a la fecha). Botón
+   "Nuevo gremio" arriba.
+
+2) Formulario de alta/edición: campo de texto para el Nombre, y un selector
+   de fecha y hora para la Fecha límite de selección.
+
+Genera un único mockup coherente con la dirección ya acordada para ambas
+vistas (listado + formulario).
+```
 
 ### Implementación del mecanismo de branding (2026-09-19)
 
