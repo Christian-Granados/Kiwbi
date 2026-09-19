@@ -91,18 +91,19 @@
 
           <div class="kiwbi-fieldset">
             <div class="kiwbi-legend">Logo</div>
+            <!-- Ronda 5: hoy `UpdateDeveloperBrandingCommand.LogoPath` es un texto/URL, sin subida
+                 de fichero real (a diferencia del plano de Vivienda/Promoción) - se deja como campo
+                 de texto para no anticipar una capacidad que Application/Infrastructure no soportan
+                 todavía; una subida real quedaría para una futura ampliación de ese caso de uso. -->
             <div class="row g-3 align-items-center">
               <div class="col-auto d-flex align-items-center gap-3">
                 <span class="kiwbi-logo-preview" style="background:#2f7d5b;">H</span>
                 <div class="small text-muted" style="font-size:.7rem;">Sin logo aún.<br>Se usan las iniciales sobre el color primario.</div>
               </div>
               <div class="col">
-                <label for="logo-upload" class="kiwbi-dropzone" style="padding:0.9rem;">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-                  <strong>Subir logo</strong>
-                  <span class="small">SVG, PNG o JPG · máx. 2 MB</span>
-                  <input id="logo-upload" type="file" accept="image/*" class="visually-hidden" />
-                </label>
+                <label for="logo-path" class="form-label small fw-medium">URL del logo</label>
+                <input id="logo-path" type="text" class="form-control form-control-sm" placeholder="https://…/logo-promotora.svg" />
+                <p class="small text-muted mb-0 mt-1" style="font-size:.7rem;">Enlace a una imagen ya alojada. La subida directa de fichero no está disponible todavía.</p>
               </div>
             </div>
           </div>

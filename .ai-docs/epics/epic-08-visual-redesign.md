@@ -138,8 +138,9 @@ Esto resuelve de facto la "Selección del enfoque de implementación" (más abaj
 - [x] Usuario genera Brief J en v0.dev y comparte la carpeta descargada.
 - [x] IA revisa Brief J, traduce a Bootstrap 5 real, y documenta la dirección final.
 - [x] **Inventario completo de pantallas cerrado**: las 13 pantallas del inventario de la Ronda 3 (más Personalizaciones y Viviendas, ya cubiertas antes) están diseñadas, traducidas a Bootstrap 5 y validadas en navegador.
-- [ ] **Regla explícita mientras dure esta Feature: no se pasa a la Feature 8.2 hasta que todo el inventario de pantallas quede diseñado, traducido y validado** (o se decida explícitamente dar por cerrado el alcance del rediseño con lo que haya en ese momento).
-- [ ] Cerrar la Feature 8.1 dejando el PoC + mockups + decisiones documentadas como entrada de la Feature 8.2 (que convertirá esto en tokens/componentes reales integrados en las vistas Razor, con datos reales en vez de contenido de muestra).
+- [x] **Auditoría de coherencia (Ronda 5)**: las 19 pantallas se cruzaron contra el código real (Controllers/Application/Domain) y el grafo de navegación completo; los 7 hallazgos quedaron resueltos o documentados explícitamente (ver "Ronda 5" más abajo).
+- [x] **Regla explícita mientras dure esta Feature: no se pasa a la Feature 8.2 hasta que todo el inventario de pantallas quede diseñado, traducido y validado** (o se decida explícitamente dar por cerrado el alcance del rediseño con lo que haya en ese momento) — cumplida.
+- [ ] Cerrar la Feature 8.1 dejando el PoC + mockups + decisiones documentadas como entrada de la Feature 8.2 (que convertirá esto en tokens/componentes reales integrados en las vistas Razor, con datos reales en vez de contenido de muestra) — pendiente de confirmación expresa del usuario.
 
 ### Ronda 2 (pantallas priorizadas) — resultado (2026-09-19)
 
@@ -465,6 +466,8 @@ fila.
 Genera un mockup coherente por cada una de las dos pantallas.
 ```
 
+> **Corrección (Ronda 5, 2026-09-20):** la condición de "Confirmar" tal y como está redactada arriba ("solo si el gremio ya venció y hay una opción elegida") es **incorrecta** respecto al comportamiento real (`ConfirmHomeCustomizationChoiceUseCase` / `HousingPromotionChoicesController`): la regla real es `gremio vencido && estado es Pendiente o Seleccionada` — también se puede confirmar una personalización Pendiente (el caso de uso asigna la opción por defecto automáticamente antes de confirmar). El PoC (`progreso-detalle.html`) se corrigió para incluir un ejemplo de este caso.
+
 #### Brief I — resultado (2026-09-20)
 
 Generado en el mismo proyecto/hilo (`C:\Users\cgran\Documents\identidad-visual-kiwbi`), como `components/kiwbi/progreso.tsx` (`Progreso`), sidebar contextual con "Progreso" activo. Muy fiel al brief, con una decisión de diseño explícita y acertada que conviene conservar: **los 4 colores de estado (Pendiente/Seleccionada/Confirmada/Pagada) son fijos y NO usan el acento del tenant** — deben leerse igual en cualquier promotora, al ser estados de negocio reales (`HomeCustomizationChoiceStatus`), no un elemento de marca.
@@ -546,7 +549,17 @@ Antes de dar por cerrada la Feature 8.1, se hizo una auditoría exhaustiva cruza
 - Personalizaciones — opciones (bloque "Opciones" de `personalizacion-detalle.html`): reglas de "no eliminar la única opción" / "no eliminar la opción por defecto sin fijar otra antes" coinciden con `Customization.RemoveOption` en Domain.
 - El resto del grafo de navegación (Resumen/Tipologías/Viviendas/Gremios/Personalizaciones/Progreso, y las páginas "representativas únicas" reutilizadas para Editar/Detalle en varias filas de una tabla) es una simplificación consciente y ya documentada del PoC estático, no una incoherencia — se resolverá de forma natural cuando la Feature 8.2 use rutas reales con `id`.
 
-**Decisión pendiente del usuario:** cuáles de los hallazgos 1-7 se corrigen ahora (en los ficheros estáticos, para que la Feature 8.2 parta de una referencia ya correcta) y cuáles se dejan como nota para resolver directamente al construir la vista Razor real.
+**Decisiones tomadas y correcciones aplicadas (2026-09-20):**
+
+1. **Corregido.** `personalizacion-detalle.html` reescrito: el bloque "Se aplica a" ahora es una tabla de asignaciones actuales (Nivel/Destino/Quitar por fila) + dos altas independientes "Añadir tipología"/"Añadir vivienda" (select + botón cada una), sin scope-selector ni "Guardar asignación" en bloque. Refleja fielmente `CustomizationsController.Details`.
+2. **Corregido.** Se añadió una nota de corrección justo debajo del texto original del Brief I explicando la regla real (`gremio vencido && estado es Pendiente o Seleccionada`), y `progreso-detalle.html` incorpora un nuevo gremio de ejemplo ("Alicatados", vencido, con una línea Pendiente) que ahora sí muestra el botón "Confirmar" en ese caso; `progreso.html` se actualizó en consecuencia (recuentos de la fila "1ª · A" y de la leyenda/totales de la promoción).
+3. **Se mantiene, documentado.** La columna "Nº viviendas" de `tipologias.html` se conserva; queda anotado que la Feature 8.2 deberá ampliar `GetHousingTypologiesUseCase` con un recuento de viviendas por tipología (consulta de solo lectura, mismo precedente ya aceptado con `GetBrandingForHousingUnitUseCase`).
+4. **Se mantiene, documentado.** `gremios-nuevo.html` conserva los campos Fecha y Hora separados (mejor UX); queda anotado que la Feature 8.2 deberá combinarlos en un único `SelectionCutOffDateUtc` en el Controller/ViewModel, sin tocar Application.
+5. **Corregido (recorte de alcance).** `mi-promotora.html` ya no incluye un dropzone de subida de fichero para el logo: el campo pasa a ser una URL de texto (`LogoPath`), coherente con la capacidad real de `UpdateDeveloperBrandingCommand` hoy. Queda anotado como posible mejora futura (fuera de este Epic) ampliar ese caso de uso para aceptar un fichero real, igual que ya existe para los planos de Vivienda/Promoción.
+6. **Corregido.** `vivienda-invitaciones.html` ahora modela los 4 estados reales (se añadió una fila de ejemplo con el badge "Caducada", distinto de "Pendiente" aunque el dominio solo persiste Pending/Accepted/Cancelled) y se añadió la columna "Enviada" (`CreatedAtUtc`) junto a "Caduca".
+7. **Se mantiene como placeholder, documentado.** El nav item "Ajustes" se conserva visualmente en las 3 pantallas con sidebar GLOBAL, pero queda anotado explícitamente que **no forma parte del alcance de la Feature 8.2** — es un placeholder para una futura pantalla de preferencias/seguridad de cuenta (candidata natural para Epic 9, "Cierre de MVP"), no una pantalla a construir ahora.
+
+**Con esto, el inventario completo de pantallas (Rondas 3 y 4) queda no solo diseñado y traducido, sino auditado contra el código real y corregido donde hacía falta.** La Feature 8.1 puede darse por cerrada en cuanto el usuario lo confirme explícitamente (regla de aprobación de `04-ai-coding-guidelines.md`).
 
 ### Implementación del mecanismo de branding (2026-09-19)
 

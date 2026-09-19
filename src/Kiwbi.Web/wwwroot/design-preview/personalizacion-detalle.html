@@ -219,58 +219,74 @@
           </div>
         </div>
 
-        <!-- Bloque 2: Se aplica a -->
-        <div class="kiwbi-fieldset">
-          <div class="kiwbi-legend">Se aplica a</div>
-          <p class="small text-muted mb-3" style="margin-top:-0.4rem;">Define a qué viviendas de la promoción afecta esta personalización</p>
+        <!-- Bloque 2: Se aplica a — patrón real: alta/baja de asignaciones una a una,
+             NO un selector de scope con guardado en bloque (eso solo existe en el alta). -->
+        <div class="kiwbi-table-card mb-3">
+          <div class="kiwbi-table-card-header">
+            <span class="title">Se aplica a</span>
+            <span class="count">2 asignaciones</span>
+          </div>
+          <table class="kiwbi-table">
+            <thead>
+              <tr>
+                <th>Nivel</th>
+                <th>Destino</th>
+                <th class="text-end">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><span class="kiwbi-chip">Tipología</span></td>
+                <td class="kiwbi-row-title">3 dorm. · Tipo C</td>
+                <td class="text-end">
+                  <form class="d-inline">
+                    <button type="submit" class="btn btn-sm btn-outline-danger">Quitar</button>
+                  </form>
+                </td>
+              </tr>
+              <tr>
+                <td><span class="kiwbi-chip">Tipología</span></td>
+                <td class="kiwbi-row-title">4 dorm. · Ático</td>
+                <td class="text-end">
+                  <form class="d-inline">
+                    <button type="submit" class="btn btn-sm btn-outline-danger">Quitar</button>
+                  </form>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
 
-          <div class="row g-2">
-            <div class="col">
-              <button type="button" class="kiwbi-scope-option" data-scope="promocion">
-                <span><span class="kiwbi-scope-radio"></span>Toda la promoción</span>
-                <span class="kiwbi-scope-hint">Todas las viviendas</span>
-              </button>
-            </div>
-            <div class="col">
-              <button type="button" class="kiwbi-scope-option active" data-scope="tipologia">
-                <span><span class="kiwbi-scope-radio"></span>Tipología</span>
-                <span class="kiwbi-scope-hint">Por tipo de vivienda</span>
-              </button>
-            </div>
-            <div class="col">
-              <button type="button" class="kiwbi-scope-option" data-scope="vivienda">
-                <span><span class="kiwbi-scope-radio"></span>Vivienda</span>
-                <span class="kiwbi-scope-hint">Viviendas concretas</span>
-              </button>
+        <!-- Solo se muestran estas dos altas independientes cuando la personalización NO
+             está asignada a "toda la promoción" (no existe forma de reconvertirla a ese ámbito). -->
+        <div class="row g-3">
+          <div class="col-sm-6">
+            <div class="kiwbi-fieldset">
+              <div class="kiwbi-legend">Añadir tipología</div>
+              <form class="d-flex gap-2">
+                <select class="form-select form-select-sm">
+                  <option>2 dorm. · Tipo A</option>
+                  <option>2 dorm. · Tipo B</option>
+                  <option>Bajo con jardín</option>
+                </select>
+                <button type="submit" class="btn btn-sm btn-outline-secondary text-nowrap">Añadir</button>
+              </form>
             </div>
           </div>
-
-          <div data-scope-panel="tipologia" class="mt-3 p-3 rounded-3" style="background:var(--kiwbi-bg); border:1px solid var(--kiwbi-border);">
-            <label class="form-label small fw-medium">Selecciona las tipologías</label>
-            <div class="d-flex flex-wrap gap-2">
-              <button type="button" class="kiwbi-pill">2 dorm. · Tipo A</button>
-              <button type="button" class="kiwbi-pill">2 dorm. · Tipo B</button>
-              <button type="button" class="kiwbi-pill active">3 dorm. · Tipo C</button>
-              <button type="button" class="kiwbi-pill active">4 dorm. · Ático</button>
+          <div class="col-sm-6">
+            <div class="kiwbi-fieldset">
+              <div class="kiwbi-legend">Añadir vivienda</div>
+              <form class="d-flex gap-2">
+                <select class="form-select form-select-sm">
+                  <option>MV-A-2B</option>
+                  <option>MV-A-3A</option>
+                  <option>MV-B-1C</option>
+                  <option>PT-2-4D</option>
+                  <option>PT-1-BJ</option>
+                </select>
+                <button type="submit" class="btn btn-sm btn-outline-secondary text-nowrap">Añadir</button>
+              </form>
             </div>
-          </div>
-          <div data-scope-panel="vivienda" hidden class="mt-3 p-3 rounded-3" style="background:var(--kiwbi-bg); border:1px solid var(--kiwbi-border);">
-            <label class="form-label small fw-medium">Selecciona las viviendas</label>
-            <div class="d-flex flex-wrap gap-2">
-              <button type="button" class="kiwbi-pill">MV-A-2B</button>
-              <button type="button" class="kiwbi-pill">MV-A-3A</button>
-              <button type="button" class="kiwbi-pill">MV-B-1C</button>
-              <button type="button" class="kiwbi-pill">PT-2-4D</button>
-              <button type="button" class="kiwbi-pill">PT-1-BJ</button>
-            </div>
-          </div>
-
-          <div class="d-flex justify-content-end gap-2 mt-3">
-            <button type="button" class="btn btn-sm btn-outline-secondary">Descartar cambios</button>
-            <button type="button" class="btn btn-kiwbi-primary btn-sm d-flex align-items-center gap-1">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-              Guardar asignación
-            </button>
           </div>
         </div>
       </div>

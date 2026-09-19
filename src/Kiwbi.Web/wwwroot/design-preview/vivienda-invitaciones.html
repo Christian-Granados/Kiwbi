@@ -126,13 +126,14 @@
         <div class="kiwbi-table-card mb-3">
           <div class="kiwbi-table-card-header">
             <span class="title">Invitaciones enviadas</span>
-            <span class="count">4</span>
+            <span class="count">5</span>
           </div>
           <table class="kiwbi-table">
             <thead>
               <tr>
                 <th>Email</th>
                 <th>Estado</th>
+                <th>Enviada</th>
                 <th>Caduca</th>
                 <th class="text-end">Acciones</th>
               </tr>
@@ -141,6 +142,7 @@
               <tr>
                 <td class="kiwbi-row-title">laura.marti@gmail.com</td>
                 <td><span class="kiwbi-badge kiwbi-badge-amber">Pendiente</span></td>
+                <td class="text-muted">20 sep 2026</td>
                 <td class="text-muted">27 sep 2026</td>
                 <td class="text-end">
                   <button type="button" class="btn btn-sm btn-outline-secondary">Reenviar</button>
@@ -150,7 +152,20 @@
               <tr>
                 <td class="kiwbi-row-title">j.ferrer@outlook.com</td>
                 <td><span class="kiwbi-badge kiwbi-badge-amber">Pendiente</span></td>
+                <td class="text-muted">17 sep 2026</td>
                 <td class="text-muted">24 sep 2026</td>
+                <td class="text-end">
+                  <button type="button" class="btn btn-sm btn-outline-secondary">Reenviar</button>
+                  <button type="button" class="btn btn-sm btn-outline-danger">Cancelar</button>
+                </td>
+              </tr>
+              <!-- Estado calculado (IsExpired), distinto del Pendiente todavía vigente: el dominio
+                   sigue guardando Status=Pending, por eso Reenviar/Cancelar siguen disponibles. -->
+              <tr>
+                <td class="kiwbi-row-title">antiguo.pendiente@gmail.com</td>
+                <td><span class="kiwbi-badge kiwbi-badge-danger">Caducada</span></td>
+                <td class="text-muted">1 sep 2026</td>
+                <td class="text-muted">8 sep 2026</td>
                 <td class="text-end">
                   <button type="button" class="btn btn-sm btn-outline-secondary">Reenviar</button>
                   <button type="button" class="btn btn-sm btn-outline-danger">Cancelar</button>
@@ -159,12 +174,14 @@
               <tr>
                 <td class="kiwbi-row-title">antiguo.correo@gmail.com</td>
                 <td><span class="kiwbi-badge kiwbi-badge-neutral">Cancelada</span></td>
+                <td class="text-muted">3 sep 2026</td>
                 <td class="text-muted">10 sep 2026</td>
                 <td class="text-end"><span class="small text-muted">Sin acciones</span></td>
               </tr>
               <tr>
                 <td class="kiwbi-row-title">noelia.sanz@gmail.com</td>
                 <td><span class="kiwbi-badge kiwbi-badge-success">Aceptada</span></td>
+                <td class="text-muted">29 ago 2026</td>
                 <td class="text-muted">5 sep 2026</td>
                 <td class="text-end"><span class="small text-muted">Sin acciones</span></td>
               </tr>
