@@ -115,12 +115,37 @@ Esto resuelve de facto la "Selección del enfoque de implementación" (más abaj
 - [x] Con la validación técnica ya hecha, decidir el enfoque de implementación real en `Kiwbi.Web`: **Bootstrap 5 a medida** (ver "Selección del enfoque de implementación" más abajo).
 - [x] Decidir el mecanismo definitivo de aplicación del branding por tenant al tema para la implementación real (ver "Mecanismo de inyección del branding por tenant" más abajo).
 - [x] Implementar el mecanismo de branding decidido (ver "Implementación del mecanismo de branding" más abajo) y validarlo end-to-end con datos reales.
-- [ ] IA redacta los briefs del resto del subconjunto priorizado de pantallas: Dashboard Promotora, una pantalla CRUD representativa (p. ej. listado + formulario de Personalizaciones), Dashboard/Detalle Comprador (`Buyer/Index` y `Buyer/HousingUnit`) — el Layout/Navegación base y una pantalla de listado (Viviendas) ya quedan cubiertos por el PoC.
-- [ ] Usuario genera mockups de esas pantallas ya alineados con la dirección acordada (nuevas rondas según haga falta).
-- [ ] IA revisa, itera si hace falta, traduce a Bootstrap 5 real (ampliando el PoC o creando nuevos ficheros de referencia bajo `wwwroot/design-preview/`), y documenta en este Epic la dirección visual final por pantalla.
+- [x] Redactar los briefs del resto del subconjunto priorizado de pantallas (ver "Ronda 2 (pantallas priorizadas) — briefs" más abajo): Brief A (Dashboard Promotora), Brief B (CRUD de Personalizaciones), Brief C (Portal del Comprador).
+- [x] Usuario genera los mockups de Brief A/B/C en v0.dev (mismo proyecto/hilo, un solo mockup coherente por pantalla) y comparte la carpeta descargada.
+- [x] IA revisa Brief A/B/C, traduce las 5 pantallas a Bootstrap 5 real bajo `wwwroot/design-preview/`, y documenta la dirección final por pantalla (ver "Ronda 2 (pantallas priorizadas) — resultado" más abajo).
+- [ ] Revisión conjunta usuario + IA de las 5 pantallas ya traducidas (Viviendas, Dashboard Promotora, Personalizaciones listado + alta, Buyer Index + Detalle de Vivienda) para confirmar que el resultado es el esperado antes de decidir si hacen falta más diseños o se cierra la Feature 8.1.
 - [ ] Cerrar la Feature 8.1 dejando el PoC + mockups + decisiones documentadas como entrada de la Feature 8.2 (que convertirá esto en tokens/componentes reales integrados en las vistas Razor, con datos reales en vez de contenido de muestra).
 
+### Ronda 2 (pantallas priorizadas) — resultado (2026-09-19)
+
+El usuario generó los tres briefs en el **mismo proyecto/hilo de v0.dev** que la ronda 1 (buena práctica ya recomendada: mantiene el mismo lenguaje visual sin tener que reexplicarlo), descargado esta vez en `C:\Users\cgran\Documents\identidad-visual-kiwbi-dashboard-comprador`. El proyecto contenía los tres componentes esperados — `dashboard-promotora.tsx` (Brief A), `personalizaciones.tsx` (Brief B, con listado + formulario ya como dos vistas conmutables) y `buyer-experience.tsx` (Brief C, con las dos pantallas del comprador) — muy fieles a lo pedido, incluyendo detalles no explícitamente solicitados pero coherentes con la dirección ya acordada:
+- Sidebar con estado de colapso real (`useState`, no solo CSS) en Dashboard Promotora y Personalizaciones.
+- Un nuevo item de navegación **"Ajustes"** anclado bajo el widget "Plan Promotora" en el pie del sidebar (no estaba en el PoC de Viviendas de la ronda 1 — se ha añadido también allí para que las 5 pantallas compartan exactamente el mismo sidebar).
+- Avatar del usuario con iniciales + nombre corto (p. ej. "CG" / "Carmen G.") en vez de un círculo vacío. Como `Kiwbi.Web` no guarda hoy un nombre de persona por usuario (solo el nombre de la promotora vía `DeveloperCompany`), esto queda anotado como una decisión pendiente para la Feature 8.2/8.3: usar el nombre de la promotora, las iniciales del email, o añadir un campo de nombre a `ApplicationUser` si se considera necesario.
+- En el Dashboard del Comprador, cada tarjeta de vivienda incluye un pequeño punto de color + nombre de la promotora al pie (no es el acento global de la página, solo una etiqueta informativa por tarjeta) — coherente con "sin acento de marca" a nivel de página, pero es una idea a valorar para la Feature 8.2/8.3 si se quiere trasladar (exigiría exponer el color de marca por Vivienda en `BuyerHousingUnitViewModel`, hoy no lo tiene).
+
+**Las 5 pantallas ya están traducidas a Bootstrap 5 real y verificadas en navegador** (capturas + interacciones):
+
+| Pantalla | Fichero | Verificado |
+| --- | --- | --- |
+| Viviendas (ronda 1, refactorizada) | `wwwroot/design-preview/viviendas.html` | Sidebar colapsa/expande, breadcrumb, avatar con iniciales |
+| Dashboard Promotora (Brief A) | `wwwroot/design-preview/dashboard-promotora.html` | Tabla de Promociones con columnas reales, KPIs, estado vacío comentado en el HTML como referencia |
+| Personalizaciones · listado (Brief B) | `wwwroot/design-preview/personalizaciones.html` | Columna Gremio, chips "Se aplica a", enlaza a la vista de alta |
+| Personalizaciones · alta (Brief B) | `wwwroot/design-preview/personalizaciones-nueva.html` | Selector "Se aplica a" cambia de opción activa y muestra/oculta el multi-select de tipologías/viviendas; pills de selección múltiple con toggle |
+| Mis viviendas — Comprador (Brief C, pantalla 1) | `wwwroot/design-preview/buyer-index.html` | Sin sidebar ni acento, tarjetas con plano/placeholder |
+| Detalle de Vivienda — Comprador (Brief C, pantalla 2) | `wwwroot/design-preview/buyer-housing-unit.html` | Cabecera con degradado del acento de la promotora dueña; tarjetas de opción seleccionables (grupo abierto) vs. deshabilitadas (grupo vencido); selector de "vivienda de ejemplo" (solo de esta PoC) confirma que el acento cambia por vivienda, no por sesión de usuario |
+
+**Decisión de arquitectura tomada al traducir Brief B a Razor real:** en el mockup de v0.dev, listado y formulario son dos vistas que se conmutan en el cliente (estado de React). Como Kiwbi es explícitamente no-SPA (páginas Razor renderizadas en servidor, `02-architecture-and-stack.md`), se tradujeron como **dos páginas reales enlazadas** (`personalizaciones.html` → `personalizaciones-nueva.html`, con un enlace `<a>`, no un `<button>` con estado JS) — más fiel a como ya funciona `CustomizationsController.Index`/`Create` (Epic 7) que replicar el patrón de un solo componente con estado interno.
+
+**Refactor técnico realizado sobre el PoC (no visible en los mockups, decisión propia al traducir):** con 5 pantallas ya comparten el mismo shell (sidebar/topbar/KPIs/tabla/badges/formularios), se extrajo el CSS y JS que antes vivían inline en `viviendas.html` a dos ficheros compartidos — `wwwroot/design-preview/kiwbi-preview.css` y `kiwbi-preview.js` — para evitar que cada nueva pantalla duplicara y pudiera desincronizar esas reglas. `viviendas.html` se adaptó para referenciarlos (mismo resultado visual, verificado de nuevo tras el cambio). El JS compartido añade además los manejadores genéricos para el selector "Se aplica a" (`.kiwbi-scope-option` + `[data-scope-panel]`), las pills de selección múltiple (`.kiwbi-pill`) y las tarjetas de opción seleccionables (`[data-option-group]`), reutilizables en cualquier pantalla futura sin JS adicional.
+
 ### Implementación del mecanismo de branding (2026-09-19)
+
 
 El mecanismo decidido arriba ya está implementado y validado, por delante del resto de la Feature 8.1 (no requería esperar a más mockups, era puramente técnico):
 
@@ -128,6 +153,115 @@ El mecanismo decidido arriba ya está implementado y validado, por delante del r
 - **`TenantBrandingViewComponent`** (nuevo, `Kiwbi.Web/Components/`): invocado desde `_Layout.cshtml` (`@await Component.InvokeAsync("TenantBranding")`), decide qué `DeveloperCompany` aplica según el rol/ruta actual exactamente como se documentó (Promotora vía `ICurrentUser.DeveloperCompanyId` + `GetCurrentDeveloperProfileUseCase`; Comprador solo cuando `RouteData` es `Buyer/HousingUnit/{id}` vía el nuevo use case; cualquier otro caso no renderiza nada). Su vista (`Views/Shared/Components/TenantBranding/Default.cshtml`) emite el mismo bloque `<style>` con `--kiwbi-accent`/`--kiwbi-accent-2` ya validado en el PoC.
 - **Prueba mínima de que llega a CSS real:** se añadió una única regla a `site.css` (`.navbar-light .navbar-brand { color: var(--kiwbi-accent, inherit); }`) que recolorea el texto "Kiwbi.Web" de la barra de navegación actual cuando hay branding, y cae a `inherit` (el negro por defecto de Bootstrap) cuando no lo hay. **No es un rediseño de la navegación** — el sidebar/topbar reales de Operativo+Blueprint siguen pendientes de la Feature 8.2/8.3; esto es solo la prueba de que el dato fluye de la base de datos real hasta el CSS renderizado.
 - **Validado manualmente end-to-end** (registro de una promotora de prueba vía `/Account/Register`, edición de su color primario a `#C0392B` vía `/DeveloperProfile/EditBranding`, captura de pantalla confirmando el cambio de color del navbar-brand) y verificado que al cerrar sesión el navbar-brand vuelve al negro por defecto (sin fuga de branding a páginas anónimas). El *build* completo y los 305 tests de Domain+Application (131+174) siguen en verde tras el cambio. La ruta de Comprador (`Buyer/HousingUnit`) comparte exactamente el mismo patrón de código que la de Promotora (ya cubierta end-to-end) y se validó por revisión de código, no por click-through completo (habría exigido sembrar una Promoción/Vivienda/invitación de comprador aceptada solo para esta prueba).
+
+### Cómo proceder después de generar en v0.dev (flujo ya validado en la ronda 1)
+
+Esto ya no es teórico: es exactamente el flujo que funcionó para "Operativo · Sidebar denso". A partir de ahora, para cada brief de esta sección:
+
+1. **Genera el mockup en v0.dev usando el brief.** Recomendado: continuar en el **mismo hilo/proyecto** de v0.dev que ya generó Operativo/Editorial/Blueprint/Cálido (así v0 parte del mismo lenguaje visual sin tener que reexplicárselo). Si prefieres empezar un hilo nuevo, pega primero el párrafo "Dirección ya acordada" que encabeza cada brief siguiente, para anclarlo al mismo estilo antes de pedirle la pantalla nueva.
+2. **A diferencia de la ronda 1, no hace falta pedir 3-4 variaciones divergentes.** Ya no estamos explorando estética, sino aplicando la dirección ya elegida a una pantalla concreta: pide **un único mockup coherente** con esa dirección. Solo pide 2 variantes si hay una duda de *layout* genuina y acotada (p. ej. "¿la ficha de cada Personalización se ve mejor como fila de tabla expandible o como tarjeta?"), nunca para volver a comparar paletas o tipografías ya decididas.
+3. **Cuando el resultado te convenza** (puedes pedir ajustes dentro del propio chat de v0.dev antes de darlo por bueno), descarga el proyecto completo (el botón de descarga/exportación que ofrezca la interfaz de v0.dev en ese momento) a una carpeta local. Puede ser la misma `C:\Users\cgran\Documents\identidad-visual-kiwbi` (v0.dev permite seguir añadiendo pantallas al mismo proyecto) o una carpeta nueva si prefieres mantenerlas separadas — cualquiera de las dos me vale.
+4. **Dime la ruta absoluta de esa carpeta** (aunque sea la misma de siempre, confírmamelo para saber que ya está actualizada) **y qué pantalla/variación concreta quieres que revise** si generaste más de una. No hace falta que la copies dentro de `C:\Kiwbi`: leo archivos fuera del workspace por ruta absoluta, tal como hice con `identidad-visual-kiwbi`.
+5. **A partir de ahí, estos son mis pasos** (los mismos que ya hice con Operativo/Blueprint): reviso el código fuente real que generó v0 (no una captura) para extraer con precisión paleta/tipografía/estructura, lo contrasto con lo ya decidido (paleta Slate, Inter, sidebar híbrido, alcance del acento de marca, mapeo a los datos/enums reales de Kiwbi), lo traduzco a Bootstrap 5 real ampliando `wwwroot/design-preview/` con un fichero nuevo (o reutilizando el patrón de `viviendas.html`), y lo verifico en el navegador (capturas + interacciones, como ya hice con el colapso del sidebar y el interruptor de marca) antes de documentar la dirección final de esa pantalla en este Epic.
+
+### Ronda 2 (pantallas priorizadas) — briefs (2026-09-19)
+
+Tres briefs, uno por cada pantalla priorizada pendiente (el Layout/Navegación base y el listado de Viviendas ya quedaron resueltos por el PoC). Cada uno incluye primero un párrafo de "dirección ya acordada" (para anclar el estilo si usas un hilo nuevo de v0.dev) y después el contenido específico de esa pantalla, con los datos/columnas reales de Kiwbi para que el mockup salga ya útil, no genérico.
+
+#### Brief A — Dashboard Promotora (`HousingPromotions/Index`)
+
+```
+Dirección ya acordada (no la cambies, ya está decidida): sigue exactamente el
+mismo sistema visual de "Operativo · Sidebar denso" que ya generaste antes -
+sidebar con dos estados (expandido ~224px con logo+nombre de tenant+labels,
+colapsado a icon-rail ~64px solo iconos), topbar con buscador/notificaciones/
+avatar, paleta base neutra fría tipo Slate (fondo #f8fafc, bordes #e2e8f0,
+texto #0f172a/#64748b), tipografía Inter, radios de 0.5rem (botones/inputs) y
+0.75rem (cards/tablas). El acento de marca del tenant solo se aplica en:
+logo, item de nav activo, botón primario, punto de notificación y barras de
+progreso - nunca en fondo general ni texto.
+
+Pantalla a diseñar: el Dashboard de la Promotora, punto de entrada tras iniciar
+sesión. Es el listado de sus Promociones (edificios en construcción), no de
+Viviendas individuales - reutiliza la misma fila de 4 KPI cards ya usada en
+Viviendas (Promociones activas, Viviendas en curso, Personalizaciones
+pendientes, Gremios coordinados), y debajo una tabla de Promociones con estas
+columnas reales: Nombre, Ciudad, Dirección, Nº de viviendas, y una acción
+"Ver"/"Editar" por fila. Botón principal "Nueva promoción" arriba a la derecha,
+igual patrón que "Nueva vivienda" en la pantalla ya generada. Si no hay
+ninguna promoción todavía, muestra un estado vacío con el mismo botón.
+
+Genera un único mockup coherente con la dirección ya acordada (no variaciones
+divergentes de paleta/tipografía, eso ya está decidido).
+```
+
+#### Brief B — CRUD de Personalizaciones (`Customizations/Index` agregado + `Customizations/Create`)
+
+```
+Dirección ya acordada (no la cambies): igual que en el Brief A - sistema
+"Operativo + sidebar híbrido" ya generado, paleta Slate, Inter, radios
+0.5rem/0.75rem, acento de marca solo en logo/nav activo/botón primario/
+notificación/progreso.
+
+Pantalla a diseñar: dos vistas de un CRUD real, la de "Personalizaciones" de
+Kiwbi (piensa en ello como el catálogo de opciones que un comprador podrá
+elegir para su vivienda - p. ej. tipo de suelo, grifería - agrupadas por
+Gremio):
+
+1) Listado (vista "agregada", sin filtrar por un Gremio concreto): tabla con
+   columnas Nombre, Gremio, Nº de opciones, "Se aplica a" (texto corto tipo
+   "Toda la promoción" / "2 tipologías" / "3 viviendas"), y acciones
+   Detalle/Eliminar por fila. Botón "Nueva personalización" arriba. Si la
+   promoción todavía no tiene ningún Gremio dado de alta, el botón aparece
+   deshabilitado con un aviso corto invitando a crear un Gremio primero.
+
+2) Formulario de alta: un <select> para elegir el Gremio, campo de texto para
+   el Nombre de la personalización, un bloque separado (visualmente
+   diferenciado, es la "opción por defecto") con Nombre de la opción y
+   Sobrecoste en euros, un selector de "Se aplica a" con 3 opciones (Toda la
+   promoción / Tipología / Vivienda) que al elegir Tipología o Vivienda
+   revela un selector múltiple correspondiente. Piensa en cómo estructurar
+   este formulario con secciones claras (no todo en una columna plana) dado
+   que tiene bastantes campos condicionales.
+
+Genera un único mockup coherente con la dirección ya acordada para ambas
+vistas (listado + formulario).
+```
+
+#### Brief C — Portal del Comprador (`Buyer/Index` + `Buyer/HousingUnit`)
+
+```
+Dirección ya acordada (no la cambies): mismo sistema base que en los briefs
+anteriores (paleta Slate, Inter, radios 0.5rem/0.75rem), PERO con una
+diferencia importante de alcance de marca respecto al panel de Promotora:
+
+- En el Dashboard del Comprador (pantalla 1) NO se aplica ningún acento de
+  marca de tenant - un comprador puede tener viviendas de varias promotoras
+  a la vez, así que esta pantalla se queda neutra (sin sidebar de Promotora
+  tampoco - el comprador no gestiona nada, solo consulta).
+- En el Detalle de Vivienda (pantalla 2) SÍ se aplica el acento de marca de
+  la promotora dueña de esa vivienda concreta, con más protagonismo que en
+  el panel de Promotora (refuerza la relación promotora-comprador en el
+  punto de contacto directo).
+
+Pantalla 1 - Dashboard del Comprador ("Mis viviendas"): una rejilla de
+tarjetas, una por cada vivienda que el comprador tiene asignada, con: nombre
+de la Promoción, Ciudad, Planta y Puerta, y una miniatura del plano si existe
+(si no, un placeholder neutro). Cada tarjeta lleva a la pantalla 2. Sin
+sidebar ni densidad de datos - tono más simple y directo que el panel B2B.
+
+Pantalla 2 - Detalle de Vivienda: el plano de la vivienda arriba, y debajo un
+listado de Personalizaciones agrupadas por Gremio (nombre del Gremio, fecha
+límite de selección, y una indicación clara de si ese Gremio ya venció -
+en ese caso las opciones se ven bloqueadas/de solo lectura). Dentro de cada
+Gremio, cada Personalización muestra su nombre y sus Opciones disponibles
+como tarjetas/botones seleccionables (con su sobrecoste en euros), resaltando
+cuál es la opción actualmente elegida/efectiva. Si el Gremio no ha vencido,
+las opciones son clicables (selección interactiva); si ha vencido, se ven
+igual pero sin poder interactuar.
+
+Genera un único mockup coherente por cada una de las dos pantallas.
+```
 
 ## Selección del enfoque de implementación
 

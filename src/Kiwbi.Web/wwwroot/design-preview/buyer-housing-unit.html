@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kiwbi · PoC visual — Detalle de Vivienda (Comprador)</title>
+<link rel="stylesheet" href="../lib/bootstrap/dist/css/bootstrap.min.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="kiwbi-preview.css" />
+</head>
+<body id="kiwbiBuyerBody">
+
+<!-- El acento de marca aquí SÍ se aplica: es la promotora dueña de esta vivienda concreta,
+     siempre inequívoca (a diferencia del dashboard agregado de Mis viviendas). -->
+<header class="kiwbi-buyer-header">
+  <div class="mx-auto d-flex align-items-center justify-content-between" style="max-width:50rem;">
+    <a href="buyer-index.html" class="kiwbi-buyer-header-back text-decoration-none">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+      Mis viviendas
+    </a>
+    <div class="d-flex align-items-center gap-2">
+      <span class="small" style="opacity:.9;" id="kiwbiTenantName">Hábitat Verde</span>
+      <span class="d-flex align-items-center justify-content-center rounded-2 fw-bold" style="width:2rem;height:2rem;background:rgba(255,255,255,.2);" id="kiwbiMark">H</span>
+    </div>
+  </div>
+  <div class="mx-auto mt-3" style="max-width:50rem;">
+    <div class="text-uppercase small" style="letter-spacing:.08em;opacity:.75;">Valencia</div>
+    <h1 class="h3 fw-bold mt-1 mb-1">Residencial Miravalle</h1>
+    <div class="small" style="opacity:.9;">2ª planta · Puerta B · 3 dorm. · Tipo C</div>
+  </div>
+</header>
+
+<div class="mx-auto px-3 py-4" style="max-width:50rem;">
+  <!-- Selector de vivienda de ejemplo, solo para esta PoC: demuestra que el acento cambia según
+       la promotora dueña de la vivienda, no según un usuario "logueado". -->
+  <div class="d-flex align-items-center gap-2 mb-4 small">
+    <span class="text-muted">Vivienda de ejemplo:</span>
+    <button type="button" class="kiwbi-pill active" data-demo-tenant="habitat" data-accent="#2f7d5b" data-accent2="#1c5540" data-name="Hábitat Verde" data-initial="H">Miravalle (Hábitat Verde)</button>
+    <button type="button" class="kiwbi-pill" data-demo-tenant="nova" data-accent="#2563a8" data-accent2="#173f6b" data-name="Nova Residencial" data-initial="N">Parque del Turia (Nova)</button>
+  </div>
+
+  <section class="kiwbi-table-card mb-4">
+    <div class="kiwbi-table-card-header"><span class="title">Plano de tu vivienda</span></div>
+    <div class="d-flex align-items-center justify-content-center text-muted" style="aspect-ratio: 16/9; background: var(--kiwbi-bg);">
+      <div class="text-center">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21h18M6 21V7l6-4 6 4v14M10 21v-6h4v6"/></svg>
+        <div class="small mt-1">Plano no disponible</div>
+      </div>
+    </div>
+  </section>
+
+  <h2 class="h5 mt-5" style="font-weight:600;">Personalizaciones</h2>
+  <p class="small text-muted">Elige tus acabados. Cada gremio tiene su propia fecha límite de selección.</p>
+
+  <div class="d-flex flex-column gap-3 mt-3">
+    <!-- Gremio abierto -->
+    <div class="kiwbi-gremio-card">
+      <div class="kiwbi-gremio-card-header">
+        <span class="fw-semibold" style="font-size:.9rem;">Pavimentos</span>
+        <span class="kiwbi-gremio-badge-open">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+          Hasta 25 sep
+        </span>
+      </div>
+      <div class="p-3">
+        <div class="text-uppercase small text-muted mb-2" style="letter-spacing:.04em;font-size:.68rem;">Tipo de suelo</div>
+        <div class="row row-cols-1 row-cols-sm-3 g-2">
+          <div class="col">
+            <button type="button" class="kiwbi-option-card selected" data-option-group="suelo">
+              <span class="kiwbi-option-thumb"></span>
+              <span class="flex-fill text-start">
+                <span class="d-block fw-semibold" style="font-size:.85rem;">Roble natural</span>
+                <span class="d-block small text-muted">Tarima laminada AC5</span>
+              </span>
+              <span class="small fw-semibold text-muted">Incluido</span>
+              <span class="kiwbi-option-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
+            </button>
+          </div>
+          <div class="col">
+            <button type="button" class="kiwbi-option-card" data-option-group="suelo">
+              <span class="kiwbi-option-thumb"></span>
+              <span class="flex-fill text-start">
+                <span class="d-block fw-semibold" style="font-size:.85rem;">Roble ceniza</span>
+                <span class="d-block small text-muted">Tarima laminada AC5</span>
+              </span>
+              <span class="small fw-semibold" style="color:var(--kiwbi-accent);">+320 €</span>
+              <span class="kiwbi-option-check"></span>
+            </button>
+          </div>
+          <div class="col">
+            <button type="button" class="kiwbi-option-card" data-option-group="suelo">
+              <span class="kiwbi-option-thumb"></span>
+              <span class="flex-fill text-start">
+                <span class="d-block fw-semibold" style="font-size:.85rem;">Porcelánico gris</span>
+                <span class="d-block small text-muted">Gran formato 80×80</span>
+              </span>
+              <span class="small fw-semibold" style="color:var(--kiwbi-accent);">+540 €</span>
+              <span class="kiwbi-option-check"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Gremio vencido / bloqueado -->
+    <div class="kiwbi-gremio-card expired">
+      <div class="kiwbi-gremio-card-header">
+        <span class="fw-semibold" style="font-size:.9rem;">Fontanería</span>
+        <span class="kiwbi-gremio-badge-expired">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="1.5"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+          Cerrado · venció 15 sep
+        </span>
+      </div>
+      <div class="p-3">
+        <div class="text-uppercase small text-muted mb-2" style="letter-spacing:.04em;font-size:.68rem;">Grifería de baño</div>
+        <div class="row row-cols-1 row-cols-sm-3 g-2">
+          <div class="col">
+            <button type="button" class="kiwbi-option-card selected" data-option-group="griferia" disabled>
+              <span class="kiwbi-option-thumb"></span>
+              <span class="flex-fill text-start">
+                <span class="d-block fw-semibold" style="font-size:.85rem;">Cromo</span>
+                <span class="d-block small text-muted">Acabado brillo</span>
+              </span>
+              <span class="small fw-semibold text-muted">Incluido</span>
+              <span class="kiwbi-option-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg></span>
+            </button>
+          </div>
+          <div class="col">
+            <button type="button" class="kiwbi-option-card" data-option-group="griferia" disabled>
+              <span class="kiwbi-option-thumb"></span>
+              <span class="flex-fill text-start">
+                <span class="d-block fw-semibold" style="font-size:.85rem;">Negro mate</span>
+                <span class="d-block small text-muted">Acabado mate</span>
+              </span>
+              <span class="small fw-semibold" style="color:var(--kiwbi-accent);">+180 €</span>
+              <span class="kiwbi-option-check"></span>
+            </button>
+          </div>
+          <div class="col">
+            <button type="button" class="kiwbi-option-card" data-option-group="griferia" disabled>
+              <span class="kiwbi-option-thumb"></span>
+              <span class="flex-fill text-start">
+                <span class="d-block fw-semibold" style="font-size:.85rem;">Oro cepillado</span>
+                <span class="d-block small text-muted">Acabado satinado</span>
+              </span>
+              <span class="small fw-semibold" style="color:var(--kiwbi-accent);">+260 €</span>
+              <span class="kiwbi-option-check"></span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="kiwbi-preview.js"></script>
+<script>
+  // Demo exclusivo de esta PoC: alterna entre dos viviendas de ejemplo (cada una de una
+  // promotora distinta) para demostrar que el acento se resuelve por vivienda, no por sesión.
+  document.querySelectorAll('[data-demo-tenant]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      document.querySelectorAll('[data-demo-tenant]').forEach(function (b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      document.documentElement.style.setProperty('--kiwbi-accent', btn.dataset.accent);
+      document.documentElement.style.setProperty('--kiwbi-accent-2', btn.dataset.accent2);
+      document.getElementById('kiwbiMark').textContent = btn.dataset.initial;
+      document.getElementById('kiwbiTenantName').textContent = btn.dataset.name;
+    });
+  });
+</script>
+</body>
+</html>

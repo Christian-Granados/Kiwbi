@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kiwbi · PoC visual — Mis viviendas (Comprador)</title>
+<link rel="stylesheet" href="../lib/bootstrap/dist/css/bootstrap.min.css" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<link rel="stylesheet" href="kiwbi-preview.css" />
+</head>
+<body>
+
+<!-- Sin sidebar ni acento de marca: un comprador puede tener viviendas de varias promotoras a la vez. -->
+<header class="kiwbi-buyer-topbar">
+  <div class="d-flex align-items-center gap-2">
+    <span class="kiwbi-buyer-mark">k</span>
+    <div class="lh-sm">
+      <div class="fw-semibold" style="font-size:.875rem;">Kiwbi</div>
+      <div class="kiwbi-brand-sub">Área del comprador</div>
+    </div>
+  </div>
+  <div class="d-flex align-items-center gap-2">
+    <span class="small text-muted d-none d-sm-inline">Laura Giménez</span>
+    <span class="kiwbi-avatar" style="width:2.25rem;height:2.25rem;font-size:.8rem;">LG</span>
+  </div>
+</header>
+
+<div class="mx-auto px-4 py-5" style="max-width: 62rem;">
+  <h1 class="h4" style="font-weight:600;">Mis viviendas</h1>
+  <p class="small text-muted">Consulta cada vivienda y personaliza sus acabados antes de la fecha límite.</p>
+
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4 mt-1">
+    <div class="col">
+      <a href="buyer-housing-unit.html?tenant=habitat" class="kiwbi-buyer-card">
+        <div class="kiwbi-buyer-card-plano">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21h18M6 21V7l6-4 6 4v14M10 21v-6h4v6"/></svg>
+        </div>
+        <div class="kiwbi-buyer-card-body">
+          <div class="fw-semibold" style="font-size:.9rem;">Residencial Miravalle</div>
+          <div class="small text-muted d-flex align-items-center gap-1 mt-1">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M12 21s-7-6.5-7-11.5A7 7 0 0 1 19 9.5C19 14.5 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+            Valencia
+          </div>
+          <div class="d-flex gap-2 mt-2">
+            <span class="kiwbi-chip">2ª planta</span>
+            <span class="kiwbi-chip">Puerta B</span>
+          </div>
+          <div class="d-flex align-items-center gap-2 mt-3 pt-2 border-top">
+            <span class="kiwbi-buyer-tenant-dot" style="background:#2f7d5b;"></span>
+            <span class="small text-muted">Hábitat Verde</span>
+          </div>
+        </div>
+      </a>
+    </div>
+    <div class="col">
+      <a href="buyer-housing-unit.html?tenant=nova" class="kiwbi-buyer-card">
+        <div class="kiwbi-buyer-card-plano">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21h18M6 21V7l6-4 6 4v14M10 21v-6h4v6"/></svg>
+        </div>
+        <div class="kiwbi-buyer-card-body">
+          <div class="fw-semibold" style="font-size:.9rem;">Parque del Turia</div>
+          <div class="small text-muted d-flex align-items-center gap-1 mt-1">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M12 21s-7-6.5-7-11.5A7 7 0 0 1 19 9.5C19 14.5 12 21 12 21Z"/><circle cx="12" cy="9.5" r="2.5"/></svg>
+            Valencia
+          </div>
+          <div class="d-flex gap-2 mt-2">
+            <span class="kiwbi-chip">4ª planta</span>
+            <span class="kiwbi-chip">Puerta D</span>
+          </div>
+          <div class="d-flex align-items-center gap-2 mt-3 pt-2 border-top">
+            <span class="kiwbi-buyer-tenant-dot" style="background:#2563a8;"></span>
+            <span class="small text-muted">Nova Residencial</span>
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+  <p class="small text-muted mt-4 mb-0">
+    <em>Nota de la PoC: Laura tiene viviendas de dos promotoras distintas a la vez — por eso este
+    dashboard se queda neutro (sin acento de marca ni sidebar); el acento aparece recién al entrar
+    al detalle de cada vivienda, ya con un único tenant inequívoco.</em>
+  </p>
+</div>
+
+</body>
+</html>

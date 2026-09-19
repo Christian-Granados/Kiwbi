@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Kiwbi · PoC visual — Viviendas</title>
+<title>Kiwbi · PoC visual — Dashboard Promotora</title>
 <link rel="stylesheet" href="../lib/bootstrap/dist/css/bootstrap.min.css" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -12,7 +12,6 @@
 <body>
 
 <div class="kiwbi-shell">
-  <!-- Sidebar: expandido = Operativo · Sidebar denso; colapsado (icon-rail) = Blueprint · Técnico -->
   <aside class="kiwbi-sidebar" id="kiwbiSidebar">
     <div class="kiwbi-brand">
       <span class="kiwbi-mark" id="kiwbiMark">H</span>
@@ -23,7 +22,7 @@
     </div>
 
     <nav class="kiwbi-nav">
-      <a class="kiwbi-nav-item" href="#" title="Panel">
+      <a class="kiwbi-nav-item active" href="#" title="Panel">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
         <span class="kiwbi-nav-label">Panel</span>
       </a>
@@ -31,7 +30,7 @@
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M6 21V7l6-4 6 4v14M10 21v-6h4v6"/></svg>
         <span class="kiwbi-nav-label">Promociones</span>
       </a>
-      <a class="kiwbi-nav-item active" href="#" title="Viviendas">
+      <a class="kiwbi-nav-item" href="viviendas.html" title="Viviendas">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
         <span class="kiwbi-nav-label">Viviendas</span>
       </a>
@@ -39,7 +38,7 @@
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 1.4 1.4l3-3a1 1 0 0 0-1.4-1.4l-3 3ZM3 21l7-7M7 21H3v-4l9.5-9.5a2.1 2.1 0 0 1 3 3L5 21Z"/></svg>
         <span class="kiwbi-nav-label">Gremios</span>
       </a>
-      <a class="kiwbi-nav-item" href="#" title="Personalización">
+      <a class="kiwbi-nav-item" href="personalizaciones.html" title="Personalización">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="9" cy="10" r="1"/><circle cx="14" cy="8" r="1"/><circle cx="15" cy="13" r="1"/></svg>
         <span class="kiwbi-nav-label">Personalización</span>
       </a>
@@ -75,7 +74,7 @@
       </button>
       <div class="kiwbi-search">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        Buscar vivienda, comprador…
+        Buscar promoción, vivienda…
       </div>
       <button type="button" class="kiwbi-icon-btn">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
@@ -89,15 +88,15 @@
     </header>
 
     <div class="kiwbi-content">
-      <div class="kiwbi-breadcrumb"><span>Panel</span><span>/</span><span class="current">Viviendas</span></div>
+      <div class="kiwbi-breadcrumb"><span>Panel</span><span>/</span><span class="current">Promociones</span></div>
       <div class="d-flex align-items-center justify-content-between mb-4">
         <div>
-          <h1 class="h4 mb-0" style="font-weight:600;">Viviendas</h1>
-          <div class="small text-muted">Residencial Miravalle · Fase II</div>
+          <h1 class="h4 mb-0" style="font-weight:600;">Promociones</h1>
+          <div class="small text-muted">Todos los edificios en construcción de tu promotora</div>
         </div>
         <button type="button" class="btn btn-kiwbi-primary btn-sm d-flex align-items-center gap-1">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Nueva vivienda
+          Nueva promoción
         </button>
       </div>
 
@@ -110,64 +109,96 @@
 
       <div class="kiwbi-table-card">
         <div class="kiwbi-table-card-header">
-          <span class="title">Listado de viviendas</span>
-          <span class="count">184 resultados</span>
+          <span class="title">Listado de promociones</span>
+          <span class="count">6 promociones</span>
         </div>
         <table class="kiwbi-table">
           <thead>
             <tr>
-              <th>Vivienda</th>
-              <th>Comprador</th>
-              <th class="kiwbi-col-optional">Pendiente</th>
-              <th>Estado</th>
-              <th class="kiwbi-col-optional">Progreso</th>
-              <th>Límite</th>
+              <th>Nombre</th>
+              <th class="kiwbi-col-optional">Ciudad</th>
+              <th class="kiwbi-col-optional">Dirección</th>
+              <th class="text-end">Nº viviendas</th>
+              <th class="text-end">Acciones</th>
             </tr>
           </thead>
           <tbody>
             <tr>
-              <td><div class="kiwbi-row-title">MV-A-2B</div><div class="kiwbi-row-detail">Bloque A · 2º B · 3 dorm.</div></td>
-              <td>Laura Giménez</td>
-              <td class="kiwbi-col-optional text-muted">Suelos, Grifería</td>
-              <td><span class="kiwbi-badge kiwbi-badge-info"><span class="kiwbi-dot"></span>En progreso</span></td>
-              <td class="kiwbi-col-optional"><span class="kiwbi-progress"><span style="width:60%"></span></span> <span class="small text-muted">60%</span></td>
-              <td>22 sep</td>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <span class="kiwbi-row-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M6 21V7l6-4 6 4v14M10 21v-6h4v6"/></svg></span>
+                  <div><div class="kiwbi-row-title">Residencial Miravalle</div><div class="kiwbi-row-detail">Acabados</div></div>
+                </div>
+              </td>
+              <td class="kiwbi-col-optional text-muted">Valencia</td>
+              <td class="kiwbi-col-optional text-muted">Av. de Aragón 112 · Fase II</td>
+              <td class="text-end fw-medium">48</td>
+              <td class="text-end">
+                <button type="button" class="btn btn-sm btn-outline-secondary">Ver</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary">Editar</button>
+              </td>
             </tr>
             <tr>
-              <td><div class="kiwbi-row-title">MV-A-3A</div><div class="kiwbi-row-detail">Bloque A · 3º A · 2 dorm.</div></td>
-              <td>Marc Ortí</td>
-              <td class="kiwbi-col-optional text-muted">—</td>
-              <td><span class="kiwbi-badge kiwbi-badge-success"><span class="kiwbi-dot"></span>Completada</span></td>
-              <td class="kiwbi-col-optional"><span class="kiwbi-progress"><span style="width:100%"></span></span> <span class="small text-muted">100%</span></td>
-              <td>15 sep</td>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <span class="kiwbi-row-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M6 21V7l6-4 6 4v14M10 21v-6h4v6"/></svg></span>
+                  <div><div class="kiwbi-row-title">Parque del Turia</div><div class="kiwbi-row-detail">Instalaciones</div></div>
+                </div>
+              </td>
+              <td class="kiwbi-col-optional text-muted">Valencia</td>
+              <td class="kiwbi-col-optional text-muted">C/ Menorca 8 · Fase I</td>
+              <td class="text-end fw-medium">36</td>
+              <td class="text-end">
+                <button type="button" class="btn btn-sm btn-outline-secondary">Ver</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary">Editar</button>
+              </td>
             </tr>
             <tr>
-              <td><div class="kiwbi-row-title">MV-B-1C</div><div class="kiwbi-row-detail">Bloque B · 1º C · 4 dorm.</div></td>
-              <td>Familia Roig</td>
-              <td class="kiwbi-col-optional text-muted">Carpintería</td>
-              <td><span class="kiwbi-badge kiwbi-badge-danger"><span class="kiwbi-dot"></span>Vencida</span></td>
-              <td class="kiwbi-col-optional"><span class="kiwbi-progress"><span style="width:45%"></span></span> <span class="small text-muted">45%</span></td>
-              <td>19 sep</td>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <span class="kiwbi-row-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M6 21V7l6-4 6 4v14M10 21v-6h4v6"/></svg></span>
+                  <div><div class="kiwbi-row-title">Altos de Godella</div><div class="kiwbi-row-detail">Estructura</div></div>
+                </div>
+              </td>
+              <td class="kiwbi-col-optional text-muted">Godella</td>
+              <td class="kiwbi-col-optional text-muted">C/ Mayor 45</td>
+              <td class="text-end fw-medium">24</td>
+              <td class="text-end">
+                <button type="button" class="btn btn-sm btn-outline-secondary">Ver</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary">Editar</button>
+              </td>
             </tr>
             <tr>
-              <td><div class="kiwbi-row-title">PT-2-4D</div><div class="kiwbi-row-detail">Escalera 2 · 4º D · 3 dorm.</div></td>
-              <td>Nuria Campos</td>
-              <td class="kiwbi-col-optional text-muted">Todas</td>
-              <td><span class="kiwbi-badge kiwbi-badge-neutral"><span class="kiwbi-dot"></span>Sin iniciar</span></td>
-              <td class="kiwbi-col-optional"><span class="kiwbi-progress"><span style="width:0%"></span></span> <span class="small text-muted">0%</span></td>
-              <td>05 oct</td>
-            </tr>
-            <tr>
-              <td><div class="kiwbi-row-title">PT-1-BJ</div><div class="kiwbi-row-detail">Escalera 1 · Bajo · 2 dorm.</div></td>
-              <td>Sergio Belda</td>
-              <td class="kiwbi-col-optional text-muted">Alicatados</td>
-              <td><span class="kiwbi-badge kiwbi-badge-info"><span class="kiwbi-dot"></span>En progreso</span></td>
-              <td class="kiwbi-col-optional"><span class="kiwbi-progress"><span style="width:78%"></span></span> <span class="small text-muted">78%</span></td>
-              <td>30 sep</td>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <span class="kiwbi-row-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M6 21V7l6-4 6 4v14M10 21v-6h4v6"/></svg></span>
+                  <div><div class="kiwbi-row-title">Jardines de Ruzafa</div><div class="kiwbi-row-detail">Cimentación</div></div>
+                </div>
+              </td>
+              <td class="kiwbi-col-optional text-muted">Valencia</td>
+              <td class="kiwbi-col-optional text-muted">C/ Sueca 30</td>
+              <td class="text-end fw-medium">18</td>
+              <td class="text-end">
+                <button type="button" class="btn btn-sm btn-outline-secondary">Ver</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary">Editar</button>
+              </td>
             </tr>
           </tbody>
         </table>
       </div>
+
+      <!-- Estado vacío de referencia (promoción recién creada, sin datos): comentar la tabla de arriba
+           y descomentar este bloque para revisar el estado sin promociones. -->
+      <!--
+      <div class="kiwbi-table-card">
+        <div class="kiwbi-empty-state">
+          <span class="kiwbi-empty-icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M6 21V7l6-4 6 4v14M10 21v-6h4v6"/></svg></span>
+          <h3>Todavía no hay promociones</h3>
+          <p>Crea tu primera promoción para empezar a añadir viviendas y coordinar los gremios.</p>
+          <button type="button" class="btn btn-kiwbi-primary btn-sm mt-3">Nueva promoción</button>
+        </div>
+      </div>
+      -->
     </div>
   </div>
 </div>

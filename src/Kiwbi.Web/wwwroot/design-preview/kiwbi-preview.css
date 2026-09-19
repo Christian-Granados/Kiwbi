@@ -1,0 +1,254 @@
+/* Feature 8.1 — sistema de vista previa compartido por todos los PoC de wwwroot/design-preview/.
+   Dirección: "Operativo · Sidebar denso" (paleta/tipografía/densidad) + "Blueprint · Técnico" (sidebar
+   colapsable a icon-rail). Solo maquetación visual sobre Bootstrap 5 ya vendorizado; sin datos reales. */
+:root {
+  --kiwbi-bg: #f8fafc;
+  --kiwbi-surface: #ffffff;
+  --kiwbi-border: #e2e8f0;
+  --kiwbi-border-soft: #f1f5f9;
+  --kiwbi-text: #0f172a;
+  --kiwbi-text-muted: #64748b;
+  --kiwbi-text-faint: #94a3b8;
+  --kiwbi-accent: #2f7d5b;
+  --kiwbi-accent-2: #1c5540;
+  --kiwbi-sidebar-width: 224px;
+  --kiwbi-sidebar-width-collapsed: 64px;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background-color: var(--kiwbi-bg);
+  color: var(--kiwbi-text);
+}
+
+/* ---- Shell / sidebar (Promotora) ---- */
+.kiwbi-shell { display: flex; min-height: 100vh; }
+
+.kiwbi-sidebar {
+  width: var(--kiwbi-sidebar-width);
+  flex-shrink: 0;
+  background: var(--kiwbi-surface);
+  border-right: 1px solid var(--kiwbi-border);
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 0.75rem;
+  transition: width 0.15s ease;
+}
+.kiwbi-sidebar.collapsed { width: var(--kiwbi-sidebar-width-collapsed); }
+
+.kiwbi-brand { display: flex; align-items: center; gap: 0.6rem; padding: 0 0.4rem; margin-bottom: 1.25rem; }
+.kiwbi-mark {
+  display: flex; align-items: center; justify-content: center;
+  width: 2rem; height: 2rem; border-radius: 0.5rem; flex-shrink: 0;
+  background: var(--kiwbi-accent); color: #fff; font-weight: 700; font-size: 0.9rem;
+}
+.kiwbi-brand-text { line-height: 1.1; overflow: hidden; white-space: nowrap; }
+.kiwbi-brand-name { font-size: 0.85rem; font-weight: 600; color: var(--kiwbi-text); }
+.kiwbi-brand-sub { font-size: 0.65rem; color: var(--kiwbi-text-faint); }
+.kiwbi-sidebar.collapsed .kiwbi-brand-text { display: none; }
+
+.kiwbi-nav { display: flex; flex-direction: column; gap: 0.15rem; }
+.kiwbi-nav-item {
+  display: flex; align-items: center; gap: 0.65rem; width: 100%;
+  padding: 0.5rem 0.6rem; border-radius: 0.5rem; border: none; background: none;
+  font-size: 0.875rem; font-weight: 500; color: #475569;
+  text-decoration: none; white-space: nowrap; overflow: hidden; text-align: left;
+}
+.kiwbi-nav-item:hover { background: var(--kiwbi-border-soft); color: var(--kiwbi-text); }
+.kiwbi-nav-item.active { background: var(--kiwbi-accent); color: #fff; }
+.kiwbi-nav-item svg { flex-shrink: 0; }
+.kiwbi-sidebar.collapsed .kiwbi-nav-item { justify-content: center; padding: 0.6rem; }
+.kiwbi-sidebar.collapsed .kiwbi-nav-label { display: none; }
+
+.kiwbi-sidebar-footer { margin-top: auto; display: flex; flex-direction: column; gap: 0.5rem; }
+
+.kiwbi-plan-widget {
+  background: var(--kiwbi-bg); border-radius: 0.5rem;
+  padding: 0.65rem; font-size: 0.7rem; color: var(--kiwbi-text-muted);
+}
+.kiwbi-plan-widget strong { display: block; font-size: 0.7rem; color: #334155; margin-bottom: 0.15rem; }
+.kiwbi-plan-widget .kiwbi-progress { width: 100%; }
+.kiwbi-sidebar.collapsed .kiwbi-plan-widget { display: none; }
+
+.kiwbi-tenant-switcher { display: flex; gap: 0.35rem; padding: 0 0.4rem; margin-bottom: 1rem; }
+.kiwbi-swatch {
+  width: 1.15rem; height: 1.15rem; border-radius: 50%; border: 2px solid #fff;
+  box-shadow: 0 0 0 1px var(--kiwbi-border); cursor: pointer; padding: 0;
+}
+.kiwbi-sidebar.collapsed .kiwbi-tenant-switcher { flex-wrap: wrap; justify-content: center; }
+
+/* ---- Main / topbar (Promotora) ---- */
+.kiwbi-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.kiwbi-topbar {
+  display: flex; align-items: center; gap: 0.75rem;
+  background: var(--kiwbi-surface); border-bottom: 1px solid var(--kiwbi-border);
+  padding: 0.6rem 1.25rem;
+}
+.kiwbi-collapse-btn {
+  border: 1px solid var(--kiwbi-border); background: #fff; border-radius: 0.5rem;
+  width: 2rem; height: 2rem; display: flex; align-items: center; justify-content: center;
+  color: var(--kiwbi-text-muted); flex-shrink: 0;
+}
+.kiwbi-search {
+  flex: 1; display: flex; align-items: center; gap: 0.5rem;
+  background: var(--kiwbi-bg); border: 1px solid var(--kiwbi-border);
+  border-radius: 0.5rem; padding: 0.4rem 0.75rem; color: var(--kiwbi-text-faint); font-size: 0.8rem;
+}
+.kiwbi-icon-btn {
+  position: relative; border: 1px solid var(--kiwbi-border); background: #fff;
+  border-radius: 0.5rem; width: 2.1rem; height: 2.1rem;
+  display: flex; align-items: center; justify-content: center; color: var(--kiwbi-text-muted);
+}
+.kiwbi-icon-btn .dot {
+  position: absolute; top: 0.35rem; right: 0.35rem; width: 0.4rem; height: 0.4rem;
+  border-radius: 50%; background: var(--kiwbi-accent);
+}
+.kiwbi-avatar-chip {
+  display: flex; align-items: center; gap: 0.4rem; border: 1px solid var(--kiwbi-border);
+  border-radius: 0.5rem; padding: 0.2rem 0.5rem 0.2rem 0.2rem; background: #fff;
+}
+.kiwbi-avatar {
+  width: 1.6rem; height: 1.6rem; border-radius: 50%; background: var(--kiwbi-border-soft);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 0.65rem; font-weight: 600; color: var(--kiwbi-text-muted); flex-shrink: 0;
+}
+.kiwbi-avatar-name { font-size: 0.75rem; font-weight: 500; color: var(--kiwbi-text-muted); }
+
+.kiwbi-content { padding: 1.25rem; }
+
+.kiwbi-breadcrumb { display: flex; align-items: center; gap: 0.35rem; font-size: 0.7rem; color: var(--kiwbi-text-faint); margin-bottom: 0.25rem; }
+.kiwbi-breadcrumb .current { color: var(--kiwbi-text-muted); }
+
+/* ---- KPI cards ---- */
+.kiwbi-kpi {
+  background: var(--kiwbi-surface); border: 1px solid var(--kiwbi-border);
+  border-radius: 0.75rem; padding: 0.85rem;
+}
+.kiwbi-kpi-label { font-size: 0.7rem; font-weight: 500; color: var(--kiwbi-text-muted); }
+.kiwbi-kpi-value { font-size: 1.4rem; font-weight: 600; letter-spacing: -0.01em; margin-top: 0.15rem; }
+.kiwbi-kpi-delta { font-size: 0.7rem; color: var(--kiwbi-text-faint); margin-top: 0.1rem; }
+
+/* ---- Table card ---- */
+.kiwbi-table-card { background: var(--kiwbi-surface); border: 1px solid var(--kiwbi-border); border-radius: 0.75rem; overflow: hidden; }
+.kiwbi-table-card-header {
+  display: flex; align-items: center; justify-content: space-between;
+  border-bottom: 1px solid var(--kiwbi-border-soft); padding: 0.65rem 1rem;
+}
+.kiwbi-table-card-header .title { font-size: 0.875rem; font-weight: 600; color: #1e293b; }
+.kiwbi-table-card-header .count { font-size: 0.75rem; color: var(--kiwbi-text-faint); }
+table.kiwbi-table { width: 100%; margin-bottom: 0; font-size: 0.875rem; }
+table.kiwbi-table thead th {
+  font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.04em;
+  color: var(--kiwbi-text-faint); font-weight: 500; border-bottom: 1px solid var(--kiwbi-border-soft);
+  padding: 0.5rem 1rem;
+}
+table.kiwbi-table tbody td { padding: 0.6rem 1rem; border-bottom: 1px solid var(--kiwbi-border-soft); vertical-align: middle; }
+table.kiwbi-table tbody tr:last-child td { border-bottom: none; }
+.kiwbi-row-title { font-weight: 600; color: var(--kiwbi-text); }
+.kiwbi-row-detail { font-size: 0.7rem; color: var(--kiwbi-text-faint); }
+.kiwbi-row-icon {
+  width: 2rem; height: 2rem; border-radius: 0.5rem; background: var(--kiwbi-border-soft);
+  display: flex; align-items: center; justify-content: center; color: var(--kiwbi-text-muted); flex-shrink: 0;
+}
+.kiwbi-chip { display: inline-flex; align-items: center; border-radius: 0.5rem; background: var(--kiwbi-border-soft); color: var(--kiwbi-text-muted); font-size: 0.7rem; font-weight: 500; padding: 0.15rem 0.5rem; }
+
+.kiwbi-badge { display: inline-flex; align-items: center; gap: 0.35rem; border-radius: 999px; padding: 0.15rem 0.55rem; font-size: 0.7rem; font-weight: 500; }
+.kiwbi-badge .kiwbi-dot { width: 0.35rem; height: 0.35rem; border-radius: 50%; }
+.kiwbi-badge-success { background: #ecfdf5; color: #047857; } .kiwbi-badge-success .kiwbi-dot { background: #10b981; }
+.kiwbi-badge-info    { background: #eff6ff; color: #1d4ed8; } .kiwbi-badge-info .kiwbi-dot    { background: #3b82f6; }
+.kiwbi-badge-neutral { background: #f1f5f9; color: #64748b; } .kiwbi-badge-neutral .kiwbi-dot { background: #94a3b8; }
+.kiwbi-badge-danger  { background: #fff1f2; color: #be123c; } .kiwbi-badge-danger .kiwbi-dot  { background: #f43f5e; }
+.kiwbi-badge-warning { color: var(--kiwbi-accent); background: var(--kiwbi-border-soft); }
+
+.kiwbi-progress { height: 0.35rem; width: 5rem; border-radius: 999px; background: var(--kiwbi-border-soft); overflow: hidden; display: inline-block; vertical-align: middle; }
+.kiwbi-progress > span { display: block; height: 100%; border-radius: 999px; background: var(--kiwbi-accent); }
+
+.btn-kiwbi-primary { background: var(--kiwbi-accent); border-color: var(--kiwbi-accent); color: #fff; }
+.btn-kiwbi-primary:hover { background: var(--kiwbi-accent-2); border-color: var(--kiwbi-accent-2); color: #fff; }
+.btn-kiwbi-primary:disabled { background: var(--kiwbi-accent); border-color: var(--kiwbi-accent); opacity: .4; }
+
+.kiwbi-empty-state { text-align: center; padding: 3rem 1.5rem; }
+.kiwbi-empty-icon {
+  width: 3rem; height: 3rem; border-radius: 0.75rem; background: var(--kiwbi-border-soft);
+  display: inline-flex; align-items: center; justify-content: center; color: var(--kiwbi-text-faint); margin-bottom: 1rem;
+}
+.kiwbi-empty-state h3 { font-size: 0.9rem; font-weight: 600; color: var(--kiwbi-text); }
+.kiwbi-empty-state p { font-size: 0.8rem; color: var(--kiwbi-text-muted); max-width: 22rem; margin: 0.35rem auto 0; }
+
+/* ---- Formulario (secciones tipo "fieldset" sin usar <fieldset>/<legend>, coherente con las vistas Razor reales) ---- */
+.kiwbi-fieldset { border: 1px solid var(--kiwbi-border); border-radius: 0.75rem; padding: 1.25rem; background: var(--kiwbi-surface); }
+.kiwbi-fieldset-accent { border-style: dashed; border-color: var(--kiwbi-accent); background: var(--kiwbi-bg); }
+.kiwbi-legend { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--kiwbi-text-faint); font-weight: 600; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.4rem; }
+.kiwbi-legend-accent { color: var(--kiwbi-accent); }
+
+.kiwbi-scope-option {
+  display: flex; flex-direction: column; align-items: flex-start; width: 100%; text-align: left;
+  border: 1px solid var(--kiwbi-border); border-radius: 0.5rem; padding: 0.75rem; background: #fff;
+}
+.kiwbi-scope-option:hover { border-color: #cbd5e1; }
+.kiwbi-scope-option.active { border-color: var(--kiwbi-accent); background: var(--kiwbi-bg); }
+.kiwbi-scope-radio {
+  width: 0.9rem; height: 0.9rem; border-radius: 50%; border: 1px solid #cbd5e1; display: inline-block; margin-right: 0.4rem;
+}
+.kiwbi-scope-option.active .kiwbi-scope-radio { background: var(--kiwbi-accent); border-color: var(--kiwbi-accent); }
+.kiwbi-scope-hint { font-size: 0.7rem; color: var(--kiwbi-text-faint); padding-left: 1.3rem; }
+
+.kiwbi-pill {
+  display: inline-flex; align-items: center; gap: 0.35rem; border: 1px solid var(--kiwbi-border);
+  border-radius: 999px; padding: 0.35rem 0.75rem; font-size: 0.75rem; font-weight: 500; background: #fff; color: var(--kiwbi-text-muted);
+}
+.kiwbi-pill.active { background: var(--kiwbi-accent); border-color: var(--kiwbi-accent); color: #fff; }
+
+/* ---- Portal Comprador (sin sidebar, tema neutro) ---- */
+.kiwbi-buyer-topbar {
+  background: #fff; border-bottom: 1px solid var(--kiwbi-border); padding: 1rem 1.5rem;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.kiwbi-buyer-mark {
+  display: flex; align-items: center; justify-content: center; width: 2.25rem; height: 2.25rem;
+  border-radius: 0.5rem; background: #0f172a; color: #fff; font-weight: 700; font-size: 1.1rem;
+}
+.kiwbi-buyer-card {
+  display: block; border: 1px solid var(--kiwbi-border); border-radius: 0.75rem; overflow: hidden;
+  background: #fff; text-decoration: none; color: inherit; transition: transform .15s ease, box-shadow .15s ease;
+}
+.kiwbi-buyer-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(15, 23, 42, .08); color: inherit; }
+.kiwbi-buyer-card-plano { aspect-ratio: 4 / 3; background: var(--kiwbi-border-soft); display: flex; align-items: center; justify-content: center; color: var(--kiwbi-text-faint); }
+.kiwbi-buyer-card-body { padding: 1rem; }
+.kiwbi-buyer-tenant-dot { width: 0.5rem; height: 0.5rem; border-radius: 50%; display: inline-block; }
+
+/* ---- Detalle de Vivienda (con acento de marca de la promotora dueña) ---- */
+.kiwbi-buyer-header { padding: 1.5rem; color: #fff; background: linear-gradient(140deg, var(--kiwbi-accent), var(--kiwbi-accent-2)); border-radius: 0 0 0.75rem 0.75rem; }
+.kiwbi-buyer-header-back {
+  display: inline-flex; align-items: center; gap: 0.4rem; background: rgba(255,255,255,.15);
+  border: none; border-radius: 0.5rem; color: #fff; padding: 0.35rem 0.75rem; font-size: 0.8rem; font-weight: 500;
+}
+.kiwbi-buyer-header-back:hover { background: rgba(255,255,255,.25); color: #fff; }
+
+.kiwbi-gremio-card { border: 1px solid var(--kiwbi-border); border-radius: 0.75rem; background: #fff; overflow: hidden; }
+.kiwbi-gremio-card-header {
+  display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.5rem;
+  padding: 0.75rem 1.25rem; border-bottom: 1px solid var(--kiwbi-border-soft);
+}
+.kiwbi-gremio-badge-open, .kiwbi-gremio-badge-expired {
+  display: inline-flex; align-items: center; gap: 0.3rem; border-radius: 999px; padding: 0.15rem 0.6rem; font-size: 0.7rem; font-weight: 500;
+}
+.kiwbi-gremio-badge-open { color: var(--kiwbi-accent); background: var(--kiwbi-bg); }
+.kiwbi-gremio-badge-expired { color: var(--kiwbi-text-muted); background: var(--kiwbi-border-soft); }
+.kiwbi-gremio-card.expired .kiwbi-option-card { opacity: .7; }
+
+.kiwbi-option-card {
+  display: flex; align-items: center; gap: 0.75rem; width: 100%; text-align: left;
+  border: 1px solid var(--kiwbi-border); border-radius: 0.75rem; padding: 0.75rem; background: #fff;
+}
+.kiwbi-option-card.selected { border-color: var(--kiwbi-accent); background: var(--kiwbi-bg); }
+.kiwbi-option-thumb { width: 2.75rem; height: 2.75rem; border-radius: 0.5rem; background: var(--kiwbi-border-soft); flex-shrink: 0; }
+.kiwbi-option-check {
+  width: 1.5rem; height: 1.5rem; border-radius: 50%; background: var(--kiwbi-border); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; color: #fff;
+}
+.kiwbi-option-card.selected .kiwbi-option-check { background: var(--kiwbi-accent); }
+
+@media (max-width: 767.98px) {
+  .kiwbi-col-optional { display: none; }
+}
