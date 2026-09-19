@@ -60,12 +60,18 @@ public class TradeCategoriesController : Controller
     }
 
     [HttpGet]
-    public IActionResult Create(Guid promotionId) => View(new CreateTradeCategoryViewModel { HousingPromotionId = promotionId });
+    public IActionResult Create(Guid promotionId)
+    {
+        ViewBag.PromotionId = promotionId;
+        return View(new CreateTradeCategoryViewModel { HousingPromotionId = promotionId });
+    }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(CreateTradeCategoryViewModel model, CancellationToken cancellationToken)
     {
+        ViewBag.PromotionId = model.HousingPromotionId;
+
         if (!ModelState.IsValid)
         {
             return View(model);
@@ -94,6 +100,7 @@ public class TradeCategoriesController : Controller
         }
 
         var dto = result.Value!;
+        ViewBag.PromotionId = dto.HousingPromotionId;
 
         return View(new EditTradeCategoryViewModel
         {
@@ -108,6 +115,8 @@ public class TradeCategoriesController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(EditTradeCategoryViewModel model, CancellationToken cancellationToken)
     {
+        ViewBag.PromotionId = model.HousingPromotionId;
+
         if (!ModelState.IsValid)
         {
             return View(model);

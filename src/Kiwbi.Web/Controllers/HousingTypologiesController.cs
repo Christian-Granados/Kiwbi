@@ -60,12 +60,18 @@ public class HousingTypologiesController : Controller
     }
 
     [HttpGet]
-    public IActionResult Create(Guid promotionId) => View(new CreateHousingTypologyViewModel { HousingPromotionId = promotionId });
+    public IActionResult Create(Guid promotionId)
+    {
+        ViewBag.PromotionId = promotionId;
+        return View(new CreateHousingTypologyViewModel { HousingPromotionId = promotionId });
+    }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(CreateHousingTypologyViewModel model, CancellationToken cancellationToken)
     {
+        ViewBag.PromotionId = model.HousingPromotionId;
+
         if (!ModelState.IsValid)
         {
             return View(model);
@@ -94,6 +100,7 @@ public class HousingTypologiesController : Controller
         }
 
         var dto = result.Value!;
+        ViewBag.PromotionId = dto.HousingPromotionId;
 
         return View(new EditHousingTypologyViewModel { Id = dto.Id, HousingPromotionId = dto.HousingPromotionId, Name = dto.Name });
     }
@@ -102,6 +109,8 @@ public class HousingTypologiesController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(EditHousingTypologyViewModel model, CancellationToken cancellationToken)
     {
+        ViewBag.PromotionId = model.HousingPromotionId;
+
         if (!ModelState.IsValid)
         {
             return View(model);

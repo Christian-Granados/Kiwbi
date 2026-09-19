@@ -176,6 +176,8 @@ public class CustomizationsController : Controller
 
         await PopulateCreateFormOptionsAsync(model, promotionId, cancellationToken);
 
+        ViewBag.PromotionId = promotionId;
+
         return View(model);
     }
 
@@ -189,6 +191,8 @@ public class CustomizationsController : Controller
         {
             return NotFound();
         }
+
+        ViewBag.PromotionId = model.HousingPromotionId;
 
         if (!ModelState.IsValid)
         {
@@ -241,6 +245,8 @@ public class CustomizationsController : Controller
         var model = CustomizationDetailsViewModel.FromDto(dto, housingPromotionId, typologyNamesById, unitLabelsById);
         await PopulateAvailableTargetsAsync(model, housingPromotionId, cancellationToken);
 
+        ViewBag.PromotionId = housingPromotionId;
+
         if (TempData["Error"] is string error)
         {
             ModelState.AddModelError(string.Empty, error);
@@ -261,6 +267,13 @@ public class CustomizationsController : Controller
 
         var dto = result.Value!;
 
+        var tradeCategoryResult = await _getTradeCategoryUseCase.ExecuteAsync(dto.TradeCategoryId, cancellationToken);
+
+        if (tradeCategoryResult.IsSuccess)
+        {
+            ViewBag.PromotionId = tradeCategoryResult.Value!.HousingPromotionId;
+        }
+
         return View(new EditCustomizationViewModel { Id = dto.Id, TradeCategoryId = dto.TradeCategoryId, Name = dto.Name });
     }
 
@@ -270,6 +283,13 @@ public class CustomizationsController : Controller
     {
         if (!ModelState.IsValid)
         {
+            var tradeCategoryResult = await _getTradeCategoryUseCase.ExecuteAsync(model.TradeCategoryId, cancellationToken);
+
+            if (tradeCategoryResult.IsSuccess)
+            {
+                ViewBag.PromotionId = tradeCategoryResult.Value!.HousingPromotionId;
+            }
+
             return View(model);
         }
 
@@ -371,6 +391,13 @@ public class CustomizationsController : Controller
             return NotFound();
         }
 
+        var tradeCategoryResult = await _getTradeCategoryUseCase.ExecuteAsync(result.Value!.TradeCategoryId, cancellationToken);
+
+        if (tradeCategoryResult.IsSuccess)
+        {
+            ViewBag.PromotionId = tradeCategoryResult.Value!.HousingPromotionId;
+        }
+
         return View(new EditCustomizationOptionViewModel
         {
             CustomizationId = id,
@@ -386,6 +413,18 @@ public class CustomizationsController : Controller
     {
         if (!ModelState.IsValid)
         {
+            var customizationResult = await _getCustomizationUseCase.ExecuteAsync(model.CustomizationId, cancellationToken);
+
+            if (customizationResult.IsSuccess)
+            {
+                var tradeCategoryResult = await _getTradeCategoryUseCase.ExecuteAsync(customizationResult.Value!.TradeCategoryId, cancellationToken);
+
+                if (tradeCategoryResult.IsSuccess)
+                {
+                    ViewBag.PromotionId = tradeCategoryResult.Value!.HousingPromotionId;
+                }
+            }
+
             return View(model);
         }
 

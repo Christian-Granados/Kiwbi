@@ -7,10 +7,43 @@
     <script type="importmap"></script>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/kiwbi.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Kiwbi.Web.styles.css" asp-append-version="true" />
     @await Component.InvokeAsync("TenantBranding")
 </head>
 <body>
+@{
+    var currentUserName = User.Identity?.Name ?? string.Empty;
+    var currentUserInitial = string.IsNullOrWhiteSpace(currentUserName) ? "?" : currentUserName.Trim()[0].ToString().ToUpperInvariant();
+}
+@if (User.IsInRole("DeveloperAdmin"))
+{
+    <div class="kiwbi-shell">
+        @await Component.InvokeAsync("KiwbiSidebar")
+        <div class="kiwbi-main">
+            <header class="kiwbi-topbar">
+                <button class="kiwbi-collapse-btn" id="kiwbiCollapseBtn" type="button" aria-label="Colapsar menú">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="4" y1="6" x2="20" y2="6" /><line x1="4" y1="12" x2="20" y2="12" /><line x1="4" y1="18" x2="20" y2="18" /></svg>
+                </button>
+                <div class="flex-grow-1"></div>
+                <div class="kiwbi-avatar-chip">
+                    <span class="kiwbi-avatar">@currentUserInitial</span>
+                    <span class="kiwbi-avatar-name">@currentUserName</span>
+                </div>
+                <form asp-controller="Account" asp-action="Logout" method="post" class="mb-0">
+                    <button type="submit" class="kiwbi-icon-btn" title="Cerrar sesión">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" /><polyline points="16 17 21 12 16 7" /><line x1="21" y1="12" x2="9" y2="12" /></svg>
+                    </button>
+                </form>
+            </header>
+            <main role="main" class="kiwbi-content">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+}
+else
+{
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
@@ -33,20 +66,6 @@
                         {
                             <li class="nav-item">
                                 <a class="nav-link text-dark" asp-controller="Buyer" asp-action="Index">Mis viviendas</a>
-                            </li>
-                            <li class="nav-item">
-                                <form class="form-inline" asp-controller="Account" asp-action="Logout" method="post">
-                                    <button type="submit" class="nav-link btn btn-link text-dark">Cerrar sesión</button>
-                                </form>
-                            </li>
-                        }
-                        else if (User.Identity?.IsAuthenticated == true)
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="DeveloperProfile" asp-action="Index">Mi promotora</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link text-dark" asp-controller="HousingPromotions" asp-action="Index">Promociones</a>
                             </li>
                             <li class="nav-item">
                                 <form class="form-inline" asp-controller="Account" asp-action="Logout" method="post">
@@ -79,9 +98,11 @@
             &copy; 2026 - Kiwbi.Web - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
+}
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="~/js/kiwbi.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

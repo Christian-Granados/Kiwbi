@@ -2,7 +2,7 @@
 
 ## Estado
 
-- Estado: Diseño en revisión — pendiente de aprobación expresa del usuario antes de implementar código (regla de `04-ai-coding-guidelines.md`, sección 5).
+- Estado: **Feature 8.1 cerrada y aprobada por el usuario (2026-09-20)**. Feature 8.2 (Sistema de diseño base) en marcha — implementación de código autorizada para esta Feature (regla de `04-ai-coding-guidelines.md`, sección 5).
 - Depende de: ninguno de los Epics funcionales (1-6) a nivel de datos. Es una mejora transversal que afecta a todas las vistas ya construidas; se documenta y programa después del núcleo del MVP para no interrumpir su avance, pero puede abordarse en paralelo o en cualquier momento posterior.
 
 ## Contexto y objetivo
@@ -140,7 +140,7 @@ Esto resuelve de facto la "Selección del enfoque de implementación" (más abaj
 - [x] **Inventario completo de pantallas cerrado**: las 13 pantallas del inventario de la Ronda 3 (más Personalizaciones y Viviendas, ya cubiertas antes) están diseñadas, traducidas a Bootstrap 5 y validadas en navegador.
 - [x] **Auditoría de coherencia (Ronda 5)**: las 19 pantallas se cruzaron contra el código real (Controllers/Application/Domain) y el grafo de navegación completo; los 7 hallazgos quedaron resueltos o documentados explícitamente (ver "Ronda 5" más abajo).
 - [x] **Regla explícita mientras dure esta Feature: no se pasa a la Feature 8.2 hasta que todo el inventario de pantallas quede diseñado, traducido y validado** (o se decida explícitamente dar por cerrado el alcance del rediseño con lo que haya en ese momento) — cumplida.
-- [ ] Cerrar la Feature 8.1 dejando el PoC + mockups + decisiones documentadas como entrada de la Feature 8.2 (que convertirá esto en tokens/componentes reales integrados en las vistas Razor, con datos reales en vez de contenido de muestra) — pendiente de confirmación expresa del usuario.
+- [x] Cerrar la Feature 8.1 dejando el PoC + mockups + decisiones documentadas como entrada de la Feature 8.2 (que convertirá esto en tokens/componentes reales integrados en las vistas Razor, con datos reales en vez de contenido de muestra) — **cerrada y aprobada por el usuario el 2026-09-20**.
 
 ### Ronda 2 (pantallas priorizadas) — resultado (2026-09-19)
 
@@ -712,9 +712,41 @@ Decisión tomada el 2026-09-19, sustituyendo la antigua sección "Consideración
 
 ## Feature 8.2 - Sistema de diseño base
 
-*(Plan de acción pendiente de detallar tras cerrar la Feature 8.1; dependerá de la herramienta elegida.)*
+**Plan de acción (2026-09-20)**, apoyado en las 13 pantallas ya diseñadas/traducidas/auditadas (Rondas 1-5) y en los 7 hallazgos ya resueltos:
 
-Alcance esperado, independientemente de la herramienta:
+### Fase 0 — Fundamentos compartidos (bloquea todo lo demás) — ✅ IMPLEMENTADA (2026-09-20)
+
+- `wwwroot/css/kiwbi.css` creado a partir de `kiwbi-preview.css`, excluyendo lo exclusivo de la demo (`.kiwbi-tenant-switcher`/`.kiwbi-swatch` — el acento real ya llega vía `TenantBrandingViewComponent`, no hace falta un selector manual — y `.kiwbi-plan-widget`, que mostraría datos de "plan/cuota" que no existen en el dominio).
+- `_Layout.cshtml` reescrito: si `User.IsInRole("DeveloperAdmin")`, renderiza el nuevo shell (`kiwbi-shell` con `KiwbiSidebarViewComponent` + topbar con botón de colapso/avatar/logout + `kiwbi-content`); en cualquier otro caso (Buyer, anónimo) se mantiene la navbar Bootstrap original simplificada (sin los enlaces de Promotora, que ahora vive en el sidebar). `~/css/kiwbi.css` y `~/js/kiwbi.js` añadidos junto a `site.css`/`site.js`.
+- `KiwbiSidebarViewComponent` (+ `KiwbiSidebarViewModel`, vista `Views/Shared/Components/KiwbiSidebar/Default.cshtml`) implementado: decide Contextual vs Global leyendo `ViewBag.PromotionId` (casteado a `Guid?`); si está presente pero `ViewBag.PromotionName` no, resuelve el nombre con `GetHousingPromotionUseCase` como fallback (así nunca depende de que TODOS los Controllers seteen ambos valores). Reutiliza `GetCurrentDeveloperProfileUseCase` (mismo patrón que `TenantBrandingViewComponent`) para el nombre/logo de la promotora en el bloque de marca.
+- **Hallazgo durante la implementación:** un grep mostró que `ViewBag.PromotionId`/`PromotionName` NO estaban seteados de forma consistente en todas las acciones (faltaba en varias `Create`/`Edit`/`Details`/`EditOption` GET/POST de `TradeCategoriesController`, `HousingTypologiesController`, `HousingUnitsController`, `CustomizationsController` y en `HousingPromotionsController.Details/Edit`). Se hizo un barrido mecánico añadiendo `ViewBag.PromotionId = ...;` en todas esas acciones (resolviendo el id vía el aggregate/dto ya cargado, o vía `TradeCategory.HousingPromotionId` cuando solo se disponía del id de una Customization/opción) — gracias al fallback de nombre del punto anterior, bastaba con asegurar el id. `HousingPromotionChoicesController` ya los tenía completos, sin cambios.
+- Topbar: avatar con iniciales/email real (`User.Identity.Name`, vía `ICurrentUser` no expone nombre de persona) + botón de colapso (funcional, persistido en `localStorage` vía `wwwroot/js/kiwbi.js`) + logout. Buscador/notificaciones decorativos del PoC se dejaron fuera de esta fase (no aportan funcionalidad real todavía; se revisará en Fase 3 si procede añadirlos).
+- Verificado en navegador con una promotora de prueba: shell Global (Panel/Mi promotora/Ajustes) en `DeveloperProfile`/`HousingPromotions` (listado/Create), shell Contextual (indicador "Estás dentro de" + Resumen/Tipologías/Viviendas/Gremios/Personalizaciones/Progreso) en `HousingPromotions/Details` y en `TradeCategories/Create` (antes rota, ahora corregida por el barrido), colapso de sidebar funcionando, logout revirtiendo correctamente a la navbar anónima sin ningún resto del shell. Build limpio.
+
+### Fase 1 — Componentes base reutilizables
+
+- Trasladar las clases genéricas ya validadas en las 13 pantallas (`.kiwbi-table-card`, `.kiwbi-fieldset`, `.kiwbi-badge-*`, `.btn-kiwbi-primary`, `.kiwbi-dropzone`, etc.).
+- Mapear los badges de estado a los enums reales: `HousingUnitStatus` (Disponible/Reservada/Vendida), `HomeCustomizationChoiceStatus` (Pendiente/Seleccionada/Confirmada/Pagada, colores fijos no ligados al acento de marca, ya decidido en Ronda 4/5), `BuyerInvitationStatus` + `IsExpired` (con el 4º estado "Caducada" ya corregido en Ronda 5).
+
+### Fase 2 — Aplicar a las vistas reales (orden sugerido, de menor a mayor riesgo/tamaño)
+
+1. **Mi promotora** (`DeveloperProfileController` Index/EditProfile/EditBranding) — logo como campo de texto/URL (Hallazgo 5).
+2. **Promociones** (`HousingPromotionsController` Index/Details/Create/Edit) — `Details` ya expone todos los datos reales vía `GetHousingPromotionSummaryUseCase`, solo aplica el diseño de `promocion-resumen.html`.
+3. **Tipologías** (`HousingTypologiesController`) — incluye la pequeña extensión de `GetHousingTypologiesUseCase` para el recuento de viviendas (Hallazgo 3).
+4. **Viviendas** (`HousingUnitsController` Index/Create/Edit) — el `Index` real hoy no tiene columnas de progreso; sustituir por las columnas CRUD reales (Planta/Puerta/Tipología/Superficies/Estado) en vez de las ilustrativas heredadas de la Ronda 1.
+5. **Invitaciones de comprador** (`HousingUnitsController.Invitations/InviteBuyer`) — con el estado "Caducada" ya corregido.
+6. **Gremios** (`TradeCategoriesController`) — combinar Fecha+Hora en un único `SelectionCutOffDateUtc` en el Controller/ViewModel (Hallazgo 4).
+7. **Personalizaciones** (`CustomizationsController` Index/Create/Details/EditOption) — `Details` con el patrón granular de asignaciones ya corregido (Hallazgo 1).
+8. **Progreso** (`HousingPromotionChoicesController` Index/Details) — con la regla de "Confirmar" corregida (Hallazgo 2) y los 4 colores fijos de estado.
+9. **Portal del Comprador** (`BuyerController` Index/HousingUnit) — el único circuito con acento de marca condicional (sin él en `Index`, con él en `HousingUnit`).
+
+### Fase 3 — Pulido transversal
+
+- Mensajes de validación (`asp-validation-summary`/`data-val`) con el nuevo estilo.
+- Estados vacíos reales (ya hay una referencia comentada en `dashboard-promotora.html`).
+- Breadcrumbs generados a partir de la ruta/datos reales, no hardcodeados como en el PoC.
+
+Alcance esperado, independientemente del detalle de fases:
 - Tokens de color (primario/secundario del tenant + paleta neutra/semántica: éxito, aviso, peligro — reutilizando los ya usados para los badges de `HousingUnitStatus` en Epic 2).
 - Tipografía y espaciados base.
 - Layout general (`_Layout.cshtml`, navegación) con la nueva identidad.

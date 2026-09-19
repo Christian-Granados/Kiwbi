@@ -1,0 +1,77 @@
+@model Kiwbi.Web.Components.KiwbiSidebarViewModel
+@{
+    var initial = string.IsNullOrWhiteSpace(Model.CompanyName) ? "?" : Model.CompanyName.Trim()[0].ToString().ToUpperInvariant();
+    string ActiveClass(string controller) => string.Equals(Model.ActiveController, controller, StringComparison.OrdinalIgnoreCase) ? "active" : "";
+}
+<aside class="kiwbi-sidebar" id="kiwbiSidebar">
+    <div class="kiwbi-brand">
+        @if (!string.IsNullOrWhiteSpace(Model.LogoPath))
+        {
+            <img src="@Model.LogoPath" alt="@Model.CompanyName" class="kiwbi-mark" style="object-fit:cover;" />
+        }
+        else
+        {
+            <span class="kiwbi-mark">@initial</span>
+        }
+        <div class="kiwbi-brand-text">
+            <div class="kiwbi-brand-name">@Model.CompanyName</div>
+            <div class="kiwbi-brand-sub">vía Kiwbi</div>
+        </div>
+    </div>
+
+    @if (Model.IsContextual)
+    {
+        <a class="kiwbi-context-indicator" asp-controller="HousingPromotions" asp-action="Index">
+            <span class="label">Estás dentro de</span>
+            <span class="name">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg>
+                <span>@Model.PromotionName</span>
+            </span>
+        </a>
+
+        <nav class="kiwbi-nav">
+            <a class="kiwbi-nav-item @ActiveClass("HousingPromotions")" asp-controller="HousingPromotions" asp-action="Details" asp-route-id="@Model.PromotionId" title="Resumen">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" /></svg>
+                <span class="kiwbi-nav-label">Resumen</span>
+            </a>
+            <a class="kiwbi-nav-item @ActiveClass("HousingTypologies")" asp-controller="HousingTypologies" asp-action="Index" asp-route-promotionId="@Model.PromotionId" title="Tipologías">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2" /><polyline points="2 17 12 22 22 17" /><polyline points="2 12 12 17 22 12" /></svg>
+                <span class="kiwbi-nav-label">Tipologías</span>
+            </a>
+            <a class="kiwbi-nav-item @ActiveClass("HousingUnits")" asp-controller="HousingUnits" asp-action="Index" asp-route-promotionId="@Model.PromotionId" title="Viviendas">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10.5 12 3l9 7.5" /><path d="M5 9.5V21h14V9.5" /></svg>
+                <span class="kiwbi-nav-label">Viviendas</span>
+            </a>
+            <a class="kiwbi-nav-item @ActiveClass("TradeCategories")" asp-controller="TradeCategories" asp-action="Index" asp-route-promotionId="@Model.PromotionId" title="Gremios">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 1.4 1.4l3-3a1 1 0 0 0-1.4-1.4l-3 3ZM3 21l7-7M7 21H3v-4l9.5-9.5a2.1 2.1 0 0 1 3 3L5 21Z" /></svg>
+                <span class="kiwbi-nav-label">Gremios</span>
+            </a>
+            <a class="kiwbi-nav-item @ActiveClass("Customizations")" asp-controller="Customizations" asp-action="Index" asp-route-promotionId="@Model.PromotionId" title="Personalizaciones">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9" /><circle cx="9" cy="10" r="1" /><circle cx="14" cy="8" r="1" /><circle cx="15" cy="13" r="1" /></svg>
+                <span class="kiwbi-nav-label">Personalizaciones</span>
+            </a>
+            <a class="kiwbi-nav-item @ActiveClass("HousingPromotionChoices")" asp-controller="HousingPromotionChoices" asp-action="Index" asp-route-promotionId="@Model.PromotionId" title="Progreso">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18" /><path d="M18 17V9" /><path d="M13 17V5" /><path d="M8 17v-3" /></svg>
+                <span class="kiwbi-nav-label">Progreso</span>
+            </a>
+        </nav>
+    }
+    else
+    {
+        <nav class="kiwbi-nav">
+            <a class="kiwbi-nav-item @ActiveClass("HousingPromotions")" asp-controller="HousingPromotions" asp-action="Index" title="Panel">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" /><rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" /></svg>
+                <span class="kiwbi-nav-label">Panel</span>
+            </a>
+            <a class="kiwbi-nav-item @ActiveClass("DeveloperProfile")" asp-controller="DeveloperProfile" asp-action="Index" title="Mi promotora">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M6 21V7l6-4 6 4v14M10 21v-6h4v6" /></svg>
+                <span class="kiwbi-nav-label">Mi promotora</span>
+            </a>
+            <!-- Ronda 5: placeholder deliberado, sin pantalla real detrás todavía (candidato a Epic 9). -->
+            <a class="kiwbi-nav-item" href="#" title="Ajustes">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3" /><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z" /></svg>
+                <span class="kiwbi-nav-label">Ajustes</span>
+            </a>
+        </nav>
+    }
+</aside>

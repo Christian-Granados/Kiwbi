@@ -65,6 +65,8 @@ public class HousingPromotionsController : Controller
             return NotFound();
         }
 
+        ViewBag.PromotionId = id;
+
         return View(HousingPromotionViewModel.FromSummaryDto(result.Value!));
     }
 
@@ -116,6 +118,7 @@ public class HousingPromotionsController : Controller
         }
 
         var dto = result.Value!;
+        ViewBag.PromotionId = dto.Id;
 
         return View(new EditHousingPromotionViewModel
         {
@@ -131,6 +134,8 @@ public class HousingPromotionsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(EditHousingPromotionViewModel model, CancellationToken cancellationToken)
     {
+        ViewBag.PromotionId = model.Id;
+
         if (!ModelState.IsValid)
         {
             return View(model);

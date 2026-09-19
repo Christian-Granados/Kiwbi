@@ -104,6 +104,8 @@ public class HousingUnitsController : Controller
     [HttpGet]
     public async Task<IActionResult> Create(Guid promotionId, CancellationToken cancellationToken)
     {
+        ViewBag.PromotionId = promotionId;
+
         var model = new CreateHousingUnitViewModel
         {
             HousingPromotionId = promotionId,
@@ -117,6 +119,8 @@ public class HousingUnitsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Create(CreateHousingUnitViewModel model, CancellationToken cancellationToken)
     {
+        ViewBag.PromotionId = model.HousingPromotionId;
+
         if (!ModelState.IsValid)
         {
             model.TypologyOptions = await BuildTypologyOptionsAsync(model.HousingPromotionId, cancellationToken);
@@ -155,6 +159,7 @@ public class HousingUnitsController : Controller
         }
 
         var dto = result.Value!;
+        ViewBag.PromotionId = dto.HousingPromotionId;
 
         var model = new EditHousingUnitViewModel
         {
@@ -176,6 +181,8 @@ public class HousingUnitsController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(EditHousingUnitViewModel model, CancellationToken cancellationToken)
     {
+        ViewBag.PromotionId = model.HousingPromotionId;
+
         if (!ModelState.IsValid)
         {
             model.TypologyOptions = await BuildTypologyOptionsAsync(model.HousingPromotionId, cancellationToken);
@@ -276,6 +283,7 @@ public class HousingUnitsController : Controller
             return NotFound();
         }
 
+        ViewBag.PromotionId = unitResult.Value!.HousingPromotionId;
         ViewBag.UnitLabel = $"{unitResult.Value!.Floor} {unitResult.Value.Door}";
 
         return View(new InviteBuyerViewModel { HousingUnitId = id });
@@ -287,6 +295,13 @@ public class HousingUnitsController : Controller
     {
         if (!ModelState.IsValid)
         {
+            var unitResult = await _getHousingUnitUseCase.ExecuteAsync(model.HousingUnitId, cancellationToken);
+            if (unitResult.IsSuccess)
+            {
+                ViewBag.PromotionId = unitResult.Value!.HousingPromotionId;
+                ViewBag.UnitLabel = $"{unitResult.Value!.Floor} {unitResult.Value.Door}";
+            }
+
             return View(model);
         }
 
