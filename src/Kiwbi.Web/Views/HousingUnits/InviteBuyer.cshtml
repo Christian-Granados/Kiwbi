@@ -13,12 +13,12 @@
 <div style="max-width: 32rem;">
     <form asp-controller="HousingUnits" asp-action="InviteBuyer" method="post" class="d-flex flex-column gap-3">
         <input type="hidden" asp-for="HousingUnitId" />
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div asp-validation-summary="ModelOnly" class="kiwbi-validation-summary"></div>
         <div class="kiwbi-fieldset">
             <div class="kiwbi-legend">Invitar comprador por email</div>
             <label asp-for="Email" class="form-label small fw-medium"></label>
             <input asp-for="Email" class="form-control form-control-sm" placeholder="nombre@correo.com" />
-            <span asp-validation-for="Email" class="text-danger small"></span>
+            <span asp-validation-for="Email" class="kiwbi-field-error"></span>
         </div>
         <div class="d-flex justify-content-end gap-2 pb-2">
             <a asp-controller="HousingUnits" asp-action="Invitations" asp-route-id="@Model.HousingUnitId" class="btn btn-sm btn-outline-secondary">Cancelar</a>

@@ -746,9 +746,11 @@ Decisión tomada el 2026-09-19, sustituyendo la antigua sección "Consideración
 
 ### Fase 3 — Pulido transversal
 
-- Mensajes de validación (`asp-validation-summary`/`data-val`) con el nuevo estilo.
-- Estados vacíos reales (ya hay una referencia comentada en `dashboard-promotora.html`).
-- Breadcrumbs generados a partir de la ruta/datos reales, no hardcodeados como en el PoC.
+- ✅ Mensajes de validación (`asp-validation-summary`/`data-val`) con el nuevo estilo (2026-09-20). Nuevas clases en `kiwbi.css`: `.kiwbi-validation-summary` (caja de alerta suave, sustituye `text-danger` en los `<div asp-validation-summary>`), `.kiwbi-field-error` (texto de error por campo, sustituye `text-danger small`), y `.form-control.input-validation-error`/`.form-select.input-validation-error` (borde/fondo rojo suave sobre el campo inválido, se activa automáticamente vía jQuery Unobtrusive Validation con su `errorClass` por defecto). Aplicado a los 15 formularios reales de las pantallas de la Promotora (Mi promotora, Promociones, Tipologías, Viviendas, Invitaciones, Gremios, Personalizaciones); las pantallas de `Account`/`Onboarding` (Login/Register/Accept) se dejan fuera a propósito, ya que usan el layout Bootstrap plano y quedan fuera del alcance de la Feature 8.2. Verificado en navegador con envío de un formulario vacío (Nueva promoción): estilo correcto en campo + summary.
+- ✅ Estados vacíos reales — auditado (2026-09-20): las 13 pantallas de listado ya tenían `.kiwbi-empty-state` con condiciones reales (`!Model.Any()`, colecciones concretas) desde la Fase 2, sin fabricar datos. No hizo falta ningún cambio adicional.
+- ✅ Breadcrumbs generados a partir de la ruta/datos reales — auditado (2026-09-20): las 21 pantallas con `.kiwbi-breadcrumb` ya usan `asp-route-*`/`ViewBag.PromotionName`/`Model.Name` reales, ninguna con texto hardcodeado del PoC. `Customizations/Details`, `HousingUnits/Create` y `HousingUnits/Edit` usan en su lugar un enlace "Volver a X" (patrón intencional ya existente, no un breadcrumb hardcodeado). No hizo falta ningún cambio adicional.
+
+**Fase 3 completa.**
 
 Alcance esperado, independientemente del detalle de fases:
 - Tokens de color (primario/secundario del tenant + paleta neutra/semántica: éxito, aviso, peligro — reutilizando los ya usados para los badges de `HousingUnitStatus` en Epic 2).

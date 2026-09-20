@@ -26,7 +26,7 @@
     <form asp-controller="HousingUnits" asp-action="Edit" method="post" enctype="multipart/form-data" class="d-flex flex-column gap-3">
         <input type="hidden" asp-for="Id" />
         <input type="hidden" asp-for="HousingPromotionId" />
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div asp-validation-summary="ModelOnly" class="kiwbi-validation-summary"></div>
 
         <div class="kiwbi-fieldset">
             <div class="kiwbi-legend">Ubicación</div>
@@ -34,12 +34,12 @@
                 <div class="col-sm-4">
                     <label asp-for="Floor" class="form-label small fw-medium"></label>
                     <input asp-for="Floor" class="form-control form-control-sm" />
-                    <span asp-validation-for="Floor" class="text-danger small"></span>
+                    <span asp-validation-for="Floor" class="kiwbi-field-error"></span>
                 </div>
                 <div class="col-sm-4">
                     <label asp-for="Door" class="form-label small fw-medium"></label>
                     <input asp-for="Door" class="form-control form-control-sm" />
-                    <span asp-validation-for="Door" class="text-danger small"></span>
+                    <span asp-validation-for="Door" class="kiwbi-field-error"></span>
                 </div>
                 <div class="col-sm-4">
                     <label asp-for="HousingTypologyId" class="form-label small fw-medium d-flex justify-content-between">Tipología <span class="text-muted fw-normal small">Opcional</span></label>
@@ -57,7 +57,7 @@
                         <input asp-for="BuiltAreaSqm" class="form-control" />
                         <span class="input-group-text">m²</span>
                     </div>
-                    <span asp-validation-for="BuiltAreaSqm" class="text-danger small"></span>
+                    <span asp-validation-for="BuiltAreaSqm" class="kiwbi-field-error"></span>
                 </div>
                 <div class="col-sm-6">
                     <label asp-for="UsableAreaSqm" class="form-label small fw-medium d-flex justify-content-between">Superficie útil <span class="text-muted fw-normal small">Opcional</span></label>
@@ -65,7 +65,7 @@
                         <input asp-for="UsableAreaSqm" class="form-control" />
                         <span class="input-group-text">m²</span>
                     </div>
-                    <span asp-validation-for="UsableAreaSqm" class="text-danger small"></span>
+                    <span asp-validation-for="UsableAreaSqm" class="kiwbi-field-error"></span>
                 </div>
             </div>
         </div>
@@ -95,7 +95,7 @@
                         <span class="small kiwbi-dropzone-filename">PNG, JPG, WEBP o PDF · máx. 10 MB</span>
                         <input asp-for="FloorPlanImageFile" type="file" accept=".jpg,.jpeg,.png,.webp,.pdf" class="visually-hidden" />
                     </label>
-                    <span asp-validation-for="FloorPlanImageFile" class="text-danger small"></span>
+                    <span asp-validation-for="FloorPlanImageFile" class="kiwbi-field-error"></span>
                 </div>
             </div>
         </div>

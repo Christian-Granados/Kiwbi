@@ -296,6 +296,22 @@ table.kiwbi-table tbody tr:last-child td { border-bottom: none; }
 }
 .kiwbi-pill.active { background: var(--kiwbi-accent); border-color: var(--kiwbi-accent); color: #fff; }
 
+/* ---- Validación de formularios (asp-validation-summary / asp-validation-for) ---- */
+.kiwbi-validation-summary {
+  border: 1px solid #fecdd3; background: #fff1f2; color: #be123c;
+  border-radius: 0.6rem; padding: 0.65rem 0.9rem; font-size: 0.8rem;
+}
+.kiwbi-validation-summary:empty { display: none; }
+.kiwbi-validation-summary ul { margin: 0; padding-left: 1.1rem; }
+.kiwbi-field-error { display: block; color: #be123c; font-size: 0.72rem; margin-top: 0.2rem; }
+.kiwbi-field-error:empty { display: none; }
+.form-control.input-validation-error, .form-select.input-validation-error {
+  border-color: #fda4af; background-color: #fff1f2;
+}
+.form-control.input-validation-error:focus, .form-select.input-validation-error:focus {
+  border-color: #be123c; box-shadow: 0 0 0 0.2rem rgba(190, 18, 60, 0.15);
+}
+
 /* ---- Portal Comprador (sin sidebar, tema neutro) ---- */
 .kiwbi-buyer-topbar {
   background: #fff; border-bottom: 1px solid var(--kiwbi-border); padding: 1rem 1.5rem;
