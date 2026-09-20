@@ -8,5 +8,6 @@
   <Folder Name="/tests/">
     <Project Path="tests/Kiwbi.Application.Tests/Kiwbi.Application.Tests.csproj" />
     <Project Path="tests/Kiwbi.Domain.Tests/Kiwbi.Domain.Tests.csproj" />
+    <Project Path="tests/Kiwbi.Web.Tests/Kiwbi.Web.Tests.csproj" />
   </Folder>
 </Solution>

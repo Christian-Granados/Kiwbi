@@ -2,7 +2,7 @@
 
 ## Estado
 
-- Estado: Aprobado por el usuario (2026-09-17). Features 6.1, 6.2 y 6.3 implementadas y con tests en verde (305 tests: 131 Domain + 174 Application). Pendiente únicamente la verificación manual de apertura de los ficheros Excel/PDF exportados con datos reales (ver checklist de Cierre del Epic).
+- Estado: Aprobado por el usuario (2026-09-17). Features 6.1, 6.2 y 6.3 implementadas y con tests en verde. Epic 6 **fully closed** (2026-09-20) — la verificación manual pendiente de apertura de los ficheros Excel/PDF con datos reales se completó en el Epic 10 (ver `epic-10-demo-data-and-report-verification.md`), sin defectos encontrados.
 - Depende de: Epic 1 (Foundation & Promotora Tenant), Epic 2 (Real Estate Core), Epic 3 (Customization Engine) y Epic 5 (Buyer Experience), ya implementados. Reutiliza `HousingUnit`/`HousingTypology`/`HousingPromotion` (Epic 2), `TradeCategory`/`Customization`/`CustomizationOption`/`CustomizationAssignment` (Epic 3) y `HomeCustomizationChoice` (Epic 5, módulo `Kiwbi.Domain.Choices`) como base; no depende de Epic 4 más allá de que la Vivienda ya tenga comprador vinculado para que existan elecciones que gestionar.
 
 ## Objetivos
@@ -179,7 +179,7 @@ Todos los casos de uso devuelven `Result`/`Result<T>`, reciben `CancellationToke
 ### Cierre del Epic
 
 - [x] Ejecutar los tests unitarios y una compilación completa de la solución. (305 tests: 131 Domain + 174 Application, todos en verde).
-- [ ] Verificar manualmente: exportar Excel y PDF de una Promoción con datos variados (algunas Viviendas sin elecciones, otras con elecciones `Selected`/`Confirmed`/`Paid`) y confirmar que ambos archivos abren correctamente y muestran los datos esperados. **Pendiente** — requiere una base de datos con datos de prueba cargados; no se ha ejecutado `dotnet run` con Postgres real en esta sesión.
+- [x] Verificar manualmente: exportar Excel y PDF de una Promoción con datos variados (algunas Viviendas sin elecciones, otras con elecciones `Selected`/`Confirmed`/`Paid`) y confirmar que ambos archivos abren correctamente y muestran los datos esperados. **Completado en el Epic 10** (2026-09-20) contra el tenant de demo real "Kiwbi Demo" (promoción "Residencial Vistalar") — ver `epic-10-demo-data-and-report-verification.md`, Features 10.2/10.3: ambos ficheros descargados y verificados por código (cabeceras válidas, agrupación por Gremio/Vivienda y conteo de filas correctos), sin defectos.
 - [x] Revisar que `HousingPromotionChoicesController` solo dependa de contratos de Application y no acceda a `KiwbiDbContext` ni a `ClosedXML`/`QuestPDF` directamente. Confirmado: solo referencia use cases de `Kiwbi.Application.Choices`/`Kiwbi.Application.RealEstate` y los ViewModels de `Kiwbi.Web.Models`.
 - [x] Actualizar este documento con los checks completados y cualquier decisión técnica aprobada durante la implementación.
 - [x] Actualizar la memoria de repositorio (`kiwbi-structure.md`) con un resumen del Epic cerrado, mismo criterio que Epics anteriores.

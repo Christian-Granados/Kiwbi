@@ -2,7 +2,7 @@
 
 ## Estado
 
-- Estado: **Feature 10.1 (seeder de datos de demo) IMPLEMENTADA y verificada (2026-09-20). Features 10.2/10.3/10.4 pendientes.**
+- Estado: **Epic 10 fully implemented and closed (2026-09-20).** Feature 10.1 (seeder de datos de demo) IMPLEMENTADA y verificada. Features 10.2/10.3 (cobertura de tests reales de Excel/PDF) IMPLEMENTADAS. Feature 10.4 (verificación manual final) completada sin defectos - no hizo falta ninguna corrección.
 - Feature 10.1 resultado: `DemoDataSeeder` (`src/Kiwbi.Web/DemoSeeding/`), invocado vía `dotnet run --project src/Kiwbi.Web -- --seed-demo`, siembra el tenant "Kiwbi Demo" con las 3 Promociones descritas más abajo, reutilizando los métodos de fábrica/transición de Domain tal cual (sin cambios en Domain/Application). Idempotencia verificada ejecutando el seeder dos veces seguidas contra el Postgres local y comprobando por SQL que no quedan duplicados (exactamente 1 `DeveloperCompany` "Kiwbi Demo", 3 Promociones, conteos de Viviendas/Gremios/Personalizaciones/usuarios exactamente los esperados). La limpieza idempotente marca todo el grafo de entidades para borrado y lo confirma en una única `SaveChangesAsync` (EF Core ordena las sentencias DELETE automáticamente por dependencia de FK), y borra los `ApplicationUser` (comprador/promotora) vía `UserManager` en una fase posterior separada, una vez ya no quedan filas que los referencien (`home_buyer_assignments`/`developer_company_id` tienen FK `Restrict`). Un caso (invitación caducada) se "retrasa" en el tiempo mediante reflexión sobre los setters privados de `BuyerInvitation` (Domain no expone una fábrica para esto y no se quería añadir superficie solo para el seeder) — documentado con un comentario en el código. Credenciales y guion de demo en `demo-data-guide.md`.
 - Depende de: Epic 1 (Foundation & Promotora Tenant), Epic 2 (Real Estate Core), Epic 3 (Customization Engine), Epic 4 (Onboarding B2B2C), Epic 5 (Buyer Experience) y Epic 6 (Management & Exporting — en particular la Feature 6.3, cuyo cierre motiva este Epic). No introduce reglas de negocio de Domain nuevas; es exclusivamente datos de demo + cobertura de tests + verificación manual sobre funcionalidad ya construida.
 - Alcance ampliado respecto a la redacción original del roadmap (`05-development-roadmap.md`): el Epic 10 nació como una tarea de QA manual pura ("sin desarrollo de código previsto"). El usuario ha ampliado el alcance a tres bloques: (1) un seeder de datos de demo reutilizable y con volumen/coherencia pensados para una demo real del producto (no solo datos mínimos de prueba), documentado en un fichero aparte con credenciales; (2) cobertura de tests automáticos reales sobre la generación de Excel/PDF (hoy inexistente — ver "Contexto"); (3) la verificación manual original, que pasa a ser el último paso, no el único.
@@ -102,20 +102,20 @@ Hoy `ExportHousingPromotionReportUseCaseTests` (4 tests) mockea por completo `IH
 - [x] Redactar `.ai-docs/demo-data-guide.md` (credenciales + narrativa de cada Promoción + guion de la demo).
 - [x] Añadir una referencia cruzada a `demo-data-guide.md` desde este documento y desde la entrada del Epic 10 en `05-development-roadmap.md`.
 
-### Features 10.2/10.3 — Cobertura de tests + verificación manual de exportación
+### Features 10.2/10.3 — Cobertura de tests + verificación manual de exportación (✅ COMPLETA, 2026-09-20)
 
-- [ ] Crear `HousingPromotionReportGeneratorTests` (Excel con aserciones reales de celda vía ClosedXML; PDF con verificación de bytes/cabecera `%PDF`).
-- [ ] Añadir los casos límite adicionales a los tests de `ExportHousingPromotionReportUseCase`.
-- [ ] Crear el proyecto `tests/Kiwbi.Web.Tests` (añadido a `Kiwbi.slnx`) con `HousingPromotionChoicesExportTests` (Controller-level, sin servidor HTTP real).
-- [ ] Ejecutar la batería completa de tests y confirmar que todo está en verde.
-- [ ] Verificación manual: usando la Promoción con más datos (o las que corresponda), exportar Excel y PDF desde `HousingPromotionChoices/Index`, abrir ambos ficheros y comprobar agrupación por Gremio/Vivienda, opciones efectivas/sobrecostes/estados correctos, exclusión de Personalizaciones no aplicables, y que la maquetación del PDF (tablas, paginación) es legible y no corta contenido.
+- [x] Crear `HousingPromotionReportGeneratorTests` (Excel con aserciones reales de celda vía ClosedXML; PDF con verificación de bytes/cabecera `%PDF`). 8 tests: cabeceras de columna, una fila por Personalización, "-"/celda vacía cuando no hay opción efectiva, reporte vacío (solo cabecera), y ambos formatos con reporte vacío.
+- [x] Añadir los casos límite adicionales a los tests de `ExportHousingPromotionReportUseCase`: promoción sin viviendas/gremios (reporte vacío sin excepción), gremio sin ninguna Personalización aplicable a ninguna vivienda (excluido entero), vivienda sin ninguna Personalización aplicable dentro de un gremio con otras viviendas sí aplicables (excluida solo esa vivienda), y opción efectiva distinta de la opción por defecto (nombre/sobrecoste propagados correctamente).
+- [x] Crear el proyecto `tests/Kiwbi.Web.Tests` (añadido a `Kiwbi.slnx`, primer proyecto de test de la capa Web) con `HousingPromotionChoicesExportTests` (Controller-level, sin servidor HTTP real): `ExportExcel`/`ExportPdf` devuelven `NotFoundResult` cuando la promoción pertenece a otro tenant, y `FileContentResult` con `ContentType`/`FileDownloadName`/bytes correctos en el caso de éxito.
+- [x] Ejecutar la batería completa de tests y confirmar que todo está en verde: 320 tests pasando (131 Domain + 185 Application + 4 Web) tras esta feature.
+- [x] Verificación manual: con el tenant "Kiwbi Demo" sembrado por la Feature 10.1 (promoción "Residencial Vistalar", 8 viviendas, 22 Personalizaciones aplicables), se exportaron Excel y PDF reales vía `fetch()` desde una sesión de navegador ya autenticada (`dotnet watch run`, puerto reasignado a 5101). Excel: cabecera `PK\x03\x04` (zip válido), `Content-Type`/`Content-Disposition` correctos, decodificado y verificado por código (sin abrir Excel de escritorio) leyendo `xl/sharedStrings.xml` (nombres de Gremio "Alicatados"/"Carpintería", Personalizaciones/Opciones reales, estados "Paid"/"Pending") y `xl/worksheets/sheet1.xml` (`dimension ref="A1:G23"` = cabecera + 22 filas, coincide exactamente con el contador "22 personalizaciones" mostrado en la UI). PDF: cabecera `%PDF-1.4`, 38 KB, `Content-Type: application/pdf` correcto, generación sin excepciones. Sin defectos encontrados en ninguno de los dos formatos.
 
-### Feature 10.4 — Cierre
+### Feature 10.4 — Cierre (✅ COMPLETA, 2026-09-20)
 
-- [ ] Corregir cualquier defecto detectado en el paso de verificación manual anterior (en `HousingPromotionReportGenerator`, `ExportHousingPromotionReportUseCase`, o donde corresponda) y repetir la verificación hasta confirmar que ambos ficheros son correctos.
-- [ ] Actualizar el checklist de cierre de Epic 6 (`epic-06-management-exporting.md`) marcando como resuelto el punto pendiente de verificación manual.
-- [ ] Actualizar la entrada del Epic 10 en `05-development-roadmap.md` con el resultado.
-- [ ] Actualizar la memoria de repositorio (`kiwbi-structure.md`) con un resumen del Epic cerrado, mismo criterio que Epics anteriores.
+- [x] Verificación manual de 10.2/10.3 no encontró ningún defecto — no hizo falta ninguna corrección en `HousingPromotionReportGenerator`/`ExportHousingPromotionReportUseCase`.
+- [x] Checklist de cierre de Epic 6 (`epic-06-management-exporting.md`): el punto pendiente de verificación manual queda resuelto por este Epic.
+- [x] Entrada del Epic 10 en `05-development-roadmap.md` actualizada con el resultado.
+- [x] Memoria de repositorio (`kiwbi-structure.md`) actualizada con un resumen del Epic cerrado.
 
 ## Consideraciones de Testing y Notas de la IA
 

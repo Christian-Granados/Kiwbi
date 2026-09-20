@@ -90,6 +90,85 @@ public class ExportHousingPromotionReportUseCaseTests
     }
 
     [Fact]
+    public async Task ExecuteAsync_WhenPromotionHasNoUnitsOrTradeCategories_ShouldReturnEmptyReportWithoutException()
+    {
+        var developerCompanyId = Guid.NewGuid();
+        var promotion = HousingPromotion.Create(developerCompanyId, "Residencial Vacía", "Madrid", "Calle Mayor 1");
+        SetupPromotion(promotion, developerCompanyId, [], [], []);
+        _reportGenerator.GenerateExcel(Arg.Any<HousingPromotionReportDto>()).Returns([1]);
+
+        var result = await _useCase.ExecuteAsync(new(promotion.Id, HousingPromotionReportFormat.Excel));
+
+        result.IsSuccess.Should().BeTrue();
+        _reportGenerator.Received(1).GenerateExcel(Arg.Is<HousingPromotionReportDto>(r => r.TradeCategories.Count == 0));
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_WhenNoUnitHasAnyApplicableCustomization_ShouldExcludeTheWholeTradeCategory()
+    {
+        var developerCompanyId = Guid.NewGuid();
+        var promotion = HousingPromotion.Create(developerCompanyId, "Residencial Acacias", "Madrid", "Calle Mayor 1");
+        var unit1 = HousingUnit.Create(promotion.Id, "1", "A", 90m, 80m);
+        var unit2 = HousingUnit.Create(promotion.Id, "2", "B", 90m, 80m);
+        var tradeCategory = TradeCategory.Create(promotion.Id, "Carpintería", DateTime.UtcNow.AddMonths(1));
+        var customization = Customization.CreateForUnits(tradeCategory.Id, "Suelo", "Parquet", 0m, [Guid.NewGuid()]);
+        SetupPromotion(promotion, developerCompanyId, [unit1, unit2], [tradeCategory], [customization]);
+        _reportGenerator.GenerateExcel(Arg.Any<HousingPromotionReportDto>()).Returns([1]);
+
+        var result = await _useCase.ExecuteAsync(new(promotion.Id, HousingPromotionReportFormat.Excel));
+
+        result.IsSuccess.Should().BeTrue();
+        _reportGenerator.Received(1).GenerateExcel(Arg.Is<HousingPromotionReportDto>(r => r.TradeCategories.Count == 0));
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_WhenOnlySomeUnitsHaveApplicableCustomizations_ShouldExcludeTheOthersButKeepTheTradeCategory()
+    {
+        var developerCompanyId = Guid.NewGuid();
+        var promotion = HousingPromotion.Create(developerCompanyId, "Residencial Acacias", "Madrid", "Calle Mayor 1");
+        var applicableUnit = HousingUnit.Create(promotion.Id, "1", "A", 90m, 80m);
+        var otherUnit = HousingUnit.Create(promotion.Id, "2", "B", 90m, 80m);
+        var tradeCategory = TradeCategory.Create(promotion.Id, "Carpintería", DateTime.UtcNow.AddMonths(1));
+        var customization = Customization.CreateForUnits(tradeCategory.Id, "Suelo", "Parquet", 0m, [applicableUnit.Id]);
+        SetupPromotion(promotion, developerCompanyId, [applicableUnit, otherUnit], [tradeCategory], [customization]);
+        _reportGenerator.GenerateExcel(Arg.Any<HousingPromotionReportDto>()).Returns([1]);
+
+        var result = await _useCase.ExecuteAsync(new(promotion.Id, HousingPromotionReportFormat.Excel));
+
+        result.IsSuccess.Should().BeTrue();
+        _reportGenerator.Received(1).GenerateExcel(Arg.Is<HousingPromotionReportDto>(r =>
+            r.TradeCategories.Count == 1 &&
+            r.TradeCategories[0].HousingUnits.Count == 1 &&
+            r.TradeCategories[0].HousingUnits[0].Floor == "1" &&
+            r.TradeCategories[0].HousingUnits[0].Door == "A"));
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_WhenEffectiveOptionIsNotTheDefault_ShouldPropagateItsNameAndSurcharge()
+    {
+        var developerCompanyId = Guid.NewGuid();
+        var promotion = HousingPromotion.Create(developerCompanyId, "Residencial Acacias", "Madrid", "Calle Mayor 1");
+        var unit = HousingUnit.Create(promotion.Id, "1", "A", 90m, 80m);
+        var tradeCategory = TradeCategory.Create(promotion.Id, "Carpintería", DateTime.UtcNow.AddMonths(1));
+        var customization = Customization.CreateForWholePromotion(tradeCategory.Id, "Suelo", "Parquet", 0m);
+        customization.AddOption("Roble natural", 150.50m);
+        var nonDefaultOption = customization.Options.Single(o => !o.IsDefault);
+        SetupPromotion(promotion, developerCompanyId, [unit], [tradeCategory], [customization]);
+        var choice = HomeCustomizationChoice.Create(unit.Id, customization.Id);
+        choice.SelectOption(nonDefaultOption.Id, DateTime.UtcNow);
+        _homeCustomizationChoiceRepository.GetByHousingUnitIdsAsync(Arg.Any<IEnumerable<Guid>>(), Arg.Any<CancellationToken>())
+            .Returns([choice]);
+        _reportGenerator.GenerateExcel(Arg.Any<HousingPromotionReportDto>()).Returns([1]);
+
+        var result = await _useCase.ExecuteAsync(new(promotion.Id, HousingPromotionReportFormat.Excel));
+
+        result.IsSuccess.Should().BeTrue();
+        _reportGenerator.Received(1).GenerateExcel(Arg.Is<HousingPromotionReportDto>(r =>
+            r.TradeCategories[0].HousingUnits[0].Customizations.Single().EffectiveOptionName == "Roble natural" &&
+            r.TradeCategories[0].HousingUnits[0].Customizations.Single().EffectiveOptionSurchargeAmount == 150.50m));
+    }
+
+    [Fact]
     public async Task ExecuteAsync_WithPdfFormat_ShouldDelegateToGeneratePdf()
     {
         var developerCompanyId = Guid.NewGuid();
