@@ -6,7 +6,18 @@
     var buyers = (List<Kiwbi.Web.Models.Onboarding.HousingUnitBuyerListItemViewModel>)ViewBag.Buyers;
 }
 
-<h1>Invitaciones de comprador - Vivienda @ViewBag.UnitLabel</h1>
+<div class="kiwbi-seg-tabs mb-3" style="border-bottom:1px solid var(--kiwbi-border); margin-inline: -1.25rem; padding-inline: 1.25rem;">
+    <a class="kiwbi-seg-tab" asp-controller="HousingUnits" asp-action="Edit" asp-route-id="@housingUnitId">Alta / Edición</a>
+    <span class="kiwbi-seg-tab active">Invitaciones</span>
+</div>
+
+<div class="kiwbi-breadcrumb mb-1">
+    <a asp-controller="HousingUnits" asp-action="Index" asp-route-promotionId="@promotionId" class="text-decoration-none">Viviendas</a>
+    <span>/</span>
+    <span class="current">Vivienda @ViewBag.UnitLabel</span>
+</div>
+<h1 class="h4 mb-1" style="font-weight:600;">Invitaciones · Vivienda @ViewBag.UnitLabel</h1>
+<p class="small text-muted mb-4">Invita a los compradores de esta vivienda para que accedan a su portal de personalización.</p>
 
 @if (TempData["Error"] is string error)
 {
@@ -14,94 +25,102 @@
 }
 
 <p>
-    <a asp-controller="HousingUnits" asp-action="InviteBuyer" asp-route-id="@housingUnitId" class="btn btn-primary">Invitar comprador</a>
-    <a asp-controller="HousingUnits" asp-action="Index" asp-route-promotionId="@promotionId" class="btn btn-secondary">Volver a viviendas</a>
+    <a asp-controller="HousingUnits" asp-action="InviteBuyer" asp-route-id="@housingUnitId" class="btn btn-kiwbi-primary btn-sm d-flex align-items-center gap-1" style="width: fit-content;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" /></svg>
+        Invitar comprador
+    </a>
 </p>
 
-<h2 class="h4">Compradores vinculados</h2>
-
-@if (!buyers.Any())
-{
-    <p>Todavía no hay ningún comprador vinculado a esta vivienda.</p>
-}
-else
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Correo electrónico</th>
-                <th>Vinculado el</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var buyer in buyers)
-            {
+<div class="kiwbi-table-card mb-3">
+    <div class="kiwbi-table-card-header">
+        <span class="title">Invitaciones enviadas</span>
+        <span class="count">@Model.Count</span>
+    </div>
+    @if (!Model.Any())
+    {
+        <div class="kiwbi-empty-state">
+            <p>Todavía no se ha invitado a ningún comprador para esta vivienda.</p>
+        </div>
+    }
+    else
+    {
+        <table class="kiwbi-table">
+            <thead>
                 <tr>
-                    <td>@(buyer.Email ?? "-")</td>
-                    <td>@buyer.CreatedAtUtc.ToLocalTime()</td>
+                    <th>Email</th>
+                    <th>Estado</th>
+                    <th>Enviada</th>
+                    <th>Caduca</th>
+                    <th class="text-end">Acciones</th>
                 </tr>
-            }
-        </tbody>
-    </table>
-}
+            </thead>
+            <tbody>
+                @foreach (var invitation in Model)
+                {
+                    var badge = invitation.Status.ToBuyerInvitationStatusBadge(invitation.IsExpired);
+                    <tr>
+                        <td class="kiwbi-row-title">@invitation.Email</td>
+                        <td><span class="kiwbi-badge @badge.CssClass">@badge.Label</span></td>
+                        <td class="text-muted">@invitation.CreatedAtUtc.ToLocalTime().ToString("d MMM yyyy")</td>
+                        <td class="text-muted">@invitation.ExpiresAtUtc.ToLocalTime().ToString("d MMM yyyy")</td>
+                        <td class="text-end">
+                            @if (invitation.Status == "Pending")
+                            {
+                                <form asp-controller="HousingUnits" asp-action="ResendInvitation" asp-route-invitationId="@invitation.Id" asp-route-id="@housingUnitId" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-outline-secondary">Reenviar</button>
+                                </form>
+                                <form asp-controller="HousingUnits" asp-action="CancelInvitation" asp-route-invitationId="@invitation.Id" asp-route-id="@housingUnitId" method="post" class="d-inline"
+                                      onsubmit="return confirm('¿Seguro que quieres cancelar esta invitación?');">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger">Cancelar</button>
+                                </form>
+                            }
+                            else
+                            {
+                                <span class="small text-muted">Sin acciones</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
 
-<h2 class="h4">Invitaciones</h2>
-
-@if (!Model.Any())
-{
-    <p>Todavía no se ha invitado a ningún comprador para esta vivienda.</p>
-}
-else
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Correo electrónico</th>
-                <th>Estado</th>
-                <th>Enviada</th>
-                <th>Caduca</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var invitation in Model)
-            {
+<div class="kiwbi-table-card">
+    <div class="kiwbi-table-card-header">
+        <span class="title">Compradores vinculados</span>
+        <span class="count">@buyers.Count</span>
+    </div>
+    @if (!buyers.Any())
+    {
+        <div class="kiwbi-empty-state">
+            <p>Todavía no hay ningún comprador vinculado a esta vivienda.</p>
+        </div>
+    }
+    else
+    {
+        <table class="kiwbi-table">
+            <thead>
                 <tr>
-                    <td>@invitation.Email</td>
-                    <td>
-                        @if (invitation.Status == "Accepted")
-                        {
-                            <span class="badge bg-success">Aceptada</span>
-                        }
-                        else if (invitation.Status == "Cancelled")
-                        {
-                            <span class="badge bg-secondary">Cancelada</span>
-                        }
-                        else if (invitation.IsExpired)
-                        {
-                            <span class="badge bg-danger">Caducada</span>
-                        }
-                        else
-                        {
-                            <span class="badge bg-warning text-dark">Pendiente</span>
-                        }
-                    </td>
-                    <td>@invitation.CreatedAtUtc.ToLocalTime()</td>
-                    <td>@invitation.ExpiresAtUtc.ToLocalTime()</td>
-                    <td>
-                        @if (invitation.Status == "Pending")
-                        {
-                            <form asp-controller="HousingUnits" asp-action="ResendInvitation" asp-route-invitationId="@invitation.Id" asp-route-id="@housingUnitId" method="post" class="d-inline">
-                                <button type="submit" class="btn btn-sm btn-outline-primary">Reenviar</button>
-                            </form>
-                            <form asp-controller="HousingUnits" asp-action="CancelInvitation" asp-route-invitationId="@invitation.Id" asp-route-id="@housingUnitId" method="post" class="d-inline"
-                                  onsubmit="return confirm('¿Seguro que quieres cancelar esta invitación?');">
-                                <button type="submit" class="btn btn-sm btn-outline-danger">Cancelar</button>
-                            </form>
-                        }
-                    </td>
+                    <th>Email</th>
+                    <th>Aceptada</th>
                 </tr>
-            }
-        </tbody>
-    </table>
-}
+            </thead>
+            <tbody>
+                @foreach (var buyer in buyers)
+                {
+                    var initial = string.IsNullOrWhiteSpace(buyer.Email) ? "?" : buyer.Email.Trim()[0].ToString().ToUpperInvariant();
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="kiwbi-avatar" style="background:var(--kiwbi-accent); color:#fff;">@initial</span>
+                                <span class="kiwbi-row-title">@(buyer.Email ?? "-")</span>
+                            </div>
+                        </td>
+                        <td class="text-muted">@buyer.CreatedAtUtc.ToLocalTime().ToString("d MMM yyyy · HH:mm")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

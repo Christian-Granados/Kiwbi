@@ -3,28 +3,44 @@
     ViewData["Title"] = "Editar opción";
 }
 
-<h1>Editar opción</h1>
+<div class="kiwbi-breadcrumb mb-1">
+    <a asp-controller="Customizations" asp-action="Details" asp-route-id="@Model.CustomizationId" class="text-decoration-none">Personalización</a>
+    <span>/</span>
+    <span class="current">Editar opción</span>
+</div>
+<h1 class="h4 mb-4" style="font-weight:600;">Editar opción</h1>
 
-<div class="row">
-    <div class="col-md-6">
-        <form asp-controller="Customizations" asp-action="EditOption" method="post">
-            <input type="hidden" asp-for="CustomizationId" />
-            <input type="hidden" asp-for="OptionId" />
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group mb-3">
-                <label asp-for="Name" class="form-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+<div style="max-width: 32rem;">
+    <form asp-controller="Customizations" asp-action="EditOption" method="post" class="d-flex flex-column gap-3">
+        <input type="hidden" asp-for="CustomizationId" />
+        <input type="hidden" asp-for="OptionId" />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="kiwbi-fieldset">
+            <div class="kiwbi-legend">Datos de la opción</div>
+            <div class="row g-3">
+                <div class="col-sm-8">
+                    <label asp-for="Name" class="form-label small fw-medium"></label>
+                    <input asp-for="Name" class="form-control form-control-sm" />
+                    <span asp-validation-for="Name" class="text-danger small"></span>
+                </div>
+                <div class="col-sm-4">
+                    <label asp-for="SurchargeAmount" class="form-label small fw-medium"></label>
+                    <div class="input-group input-group-sm">
+                        <input asp-for="SurchargeAmount" class="form-control" type="number" step="0.01" min="0" />
+                        <span class="input-group-text">€</span>
+                    </div>
+                    <span asp-validation-for="SurchargeAmount" class="text-danger small"></span>
+                </div>
             </div>
-            <div class="form-group mb-3">
-                <label asp-for="SurchargeAmount" class="form-label"></label>
-                <input asp-for="SurchargeAmount" class="form-control" type="number" step="0.01" min="0" />
-                <span asp-validation-for="SurchargeAmount" class="text-danger"></span>
-            </div>
-            <button type="submit" class="btn btn-primary">Guardar</button>
-            <a asp-controller="Customizations" asp-action="Details" asp-route-id="@Model.CustomizationId" class="btn btn-secondary">Cancelar</a>
-        </form>
-    </div>
+        </div>
+        <div class="d-flex justify-content-end gap-2 pb-2">
+            <a asp-controller="Customizations" asp-action="Details" asp-route-id="@Model.CustomizationId" class="btn btn-sm btn-outline-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-kiwbi-primary btn-sm d-flex align-items-center gap-1">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12" /></svg>
+                Guardar cambios
+            </button>
+        </div>
+    </form>
 </div>
 
 @section Scripts {

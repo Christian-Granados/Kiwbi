@@ -1,32 +1,54 @@
 @model Kiwbi.Web.Models.DeveloperProfile.DeveloperProfileViewModel
 @{
-    ViewData["Title"] = "Panel de la promotora";
+    ViewData["Title"] = "Mi promotora";
+    var initial = string.IsNullOrWhiteSpace(Model.Name) ? "?" : Model.Name.Trim()[0].ToString().ToUpperInvariant();
 }
 
-<h1>@Model.Name</h1>
-
-<div class="row">
-    <div class="col-md-6">
-        <h2 class="h5">Marca</h2>
-        <p>
-            <span class="d-inline-block" style="width:1.5rem;height:1.5rem;background-color:@Model.PrimaryColor;border:1px solid #ccc;"></span>
-            Color primario: @Model.PrimaryColor
-        </p>
-        @if (!string.IsNullOrEmpty(Model.SecondaryColor))
-        {
-            <p>
-                <span class="d-inline-block" style="width:1.5rem;height:1.5rem;background-color:@Model.SecondaryColor;border:1px solid #ccc;"></span>
-                Color secundario: @Model.SecondaryColor
-            </p>
-        }
-        @if (!string.IsNullOrEmpty(Model.LogoPath))
-        {
-            <p>Logo: @Model.LogoPath</p>
-        }
-    </div>
+<div class="kiwbi-breadcrumb mb-1">
+    <span>Kiwbi</span>
+    <span>/</span>
+    <span class="current">Mi promotora</span>
 </div>
+<h1 class="h4 mb-1" style="font-weight:600;">@Model.Name</h1>
+<p class="small text-muted mb-4">Datos de marca que se aplican a todo el espacio de trabajo y al portal del comprador.</p>
 
-<div class="mt-4">
-    <a asp-controller="DeveloperProfile" asp-action="EditProfile" class="btn btn-outline-primary">Editar perfil</a>
-    <a asp-controller="DeveloperProfile" asp-action="EditBranding" class="btn btn-outline-primary">Editar marca</a>
+<div class="d-flex flex-column gap-3" style="max-width: 46rem;">
+    <div class="kiwbi-fieldset">
+        <div class="kiwbi-legend">Datos generales</div>
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <div class="small text-muted">Nombre de la promotora</div>
+                <div class="fw-medium">@Model.Name</div>
+            </div>
+            <a asp-controller="DeveloperProfile" asp-action="EditProfile" class="btn btn-sm btn-outline-secondary">Editar</a>
+        </div>
+    </div>
+
+    <div class="kiwbi-fieldset">
+        <div class="kiwbi-legend">Marca</div>
+        <div class="d-flex align-items-center gap-3 mb-3">
+            @if (!string.IsNullOrWhiteSpace(Model.LogoPath))
+            {
+                <img src="@Model.LogoPath" alt="@Model.Name" class="kiwbi-logo-preview" style="object-fit:cover;" />
+            }
+            else
+            {
+                <span class="kiwbi-logo-preview" style="background:@Model.PrimaryColor;">@initial</span>
+            }
+            <div class="d-flex flex-column gap-2">
+                <div class="kiwbi-color-field">
+                    <span class="kiwbi-color-swatch d-inline-block" style="background:@Model.PrimaryColor;"></span>
+                    <span class="kiwbi-color-hex">@Model.PrimaryColor.ToUpperInvariant()</span>
+                </div>
+                @if (!string.IsNullOrWhiteSpace(Model.SecondaryColor))
+                {
+                    <div class="kiwbi-color-field">
+                        <span class="kiwbi-color-swatch d-inline-block" style="background:@Model.SecondaryColor;"></span>
+                        <span class="kiwbi-color-hex">@Model.SecondaryColor.ToUpperInvariant()</span>
+                    </div>
+                }
+            </div>
+        </div>
+        <a asp-controller="DeveloperProfile" asp-action="EditBranding" class="btn btn-sm btn-outline-secondary">Editar marca</a>
+    </div>
 </div>

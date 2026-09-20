@@ -50,6 +50,14 @@ public class BuyerController : Controller
             return NotFound();
         }
 
+        var unitsResult = await _getHousingUnitsForCurrentBuyerUseCase.ExecuteAsync(cancellationToken);
+        var unit = unitsResult.IsSuccess ? unitsResult.Value!.FirstOrDefault(u => u.HousingUnitId == id) : null;
+
+        if (unit is not null)
+        {
+            ViewBag.HousingUnit = BuyerHousingUnitViewModel.FromDto(unit);
+        }
+
         ViewData["HousingUnitId"] = id;
         var tradeCategories = result.Value!.Select(TradeCategoryCustomizationsViewModel.FromDto).ToList();
 

@@ -51,9 +51,89 @@
     });
   }
 
+  // Dropzones de subida de fichero (plano general/vivienda): muestra el nombre del fichero elegido.
+  function initDropzoneFileNames() {
+    document.querySelectorAll('.kiwbi-dropzone input[type="file"]').forEach(function (input) {
+      var label = input.closest('.kiwbi-dropzone');
+      var nameEl = label ? label.querySelector('.kiwbi-dropzone-filename') : null;
+      if (!nameEl) return;
+
+      var defaultText = nameEl.textContent;
+
+      input.addEventListener('change', function () {
+        nameEl.textContent = input.files && input.files.length ? input.files[0].name : defaultText;
+      });
+    });
+  }
+
+  // Mi promotora (EditBranding): sincroniza cada input[type=color] con su hex de texto adyacente,
+  // y actualiza la variable CSS (--preview-accent/--preview-accent-2) que alimenta la vista previa.
+  function initColorFieldSync() {
+    document.querySelectorAll('[data-color-pair]').forEach(function (field) {
+      var colorInput = field.querySelector('input[type="color"]');
+      var hexInput = field.querySelector('input[type="text"]');
+      var previewVar = field.dataset.previewVar;
+      if (!colorInput || !hexInput) return;
+
+      function applyPreview(value) {
+        if (!previewVar) return;
+        var form = field.closest('form');
+        if (form) form.style.setProperty(previewVar, value);
+      }
+
+      hexInput.value = colorInput.value.toUpperCase();
+
+      colorInput.addEventListener('input', function () {
+        hexInput.value = colorInput.value.toUpperCase();
+        applyPreview(colorInput.value);
+      });
+
+      hexInput.addEventListener('change', function () {
+        if (/^#[0-9A-Fa-f]{6}$/.test(hexInput.value)) {
+          colorInput.value = hexInput.value;
+          applyPreview(hexInput.value);
+        } else {
+          hexInput.value = colorInput.value.toUpperCase();
+        }
+      });
+    });
+  }
+
+  // Mi promotora (EditBranding): aplica una paleta sugerida a los dos selectores de color.
+  function initPalettePresets() {
+    var buttons = document.querySelectorAll('[data-palette]');
+    if (!buttons.length) return;
+
+    buttons.forEach(function (button) {
+      button.addEventListener('click', function () {
+        buttons.forEach(function (b) { b.classList.remove('active'); });
+        button.classList.add('active');
+
+        var primaryField = document.querySelector('[data-color-pair][data-preview-var="--preview-accent"]');
+        var secondaryField = document.querySelector('[data-color-pair][data-preview-var="--preview-accent-2"]');
+
+        [
+          [primaryField, button.dataset.primary],
+          [secondaryField, button.dataset.secondary],
+        ].forEach(function (pair) {
+          var field = pair[0];
+          var value = pair[1];
+          if (!field || !value) return;
+          var colorInput = field.querySelector('input[type="color"]');
+          if (!colorInput) return;
+          colorInput.value = value;
+          colorInput.dispatchEvent(new Event('input'));
+        });
+      });
+    });
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
     initSidebarCollapse();
     initScopeSelector();
     initPillToggles();
+    initDropzoneFileNames();
+    initColorFieldSync();
+    initPalettePresets();
   });
 })();

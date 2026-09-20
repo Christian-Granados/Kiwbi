@@ -3,36 +3,64 @@
     ViewData["Title"] = "Nueva promoción";
 }
 
-<h1>Nueva promoción</h1>
+<div class="kiwbi-breadcrumb mb-1">
+    <a asp-controller="HousingPromotions" asp-action="Index" class="text-decoration-none">Promociones</a>
+    <span>/</span>
+    <span class="current">Nueva promoción</span>
+</div>
+<h1 class="h4 mb-4" style="font-weight:600;">Nueva promoción</h1>
 
-<div class="row">
-    <div class="col-md-6">
-        <form asp-controller="HousingPromotions" asp-action="Create" method="post" enctype="multipart/form-data">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group mb-3">
-                <label asp-for="Name" class="form-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
+<div style="max-width: 40rem;">
+    <form asp-controller="HousingPromotions" asp-action="Create" method="post" enctype="multipart/form-data" class="d-flex flex-column gap-3">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="kiwbi-fieldset">
+            <div class="kiwbi-legend">Datos de la promoción</div>
+            <div class="row g-3">
+                <div class="col-12">
+                    <label asp-for="Name" class="form-label small fw-medium"></label>
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M6 21V7l6-4 6 4v14M10 21v-6h4v6" /></svg></span>
+                        <input asp-for="Name" class="form-control" placeholder="p. ej. Residencial Miravalle" />
+                    </div>
+                    <span asp-validation-for="Name" class="text-danger small"></span>
+                </div>
+                <div class="col-sm-6">
+                    <label asp-for="City" class="form-label small fw-medium"></label>
+                    <input asp-for="City" class="form-control form-control-sm" placeholder="p. ej. Valencia" />
+                    <span asp-validation-for="City" class="text-danger small"></span>
+                </div>
+                <div class="col-sm-6">
+                    <label asp-for="Address" class="form-label small fw-medium"></label>
+                    <div class="input-group input-group-sm">
+                        <span class="input-group-text"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-6.5-7-11.5A7 7 0 0 1 19 9.5C19 14.5 12 21 12 21Z" /><circle cx="12" cy="9.5" r="2.5" /></svg></span>
+                        <input asp-for="Address" class="form-control" placeholder="Av. de Aragón 112 · Fase II" />
+                    </div>
+                    <span asp-validation-for="Address" class="text-danger small"></span>
+                </div>
             </div>
-            <div class="form-group mb-3">
-                <label asp-for="City" class="form-label"></label>
-                <input asp-for="City" class="form-control" />
-                <span asp-validation-for="City" class="text-danger"></span>
-            </div>
-            <div class="form-group mb-3">
-                <label asp-for="Address" class="form-label"></label>
-                <input asp-for="Address" class="form-control" />
-                <span asp-validation-for="Address" class="text-danger"></span>
-            </div>
-            <div class="form-group mb-3">
-                <label asp-for="MasterPlanImageFile" class="form-label"></label>
-                <input asp-for="MasterPlanImageFile" class="form-control" type="file" accept=".jpg,.jpeg,.png,.webp,.pdf" />
-                <span asp-validation-for="MasterPlanImageFile" class="text-danger"></span>
-            </div>
-            <button type="submit" class="btn btn-primary">Crear</button>
-            <a asp-controller="HousingPromotions" asp-action="Index" class="btn btn-secondary">Cancelar</a>
-        </form>
-    </div>
+        </div>
+
+        <div class="kiwbi-fieldset">
+            <div class="kiwbi-legend">Plano general</div>
+            <label asp-for="MasterPlanImageFile" class="kiwbi-dropzone" style="padding:2rem 1rem;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="9" cy="9" r="2" /><path d="m21 15-5-5L5 21" /></svg>
+                <strong>Arrastra el plano o haz clic para subirlo</strong>
+                <span class="small kiwbi-dropzone-filename">PNG, JPG, WEBP o PDF · máx. 10 MB</span>
+                <input asp-for="MasterPlanImageFile" type="file" accept=".jpg,.jpeg,.png,.webp,.pdf" class="visually-hidden" />
+            </label>
+            <span asp-validation-for="MasterPlanImageFile" class="text-danger small"></span>
+            <p class="small text-muted mb-0 mt-2" style="font-size:.7rem;">Opcional. Podrás actualizarlo más adelante desde el hub de la promoción.</p>
+        </div>
+
+        <div class="d-flex justify-content-end gap-2 pb-2">
+            <a asp-controller="HousingPromotions" asp-action="Index" class="btn btn-sm btn-outline-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-kiwbi-primary btn-sm d-flex align-items-center gap-1">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12" /></svg>
+                Crear promoción
+            </button>
+        </div>
+    </form>
 </div>
 
 @section Scripts {

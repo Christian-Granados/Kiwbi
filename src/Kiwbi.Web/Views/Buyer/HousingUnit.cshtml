@@ -4,48 +4,100 @@
     ViewData["Title"] = "Personalizaciones de la vivienda";
     var housingUnitId = (Guid)ViewData["HousingUnitId"]!;
     var csrfToken = Antiforgery.GetAndStoreTokens(Context).RequestToken;
+    var unit = ViewBag.HousingUnit as Kiwbi.Web.Models.Buyer.BuyerHousingUnitViewModel;
 }
 
 <meta name="csrf-token" content="@csrfToken" />
 
-<h1>Personalizaciones de tu vivienda</h1>
-<p>
-    <a asp-controller="Buyer" asp-action="Index" class="btn btn-outline-secondary btn-sm">&larr; Volver a mis viviendas</a>
-</p>
+<header class="kiwbi-buyer-header">
+    <div class="mx-auto d-flex align-items-center justify-content-between" style="max-width:50rem;">
+        <a asp-controller="Buyer" asp-action="Index" class="kiwbi-buyer-header-back text-decoration-none">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg>
+            Mis viviendas
+        </a>
+    </div>
+    <div class="mx-auto mt-3" style="max-width:50rem;">
+        @if (unit is not null)
+        {
+            <div class="text-uppercase small" style="letter-spacing:.08em;opacity:.75;">@unit.City</div>
+            <h1 class="h3 fw-bold mt-1 mb-1">@unit.HousingPromotionName</h1>
+            <div class="small" style="opacity:.9;">@unit.Floor · Puerta @unit.Door</div>
+        }
+        else
+        {
+            <h1 class="h3 fw-bold mt-1 mb-1">Tu vivienda</h1>
+        }
+    </div>
+</header>
 
-@if (!Model.Any())
-{
-    <p>Esta vivienda todavía no tiene personalizaciones disponibles.</p>
-}
-else
-{
-    @foreach (var tradeCategory in Model)
+<div class="mx-auto px-3 py-4" style="max-width:50rem;">
+    @if (unit is not null)
     {
-        <div class="card mb-4">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <span><strong>@tradeCategory.TradeCategoryName</strong></span>
-                @if (tradeCategory.IsExpired)
-                {
-                    <span class="badge bg-secondary">Plazo finalizado (@tradeCategory.SelectionCutOffDateUtc.ToString("dd/MM/yyyy"))</span>
-                }
-                else
-                {
-                    <span class="badge bg-success">Plazo hasta el @tradeCategory.SelectionCutOffDateUtc.ToString("dd/MM/yyyy")</span>
-                }
-            </div>
-            <div class="card-body">
-                @foreach (var customization in tradeCategory.Customizations)
-                {
-                    @await Html.PartialAsync("_CustomizationCard", new Kiwbi.Web.Models.Buyer.CustomizationCardViewModel
-                    {
-                        HousingUnitId = housingUnitId,
-                        Customization = customization,
-                    })
-                }
-            </div>
+        <section class="kiwbi-table-card mb-4">
+            <div class="kiwbi-table-card-header"><span class="title">Plano de tu vivienda</span></div>
+            @if (!string.IsNullOrWhiteSpace(unit.FloorPlanImagePath))
+            {
+                <img src="~/@unit.FloorPlanImagePath" alt="Plano de la vivienda" style="width:100%;aspect-ratio:16/9;object-fit:contain;background:var(--kiwbi-bg);" />
+            }
+            else
+            {
+                <div class="d-flex align-items-center justify-content-center text-muted" style="aspect-ratio: 16/9; background: var(--kiwbi-bg);">
+                    <div class="text-center">
+                        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21h18M6 21V7l6-4 6 4v14M10 21v-6h4v6" /></svg>
+                        <div class="small mt-1">Plano no disponible</div>
+                    </div>
+                </div>
+            }
+        </section>
+    }
+
+    <h2 class="h5" style="font-weight:600;">Personalizaciones</h2>
+    <p class="small text-muted">Elige tus acabados. Cada gremio tiene su propia fecha límite de selección.</p>
+
+    @if (!Model.Any())
+    {
+        <div class="kiwbi-empty-state">
+            <p>Esta vivienda todavía no tiene personalizaciones disponibles.</p>
         </div>
     }
-}
+    else
+    {
+        <div class="d-flex flex-column gap-3 mt-3">
+            @foreach (var tradeCategory in Model)
+            {
+                <div class="kiwbi-gremio-card @(tradeCategory.IsExpired ? "expired" : "")">
+                    <div class="kiwbi-gremio-card-header">
+                        <span class="fw-semibold" style="font-size:.9rem;">@tradeCategory.TradeCategoryName</span>
+                        @if (tradeCategory.IsExpired)
+                        {
+                            <span class="kiwbi-gremio-badge-expired">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="1.5" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg>
+                                Cerrado · venció @tradeCategory.SelectionCutOffDateUtc.ToString("dd MMM")
+                            </span>
+                        }
+                        else
+                        {
+                            <span class="kiwbi-gremio-badge-open">
+                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9" /><polyline points="12 7 12 12 15 15" /></svg>
+                                Hasta @tradeCategory.SelectionCutOffDateUtc.ToString("dd MMM")
+                            </span>
+                        }
+                    </div>
+                    <div class="p-3">
+                        @foreach (var customization in tradeCategory.Customizations)
+                        {
+                            @await Html.PartialAsync("_CustomizationCard", new Kiwbi.Web.Models.Buyer.CustomizationCardViewModel
+                            {
+                                HousingUnitId = housingUnitId,
+                                Customization = customization,
+                            })
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
 
 @section Scripts {
     <script src="~/lib/htmx.org/htmx.min.js"></script>

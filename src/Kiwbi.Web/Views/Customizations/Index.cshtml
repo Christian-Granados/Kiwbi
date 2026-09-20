@@ -7,74 +7,105 @@
     var hasTradeCategories = (bool)ViewBag.HasTradeCategories;
 }
 
-<h1>Personalizaciones de @(tradeCategoryId is not null ? (string)ViewBag.TradeCategoryName : promotionName)</h1>
+<div class="kiwbi-breadcrumb mb-1">
+    <span>@promotionName</span>
+    <span>/</span>
+    <span class="current">Personalizaciones</span>
+</div>
 
 @if (TempData["Error"] is string error)
 {
     <div class="alert alert-danger">@error</div>
 }
 
-<p>
-    @if (hasTradeCategories)
-    {
-        <a asp-controller="Customizations" asp-action="Create" asp-route-promotionId="@promotionId" asp-route-tradeCategoryId="@tradeCategoryId" class="btn btn-primary">Nueva personalización</a>
-    }
-    @if (tradeCategoryId is not null)
-    {
-        <a asp-controller="TradeCategories" asp-action="Index" asp-route-promotionId="@promotionId" class="btn btn-secondary">Volver a los gremios</a>
-    }
-    else
-    {
-        <a asp-controller="HousingPromotions" asp-action="Details" asp-route-id="@promotionId" class="btn btn-secondary">Volver a la promoción</a>
-    }
-</p>
+<div class="d-flex flex-wrap align-items-end justify-content-between gap-3 mb-3">
+    <div>
+        <h1 class="h4 mb-0" style="font-weight:600;">Personalizaciones</h1>
+        <div class="small text-muted">
+            @(tradeCategoryId is not null ? $"Filtrado por gremio: {(string)ViewBag.TradeCategoryName}" : "Opciones que tus compradores podrán elegir, agrupadas por gremio")
+        </div>
+    </div>
+    <div class="text-end">
+        @if (hasTradeCategories)
+        {
+            <a asp-controller="Customizations" asp-action="Create" asp-route-promotionId="@promotionId" asp-route-tradeCategoryId="@tradeCategoryId" class="btn btn-kiwbi-primary btn-sm d-flex align-items-center gap-1">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+                Nueva personalización
+            </a>
+        }
+        else
+        {
+            <button type="button" class="btn btn-kiwbi-primary btn-sm" disabled>Nueva personalización</button>
+            <div class="small mt-1" style="color:#b45309;">Da de alta un gremio antes de crear personalizaciones</div>
+        }
+    </div>
+</div>
 
 @if (!hasTradeCategories)
 {
-    <p>
-        Todavía no hay gremios dados de alta en esta promoción.
-        <a asp-controller="TradeCategories" asp-action="Create" asp-route-promotionId="@promotionId">Crea uno primero</a> para poder dar de alta personalizaciones.
-    </p>
+    <div class="kiwbi-empty-state">
+        <div class="kiwbi-empty-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9" /><circle cx="9" cy="10" r="1" /><circle cx="14" cy="8" r="1" /><circle cx="15" cy="13" r="1" /></svg>
+        </div>
+        <h3>Todavía no hay gremios dados de alta</h3>
+        <p>
+            <a asp-controller="TradeCategories" asp-action="Create" asp-route-promotionId="@promotionId">Crea uno primero</a> para poder dar de alta personalizaciones.
+        </p>
+    </div>
 }
 else if (!Model.Any())
 {
-    <p>Todavía no hay personalizaciones dadas de alta.</p>
+    <div class="kiwbi-empty-state">
+        <p>Todavía no hay personalizaciones dadas de alta.</p>
+    </div>
 }
 else
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Nombre</th>
-                @if (tradeCategoryId is null)
-                {
-                    <th>Gremio</th>
-                }
-                <th>Opciones</th>
-                <th>Se aplica a</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var customization in Model)
-            {
+    <div class="kiwbi-table-card">
+        <div class="kiwbi-table-card-header">
+            <span class="title">Todas las personalizaciones</span>
+            <span class="count">@Model.Count elementos</span>
+        </div>
+        <table class="kiwbi-table">
+            <thead>
                 <tr>
-                    <td>@customization.Name</td>
+                    <th>Nombre</th>
                     @if (tradeCategoryId is null)
                     {
-                        <td>@customization.TradeCategoryName</td>
+                        <th>Gremio</th>
                     }
-                    <td>@customization.OptionsCount</td>
-                    <td>@customization.AssignmentsSummary</td>
-                    <td>
-                        <a asp-controller="Customizations" asp-action="Details" asp-route-id="@customization.Id" class="btn btn-sm btn-outline-secondary">Detalle</a>
-                        <form asp-controller="Customizations" asp-action="Delete" asp-route-id="@customization.Id" asp-route-promotionId="@promotionId" method="post" class="d-inline"
-                              onsubmit="return confirm('¿Seguro que quieres eliminar esta personalización?');">
-                            <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
-                        </form>
-                    </td>
+                    <th class="text-end">Nº opciones</th>
+                    <th class="kiwbi-col-optional">Se aplica a</th>
+                    <th class="text-end">Acciones</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var customization in Model)
+                {
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="kiwbi-row-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9" /><circle cx="9" cy="10" r="1" /><circle cx="14" cy="8" r="1" /><circle cx="15" cy="13" r="1" /></svg></span>
+                                <span class="kiwbi-row-title">@customization.Name</span>
+                            </div>
+                        </td>
+                        @if (tradeCategoryId is null)
+                        {
+                            <td><span class="kiwbi-chip">@customization.TradeCategoryName</span></td>
+                        }
+                        <td class="text-end fw-medium">@customization.OptionsCount</td>
+                        <td class="kiwbi-col-optional text-muted">@customization.AssignmentsSummary</td>
+                        <td class="text-end">
+                            <a asp-controller="Customizations" asp-action="Details" asp-route-id="@customization.Id" class="btn btn-sm btn-outline-secondary">Detalle</a>
+                            <form asp-controller="Customizations" asp-action="Delete" asp-route-id="@customization.Id" asp-route-promotionId="@promotionId" method="post" class="d-inline"
+                                  onsubmit="return confirm('¿Seguro que quieres eliminar esta personalización?');">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 }
+

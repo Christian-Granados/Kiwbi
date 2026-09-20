@@ -1,33 +1,134 @@
 @model Kiwbi.Web.Models.DeveloperProfile.EditDeveloperBrandingViewModel
 @{
     ViewData["Title"] = "Editar marca de la promotora";
+    var previewSecondary = string.IsNullOrWhiteSpace(Model.SecondaryColor) ? Model.PrimaryColor : Model.SecondaryColor;
 }
 
-<h1>Editar marca de la promotora</h1>
+<div class="kiwbi-breadcrumb mb-1">
+    <span>Kiwbi</span>
+    <span>/</span>
+    <a asp-controller="DeveloperProfile" asp-action="Index" class="text-decoration-none">Mi promotora</a>
+    <span>/</span>
+    <span class="current">Editar marca</span>
+</div>
+<h1 class="h4 mb-4" style="font-weight:600;">Editar marca de la promotora</h1>
 
-<div class="row">
-    <div class="col-md-6">
-        <form asp-controller="DeveloperProfile" asp-action="EditBranding" method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group mb-3">
-                <label asp-for="PrimaryColor" class="form-label"></label>
-                <input asp-for="PrimaryColor" class="form-control" type="color" />
-                <span asp-validation-for="PrimaryColor" class="text-danger"></span>
+<div style="max-width: 46rem;">
+    <form asp-controller="DeveloperProfile" asp-action="EditBranding" method="post" class="d-flex flex-column gap-3"
+          style="--preview-accent: @Model.PrimaryColor; --preview-accent-2: @previewSecondary;">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <div class="kiwbi-fieldset">
+            <div class="kiwbi-legend">Logo</div>
+            <!-- Ronda 5: `UpdateDeveloperBrandingCommand.LogoPath` es hoy un texto/URL, sin subida
+                 de fichero real (a diferencia del plano de Vivienda/Promoción). -->
+            <div class="row g-3 align-items-center">
+                <div class="col-auto d-flex align-items-center gap-3">
+                    @if (!string.IsNullOrWhiteSpace(Model.LogoPath))
+                    {
+                        <img src="@Model.LogoPath" alt="Logo" class="kiwbi-logo-preview" style="object-fit:cover;" />
+                    }
+                    else
+                    {
+                        <span class="kiwbi-logo-preview" style="background:var(--preview-accent);">?</span>
+                    }
+                    <div class="small text-muted" style="font-size:.7rem;max-width:9rem;">Sin logo, se usan las iniciales sobre el color primario.</div>
+                </div>
+                <div class="col">
+                    <label asp-for="LogoPath" class="form-label small fw-medium">URL del logo</label>
+                    <input asp-for="LogoPath" class="form-control form-control-sm" placeholder="https://…/logo-promotora.svg" />
+                    <span asp-validation-for="LogoPath" class="text-danger small"></span>
+                    <p class="small text-muted mb-0 mt-1" style="font-size:.7rem;">Enlace a una imagen ya alojada. La subida directa de fichero no está disponible todavía.</p>
+                </div>
             </div>
-            <div class="form-group mb-3">
-                <label asp-for="SecondaryColor" class="form-label"></label>
-                <input asp-for="SecondaryColor" class="form-control" type="color" />
-                <span asp-validation-for="SecondaryColor" class="text-danger"></span>
+        </div>
+
+        <div class="kiwbi-fieldset">
+            <div class="kiwbi-legend">Colores de marca</div>
+            <div class="row g-3">
+                <div class="col-sm-6">
+                    <label asp-for="PrimaryColor" class="form-label small fw-medium"></label>
+                    <div class="kiwbi-color-field" data-color-pair data-preview-var="--preview-accent">
+                        <input asp-for="PrimaryColor" type="color" class="kiwbi-color-swatch" />
+                        <input type="text" class="kiwbi-color-hex" spellcheck="false" />
+                    </div>
+                    <span asp-validation-for="PrimaryColor" class="text-danger small"></span>
+                    <p class="small text-muted mb-0 mt-1" style="font-size:.7rem;">Botones, navegación activa, acentos.</p>
+                </div>
+                <div class="col-sm-6">
+                    <label asp-for="SecondaryColor" class="form-label small fw-medium"></label>
+                    <div class="kiwbi-color-field" data-color-pair data-preview-var="--preview-accent-2">
+                        <input asp-for="SecondaryColor" type="color" class="kiwbi-color-swatch" />
+                        <input type="text" class="kiwbi-color-hex" spellcheck="false" />
+                    </div>
+                    <span asp-validation-for="SecondaryColor" class="text-danger small"></span>
+                    <p class="small text-muted mb-0 mt-1" style="font-size:.7rem;">Estados hover y degradados sutiles.</p>
+                </div>
             </div>
-            <div class="form-group mb-3">
-                <label asp-for="LogoPath" class="form-label"></label>
-                <input asp-for="LogoPath" class="form-control" placeholder="ej. logos/acme.png" />
-                <span asp-validation-for="LogoPath" class="text-danger"></span>
+
+            <div class="mt-3">
+                <div class="text-uppercase text-muted mb-2" style="font-size:.65rem;letter-spacing:.04em;font-weight:600;">Paletas rápidas</div>
+                <div class="d-flex flex-wrap gap-2">
+                    <button type="button" class="kiwbi-palette-pill" data-palette data-primary="#2f7d5b" data-secondary="#1c5540">
+                        <span class="kiwbi-palette-swatch"><span style="background:#2f7d5b;"></span><span style="background:#1c5540;"></span></span>
+                        Verde bosque
+                    </button>
+                    <button type="button" class="kiwbi-palette-pill" data-palette data-primary="#2563a8" data-secondary="#173f6b">
+                        <span class="kiwbi-palette-swatch"><span style="background:#2563a8;"></span><span style="background:#173f6b;"></span></span>
+                        Azul acero
+                    </button>
+                    <button type="button" class="kiwbi-palette-pill" data-palette data-primary="#c05621" data-secondary="#8a3d17">
+                        <span class="kiwbi-palette-swatch"><span style="background:#c05621;"></span><span style="background:#8a3d17;"></span></span>
+                        Terracota
+                    </button>
+                    <button type="button" class="kiwbi-palette-pill" data-palette data-primary="#5b4bc4" data-secondary="#3b2f8a">
+                        <span class="kiwbi-palette-swatch"><span style="background:#5b4bc4;"></span><span style="background:#3b2f8a;"></span></span>
+                        Púrpura real
+                    </button>
+                </div>
             </div>
-            <button type="submit" class="btn btn-primary">Guardar</button>
-            <a asp-controller="DeveloperProfile" asp-action="Index" class="btn btn-secondary">Cancelar</a>
-        </form>
-    </div>
+
+            <div class="mt-4 p-3 rounded-3" style="background:var(--kiwbi-bg); border:1px solid var(--kiwbi-border);">
+                <div class="text-uppercase text-muted mb-3" style="font-size:.65rem;letter-spacing:.04em;font-weight:600;">Vista previa en vivo</div>
+                <div class="row g-3 align-items-center">
+                    <div class="col-sm-4">
+                        <div class="border rounded-3 bg-white p-2" style="border-color:var(--kiwbi-border) !important;">
+                            <div class="d-flex align-items-center gap-2 rounded-2 px-2 py-2 text-white small fw-medium" style="background:var(--preview-accent);">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                                Panel
+                            </div>
+                            <div class="d-flex align-items-center gap-2 rounded-2 px-2 py-2 small text-muted">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
+                                Viviendas
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4 d-flex flex-column gap-2">
+                        <button type="button" class="btn btn-sm text-white d-flex align-items-center justify-content-center gap-1" style="background:var(--preview-accent);" disabled>
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                            Guardar cambios
+                        </button>
+                        <button type="button" class="btn btn-sm" style="border:1px solid var(--preview-accent); color:var(--preview-accent);" disabled>Botón secundario</button>
+                    </div>
+                    <div class="col-sm-4">
+                        <div class="d-flex justify-content-between small text-muted mb-1" style="font-size:.7rem;">
+                            <span>Progreso de obra</span><span>74%</span>
+                        </div>
+                        <span class="kiwbi-progress" style="width:100%;"><span style="width:74%;background:var(--preview-accent);"></span></span>
+                        <span class="kiwbi-progress mt-2 d-block" style="width:100%;"><span style="width:48%;background:var(--preview-accent-2);"></span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-end gap-2 pb-2">
+            <a asp-controller="DeveloperProfile" asp-action="Index" class="btn btn-sm btn-outline-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-kiwbi-primary btn-sm d-flex align-items-center gap-1">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                Guardar cambios
+            </button>
+        </div>
+    </form>
 </div>
 
 @section Scripts {

@@ -4,48 +4,83 @@
     var promotionId = (Guid)ViewBag.PromotionId;
 }
 
-<h1>Gremios de @ViewBag.PromotionName</h1>
+<div class="kiwbi-breadcrumb mb-1">
+    <span>@ViewBag.PromotionName</span>
+    <span>/</span>
+    <span class="current">Gremios</span>
+</div>
 
 @if (TempData["Error"] is string error)
 {
     <div class="alert alert-danger">@error</div>
 }
 
-<p>
-    <a asp-controller="TradeCategories" asp-action="Create" asp-route-promotionId="@promotionId" class="btn btn-primary">Nuevo gremio</a>
-    <a asp-controller="HousingPromotions" asp-action="Details" asp-route-id="@promotionId" class="btn btn-secondary">Volver a la promoción</a>
-</p>
+<div class="d-flex flex-wrap align-items-end justify-content-between gap-3 mb-3">
+    <h1 class="h4 mb-0" style="font-weight:600;">Gremios</h1>
+    <a asp-controller="TradeCategories" asp-action="Create" asp-route-promotionId="@promotionId" class="btn btn-kiwbi-primary btn-sm d-flex align-items-center gap-1">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+        Nuevo gremio
+    </a>
+</div>
 
 @if (!Model.Any())
 {
-    <p>Todavía no hay gremios dados de alta.</p>
+    <div class="kiwbi-empty-state">
+        <div class="kiwbi-empty-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 1.4 1.4l3-3a1 1 0 0 0-1.4-1.4l-3 3ZM3 21l7-7M7 21H3v-4l9.5-9.5a2.1 2.1 0 0 1 3 3L5 21Z" /></svg>
+        </div>
+        <h3>Todavía no hay gremios dados de alta</h3>
+        <p>Crea el primer gremio para poder asociarle personalizaciones.</p>
+    </div>
 }
 else
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Nombre</th>
-                <th>Fecha límite de selección (UTC)</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var tradeCategory in Model)
-            {
+    <div class="kiwbi-table-card">
+        <div class="kiwbi-table-card-header">
+            <span class="title">Todos los gremios</span>
+            <span class="count">@Model.Count gremios</span>
+        </div>
+        <table class="kiwbi-table">
+            <thead>
                 <tr>
-                    <td>@tradeCategory.Name</td>
-                    <td>@tradeCategory.SelectionCutOffDateUtc.ToString("dd/MM/yyyy HH:mm")</td>
-                    <td>
-                        <a asp-controller="Customizations" asp-action="Index" asp-route-promotionId="@promotionId" asp-route-tradeCategoryId="@tradeCategory.Id" class="btn btn-sm btn-outline-primary">Personalizaciones</a>
-                        <a asp-controller="TradeCategories" asp-action="Edit" asp-route-id="@tradeCategory.Id" class="btn btn-sm btn-outline-secondary">Editar</a>
-                        <form asp-controller="TradeCategories" asp-action="Delete" asp-route-id="@tradeCategory.Id" asp-route-promotionId="@promotionId" method="post" class="d-inline"
-                              onsubmit="return confirm('¿Seguro que quieres eliminar este gremio?');">
-                            <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
-                        </form>
-                    </td>
+                    <th>Nombre</th>
+                    <th>Fecha límite de selección</th>
+                    <th class="text-end">Acciones</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var tradeCategory in Model)
+                {
+                    var isExpired = tradeCategory.SelectionCutOffDateUtc < DateTime.UtcNow;
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="kiwbi-row-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 1.4 1.4l3-3a1 1 0 0 0-1.4-1.4l-3 3ZM3 21l7-7M7 21H3v-4l9.5-9.5a2.1 2.1 0 0 1 3 3L5 21Z" /></svg></span>
+                                <span class="kiwbi-row-title">@tradeCategory.Name</span>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="text-muted">@tradeCategory.SelectionCutOffDateUtc.ToString("dd/MM/yyyy HH:mm")</span>
+                            @if (isExpired)
+                            {
+                                <span class="kiwbi-badge kiwbi-badge-danger ms-1">Vencido</span>
+                            }
+                            else
+                            {
+                                <span class="kiwbi-badge kiwbi-badge-success ms-1">Abierto</span>
+                            }
+                        </td>
+                        <td class="text-end">
+                            <a asp-controller="Customizations" asp-action="Index" asp-route-promotionId="@promotionId" asp-route-tradeCategoryId="@tradeCategory.Id" class="btn btn-sm btn-outline-secondary">Personalizaciones</a>
+                            <a asp-controller="TradeCategories" asp-action="Edit" asp-route-id="@tradeCategory.Id" class="btn btn-sm btn-outline-secondary">Editar</a>
+                            <form asp-controller="TradeCategories" asp-action="Delete" asp-route-id="@tradeCategory.Id" asp-route-promotionId="@promotionId" method="post" class="d-inline"
+                                  onsubmit="return confirm('¿Seguro que quieres eliminar este gremio?');">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 }

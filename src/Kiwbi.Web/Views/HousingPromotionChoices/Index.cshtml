@@ -3,50 +3,113 @@
     ViewData["Title"] = "Progreso de personalizaciones";
     var promotionId = (Guid)ViewBag.PromotionId;
     var promotionName = (string)ViewBag.PromotionName;
+    var totalPending = Model.Sum(u => u.PendingCount);
+    var totalSelected = Model.Sum(u => u.SelectedCount);
+    var totalConfirmed = Model.Sum(u => u.ConfirmedCount);
+    var totalPaid = Model.Sum(u => u.PaidCount);
+    var totalChoices = Model.Sum(u => u.TotalCount);
 }
 
-<h1>Progreso de personalizaciones — @promotionName</h1>
-<p>
-    <a asp-controller="HousingPromotions" asp-action="Details" asp-route-id="@promotionId" class="btn btn-outline-secondary btn-sm">&larr; Volver a la promoción</a>
-    <a asp-controller="HousingPromotionChoices" asp-action="ExportExcel" asp-route-promotionId="@promotionId" class="btn btn-outline-success btn-sm">Exportar a Excel</a>
-    <a asp-controller="HousingPromotionChoices" asp-action="ExportPdf" asp-route-promotionId="@promotionId" class="btn btn-outline-danger btn-sm">Exportar a PDF</a>
-</p>
+<div class="kiwbi-breadcrumb mb-1">
+    <span>@promotionName</span>
+    <span>/</span>
+    <span class="current">Progreso</span>
+</div>
+<div class="d-flex flex-wrap align-items-end justify-content-between gap-3 mb-3">
+    <div>
+        <h1 class="h4 mb-1" style="font-weight:600;">Progreso de personalizaciones</h1>
+        <p class="small text-muted mb-0">Estado de las personalizaciones de cada vivienda de la promoción.</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a asp-controller="HousingPromotionChoices" asp-action="ExportExcel" asp-route-promotionId="@promotionId" class="btn btn-sm btn-outline-secondary">Exportar a Excel</a>
+        <a asp-controller="HousingPromotionChoices" asp-action="ExportPdf" asp-route-promotionId="@promotionId" class="btn btn-sm btn-outline-secondary">Exportar a PDF</a>
+    </div>
+</div>
 
 @if (!Model.Any())
 {
-    <p>Todavía no hay viviendas dadas de alta en esta promoción.</p>
+    <div class="kiwbi-empty-state">
+        <p>Todavía no hay viviendas dadas de alta en esta promoción.</p>
+    </div>
 }
 else
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Planta</th>
-                <th>Puerta</th>
-                <th>Tipología</th>
-                <th>Pendientes</th>
-                <th>Seleccionadas</th>
-                <th>Confirmadas</th>
-                <th>Pagadas</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var unit in Model)
-            {
+    <div class="kiwbi-table-card mb-3">
+        <div class="d-flex flex-wrap align-items-center gap-4 px-3 py-3">
+            <div class="d-flex align-items-center gap-2 small">
+                <span class="kiwbi-status-dot" style="background:#cbd5e1;"></span>
+                <span class="fw-medium">Pendiente</span><span class="text-muted">@totalPending</span>
+            </div>
+            <div class="d-flex align-items-center gap-2 small">
+                <span class="kiwbi-status-dot" style="background:#38bdf8;"></span>
+                <span class="fw-medium">Seleccionada</span><span class="text-muted">@totalSelected</span>
+            </div>
+            <div class="d-flex align-items-center gap-2 small">
+                <span class="kiwbi-status-dot" style="background:#818cf8;"></span>
+                <span class="fw-medium">Confirmada</span><span class="text-muted">@totalConfirmed</span>
+            </div>
+            <div class="d-flex align-items-center gap-2 small">
+                <span class="kiwbi-status-dot" style="background:#34d399;"></span>
+                <span class="fw-medium">Pagada</span><span class="text-muted">@totalPaid</span>
+            </div>
+            <div class="ms-auto small text-muted">@totalChoices personalizaciones · @Model.Count viviendas</div>
+        </div>
+    </div>
+
+    <div class="kiwbi-table-card">
+        <table class="kiwbi-table">
+            <thead>
                 <tr>
-                    <td>@unit.Floor</td>
-                    <td>@unit.Door</td>
-                    <td>@(unit.TypologyName ?? "-")</td>
-                    <td><span class="badge bg-secondary">@unit.PendingCount</span></td>
-                    <td><span class="badge bg-info text-dark">@unit.SelectedCount</span></td>
-                    <td><span class="badge bg-primary">@unit.ConfirmedCount</span></td>
-                    <td><span class="badge bg-success">@unit.PaidCount</span></td>
-                    <td>
-                        <a asp-controller="HousingPromotionChoices" asp-action="Details" asp-route-housingUnitId="@unit.HousingUnitId" class="btn btn-outline-primary btn-sm">Ver detalle</a>
-                    </td>
+                    <th>Vivienda</th>
+                    <th class="kiwbi-col-optional">Tipología</th>
+                    <th class="text-center">Pend.</th>
+                    <th class="text-center">Selec.</th>
+                    <th class="text-center">Confir.</th>
+                    <th class="text-center">Pagadas</th>
+                    <th style="width:14rem;" class="kiwbi-col-optional">Reparto</th>
+                    <th class="text-end">Acción</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var unit in Model)
+                {
+                    var total = unit.TotalCount == 0 ? 1 : unit.TotalCount;
+                    <tr>
+                        <td>
+                            <div class="kiwbi-row-title">@unit.Floor · @unit.Door</div>
+                            <div class="kiwbi-row-detail">@unit.TotalCount personalizaciones</div>
+                        </td>
+                        <td class="kiwbi-col-optional text-muted">@(unit.TypologyName ?? "-")</td>
+                        <td class="text-center @(unit.PendingCount == 0 ? "text-muted" : "fw-semibold")">@unit.PendingCount</td>
+                        <td class="text-center @(unit.SelectedCount == 0 ? "text-muted" : "fw-semibold")">@unit.SelectedCount</td>
+                        <td class="text-center @(unit.ConfirmedCount == 0 ? "text-muted" : "fw-semibold")">@unit.ConfirmedCount</td>
+                        <td class="text-center @(unit.PaidCount == 0 ? "text-muted" : "fw-semibold")">@unit.PaidCount</td>
+                        <td class="kiwbi-col-optional">
+                            <div class="kiwbi-stacked-bar" title="Pendiente: @unit.PendingCount, Seleccionada: @unit.SelectedCount, Confirmada: @unit.ConfirmedCount, Pagada: @unit.PaidCount">
+                                @if (unit.PendingCount > 0)
+                                {
+                                    <span style="width:@(unit.PendingCount * 100 / total)%;background:#e2e8f0;"></span>
+                                }
+                                @if (unit.SelectedCount > 0)
+                                {
+                                    <span style="width:@(unit.SelectedCount * 100 / total)%;background:#7dd3fc;"></span>
+                                }
+                                @if (unit.ConfirmedCount > 0)
+                                {
+                                    <span style="width:@(unit.ConfirmedCount * 100 / total)%;background:#a5b4fc;"></span>
+                                }
+                                @if (unit.PaidCount > 0)
+                                {
+                                    <span style="width:@(unit.PaidCount * 100 / total)%;background:#6ee7b7;"></span>
+                                }
+                            </div>
+                        </td>
+                        <td class="text-end">
+                            <a asp-controller="HousingPromotionChoices" asp-action="Details" asp-route-housingUnitId="@unit.HousingUnitId" class="btn btn-sm btn-outline-secondary">Ver detalle</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 }

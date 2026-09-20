@@ -172,6 +172,7 @@ public class HousingUnitsController : Controller
             UsableAreaSqm = dto.UsableAreaSqm,
             FloorPlanImagePath = dto.FloorPlanImagePath,
             TypologyOptions = await BuildTypologyOptionsAsync(dto.HousingPromotionId, cancellationToken),
+            Status = dto.Status.ToString(),
         };
 
         return View(model);

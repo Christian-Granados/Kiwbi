@@ -4,27 +4,37 @@
 }
 
 <div id="customization-@customization.Id" class="mb-4">
-    <h5>@customization.Name</h5>
-    <ul class="list-group mb-2">
+    <div class="text-uppercase small text-muted mb-2" style="letter-spacing:.04em;font-size:.68rem;">@customization.Name</div>
+    <div class="row row-cols-1 row-cols-sm-3 g-2">
         @foreach (var option in customization.Options)
         {
-            <li class="list-group-item d-flex justify-content-between align-items-center @(option.IsEffectiveSelection ? "list-group-item-primary" : string.Empty)">
-                <span>
-                    @option.Name
-                    @if (option.IsDefault)
+            <div class="col">
+                <div class="kiwbi-option-card @(option.IsEffectiveSelection ? "selected" : "")">
+                    <span class="kiwbi-option-thumb"></span>
+                    <span class="flex-fill text-start">
+                        <span class="d-block fw-semibold" style="font-size:.85rem;">
+                            @option.Name
+                            @if (option.IsDefault)
+                            {
+                                <span class="small text-muted fw-normal">(por defecto)</span>
+                            }
+                        </span>
+                    </span>
+                    @if (option.SurchargeAmount > 0)
                     {
-                        <span class="badge bg-light text-dark">Por defecto</span>
+                        <span class="small fw-semibold" style="color:var(--kiwbi-accent);">+@option.SurchargeAmount.ToString("0.##") €</span>
+                    }
+                    else
+                    {
+                        <span class="small fw-semibold text-muted">Incluido</span>
                     }
                     @if (option.IsEffectiveSelection)
                     {
-                        <span class="badge bg-primary">Elección actual</span>
+                        <span class="kiwbi-option-check"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12" /></svg></span>
                     }
-                </span>
-                <span class="d-flex align-items-center gap-2">
-                    <span>@(option.SurchargeAmount > 0 ? $"+{option.SurchargeAmount:0.00} €" : "Sin sobrecoste")</span>
-                    @if (customization.CanSelect && !option.IsEffectiveSelection)
+                    else if (customization.CanSelect)
                     {
-                        <button type="button" class="btn btn-sm btn-outline-primary"
+                        <button type="button" class="btn btn-sm btn-outline-secondary"
                                 hx-post="@Url.Action("SelectOption", "Buyer")"
                                 hx-vals='{"housingUnitId": "@Model.HousingUnitId", "customizationId": "@customization.Id", "customizationOptionId": "@option.Id"}'
                                 hx-target="#customization-@customization.Id"
@@ -32,12 +42,16 @@
                             Elegir
                         </button>
                     }
-                </span>
-            </li>
+                    else
+                    {
+                        <span class="kiwbi-option-check"></span>
+                    }
+                </div>
+            </div>
         }
-    </ul>
+    </div>
     @if (!customization.CanSelect)
     {
-        <p class="text-muted small">El plazo de selección para este gremio ha finalizado; se aplica la opción indicada arriba.</p>
+        <p class="text-muted small mt-1">El plazo de selección para este gremio ha finalizado; se aplica la opción indicada arriba.</p>
     }
 </div>

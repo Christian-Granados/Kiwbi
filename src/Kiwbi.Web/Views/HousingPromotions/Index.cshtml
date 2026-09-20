@@ -3,40 +3,65 @@
     ViewData["Title"] = "Promociones";
 }
 
-<h1>Promociones</h1>
-
-<p>
-    <a asp-controller="HousingPromotions" asp-action="Create" class="btn btn-primary">Nueva promoción</a>
-</p>
+<div class="kiwbi-breadcrumb mb-1">
+    <span class="current">Panel</span>
+</div>
+<div class="d-flex align-items-center justify-content-between mb-4">
+    <div>
+        <h1 class="h4 mb-0" style="font-weight:600;">Promociones</h1>
+        <div class="small text-muted">Todos los edificios en construcción de tu promotora</div>
+    </div>
+    <a asp-controller="HousingPromotions" asp-action="Create" class="btn btn-kiwbi-primary btn-sm d-flex align-items-center gap-1">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+        Nueva promoción
+    </a>
+</div>
 
 @if (!Model.Any())
 {
-    <p>Todavía no hay promociones dadas de alta.</p>
+    <div class="kiwbi-empty-state">
+        <div class="kiwbi-empty-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M6 21V7l6-4 6 4v14M10 21v-6h4v6" /></svg>
+        </div>
+        <h3>Todavía no hay promociones dadas de alta</h3>
+        <p>Crea tu primera promoción para empezar a organizar tipologías, viviendas y gremios.</p>
+    </div>
 }
 else
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Nombre</th>
-                <th>Ciudad</th>
-                <th>Dirección</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var promotion in Model)
-            {
+    <div class="kiwbi-table-card">
+        <div class="kiwbi-table-card-header">
+            <span class="title">Listado de promociones</span>
+            <span class="count">@Model.Count promociones</span>
+        </div>
+        <table class="kiwbi-table">
+            <thead>
                 <tr>
-                    <td>@promotion.Name</td>
-                    <td>@promotion.City</td>
-                    <td>@promotion.Address</td>
-                    <td>
-                        <a asp-controller="HousingPromotions" asp-action="Details" asp-route-id="@promotion.Id" class="btn btn-sm btn-outline-primary">Ver</a>
-                        <a asp-controller="HousingPromotions" asp-action="Edit" asp-route-id="@promotion.Id" class="btn btn-sm btn-outline-secondary">Editar</a>
-                    </td>
+                    <th>Nombre</th>
+                    <th class="kiwbi-col-optional">Ciudad</th>
+                    <th class="kiwbi-col-optional">Dirección</th>
+                    <th class="text-end">Acciones</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var promotion in Model)
+                {
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <span class="kiwbi-row-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M6 21V7l6-4 6 4v14M10 21v-6h4v6" /></svg></span>
+                                <span class="kiwbi-row-title">@promotion.Name</span>
+                            </div>
+                        </td>
+                        <td class="kiwbi-col-optional text-muted">@promotion.City</td>
+                        <td class="kiwbi-col-optional text-muted">@promotion.Address</td>
+                        <td class="text-end">
+                            <a asp-controller="HousingPromotions" asp-action="Details" asp-route-id="@promotion.Id" class="btn btn-sm btn-outline-secondary">Ver</a>
+                            <a asp-controller="HousingPromotions" asp-action="Edit" asp-route-id="@promotion.Id" class="btn btn-sm btn-outline-secondary">Editar</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 }

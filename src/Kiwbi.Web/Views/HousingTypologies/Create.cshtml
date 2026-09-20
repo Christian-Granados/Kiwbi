@@ -3,22 +3,33 @@
     ViewData["Title"] = "Nueva tipología";
 }
 
-<h1>Nueva tipología</h1>
+<div class="kiwbi-breadcrumb mb-1">
+    <a asp-controller="HousingTypologies" asp-action="Index" asp-route-promotionId="@Model.HousingPromotionId" class="text-decoration-none">Tipologías</a>
+    <span>/</span>
+    <span class="current">Nueva tipología</span>
+</div>
+<h1 class="h4 mb-1" style="font-weight:600;">Nueva tipología</h1>
+<p class="small text-muted mb-4">Una tipología es solo un nombre. Las viviendas que la compartan podrán recibir personalizaciones en bloque.</p>
 
-<div class="row">
-    <div class="col-md-6">
-        <form asp-controller="HousingTypologies" asp-action="Create" method="post">
-            <input type="hidden" asp-for="HousingPromotionId" />
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group mb-3">
-                <label asp-for="Name" class="form-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <button type="submit" class="btn btn-primary">Crear</button>
-            <a asp-controller="HousingTypologies" asp-action="Index" asp-route-promotionId="@Model.HousingPromotionId" class="btn btn-secondary">Cancelar</a>
-        </form>
-    </div>
+<div style="max-width: 38rem;">
+    <form asp-controller="HousingTypologies" asp-action="Create" method="post" class="d-flex flex-column gap-3">
+        <input type="hidden" asp-for="HousingPromotionId" />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="kiwbi-fieldset">
+            <div class="kiwbi-legend">Datos de la tipología</div>
+            <label asp-for="Name" class="form-label small fw-medium"></label>
+            <input asp-for="Name" class="form-control form-control-sm" placeholder="p. ej. 2 dorm. · Tipo A" autofocus />
+            <span asp-validation-for="Name" class="text-danger small"></span>
+            <p class="small text-muted mb-0 mt-1">Un identificador reconocible para el equipo comercial y de obra.</p>
+        </div>
+        <div class="d-flex justify-content-end gap-2 pb-2">
+            <a asp-controller="HousingTypologies" asp-action="Index" asp-route-promotionId="@Model.HousingPromotionId" class="btn btn-sm btn-outline-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-kiwbi-primary btn-sm d-flex align-items-center gap-1">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12" /></svg>
+                Crear tipología
+            </button>
+        </div>
+    </form>
 </div>
 
 @section Scripts {

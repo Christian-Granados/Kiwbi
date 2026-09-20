@@ -3,20 +3,33 @@
     ViewData["Title"] = "Invitar comprador";
 }
 
-<h1>Invitar comprador - Vivienda @ViewBag.UnitLabel</h1>
-
-<div class="row">
-    <div class="col-md-6">
-        <form asp-controller="HousingUnits" asp-action="InviteBuyer" method="post">
-            <input type="hidden" asp-for="HousingUnitId" />
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group mb-3">
-                <label asp-for="Email" class="form-label"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <button type="submit" class="btn btn-primary">Enviar invitación</button>
-            <a asp-controller="HousingUnits" asp-action="Invitations" asp-route-id="@Model.HousingUnitId" class="btn btn-secondary">Cancelar</a>
-        </form>
-    </div>
+<div class="kiwbi-breadcrumb mb-1">
+    <a asp-controller="HousingUnits" asp-action="Invitations" asp-route-id="@Model.HousingUnitId" class="text-decoration-none">Invitaciones</a>
+    <span>/</span>
+    <span class="current">Invitar comprador</span>
 </div>
+<h1 class="h4 mb-4" style="font-weight:600;">Invitar comprador · Vivienda @ViewBag.UnitLabel</h1>
+
+<div style="max-width: 32rem;">
+    <form asp-controller="HousingUnits" asp-action="InviteBuyer" method="post" class="d-flex flex-column gap-3">
+        <input type="hidden" asp-for="HousingUnitId" />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="kiwbi-fieldset">
+            <div class="kiwbi-legend">Invitar comprador por email</div>
+            <label asp-for="Email" class="form-label small fw-medium"></label>
+            <input asp-for="Email" class="form-control form-control-sm" placeholder="nombre@correo.com" />
+            <span asp-validation-for="Email" class="text-danger small"></span>
+        </div>
+        <div class="d-flex justify-content-end gap-2 pb-2">
+            <a asp-controller="HousingUnits" asp-action="Invitations" asp-route-id="@Model.HousingUnitId" class="btn btn-sm btn-outline-secondary">Cancelar</a>
+            <button type="submit" class="btn btn-kiwbi-primary btn-sm d-flex align-items-center gap-1">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13" /><polygon points="22 2 15 22 11 13 2 9 22 2" /></svg>
+                Enviar invitación
+            </button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

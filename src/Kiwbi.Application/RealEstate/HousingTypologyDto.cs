@@ -5,4 +5,5 @@ public sealed record HousingTypologyDto(
     Guid HousingPromotionId,
     string Name,
     DateTime CreatedAtUtc,
-    DateTime UpdatedAtUtc);
+    DateTime UpdatedAtUtc,
+    int UnitCount = 0);

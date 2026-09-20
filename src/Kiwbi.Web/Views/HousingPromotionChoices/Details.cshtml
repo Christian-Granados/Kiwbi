@@ -5,88 +5,101 @@
     var promotionId = (Guid)ViewBag.PromotionId;
     var housingUnitId = (Guid)ViewBag.HousingUnitId;
     var housingUnitLabel = (string)ViewBag.HousingUnitLabel;
+    var totalPending = Model.SelectMany(t => t.Customizations).Count(c => c.Status == HomeCustomizationChoiceStatus.Pending);
+    var totalSelected = Model.SelectMany(t => t.Customizations).Count(c => c.Status == HomeCustomizationChoiceStatus.Selected);
+    var totalConfirmed = Model.SelectMany(t => t.Customizations).Count(c => c.Status == HomeCustomizationChoiceStatus.Confirmed);
+    var totalPaid = Model.SelectMany(t => t.Customizations).Count(c => c.Status == HomeCustomizationChoiceStatus.Paid);
 }
 
-<h1>Personalizaciones — @housingUnitLabel</h1>
-<p>
-    <a asp-controller="HousingPromotionChoices" asp-action="Index" asp-route-promotionId="@promotionId" class="btn btn-outline-secondary btn-sm">&larr; Volver al progreso de la promoción</a>
-</p>
+<a asp-controller="HousingPromotionChoices" asp-action="Index" asp-route-promotionId="@promotionId" class="d-inline-flex align-items-center gap-1 small text-muted text-decoration-none mb-3">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg>
+    Volver al progreso
+</a>
 
 @if (TempData["Error"] is string error)
 {
     <div class="alert alert-danger">@error</div>
 }
 
+<div class="kiwbi-table-card mb-4">
+    <div class="d-flex flex-wrap align-items-start justify-content-between gap-3 p-4">
+        <div>
+            <h1 class="h4 mt-1 mb-1" style="font-weight:700;">Vivienda @housingUnitLabel</h1>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+            <div class="kiwbi-progreso-chip"><span class="kiwbi-status-dot" style="background:#cbd5e1;"></span><strong>@totalPending</strong><span class="label">Pendiente</span></div>
+            <div class="kiwbi-progreso-chip"><span class="kiwbi-status-dot" style="background:#38bdf8;"></span><strong>@totalSelected</strong><span class="label">Seleccionada</span></div>
+            <div class="kiwbi-progreso-chip"><span class="kiwbi-status-dot" style="background:#818cf8;"></span><strong>@totalConfirmed</strong><span class="label">Confirmada</span></div>
+            <div class="kiwbi-progreso-chip"><span class="kiwbi-status-dot" style="background:#34d399;"></span><strong>@totalPaid</strong><span class="label">Pagada</span></div>
+        </div>
+    </div>
+</div>
+
 @if (!Model.Any())
 {
-    <p>Esta vivienda todavía no tiene personalizaciones aplicables.</p>
+    <div class="kiwbi-empty-state">
+        <p>Esta vivienda todavía no tiene personalizaciones aplicables.</p>
+    </div>
 }
 else
 {
     @foreach (var tradeCategory in Model)
     {
-        <div class="card mb-4">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <span><strong>@tradeCategory.TradeCategoryName</strong></span>
+        <div class="kiwbi-table-card mb-3">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 px-4 py-3" style="border-bottom:1px solid var(--kiwbi-border-soft);">
+                <span class="fw-semibold">@tradeCategory.TradeCategoryName</span>
                 @if (tradeCategory.IsExpired)
                 {
-                    <span class="badge bg-secondary">Plazo finalizado (@tradeCategory.SelectionCutOffDateUtc.ToString("dd/MM/yyyy"))</span>
+                    <span class="kiwbi-gremio-badge-expired"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg> Cerrado · venció @tradeCategory.SelectionCutOffDateUtc.ToString("dd MMM yyyy")</span>
                 }
                 else
                 {
-                    <span class="badge bg-success">Plazo hasta el @tradeCategory.SelectionCutOffDateUtc.ToString("dd/MM/yyyy")</span>
+                    <span class="kiwbi-gremio-badge-open"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9" /><polyline points="12 7 12 12 15.5 14" /></svg> Abierto · hasta @tradeCategory.SelectionCutOffDateUtc.ToString("dd MMM yyyy")</span>
                 }
             </div>
-            <table class="table mb-0">
-                <thead>
-                    <tr>
-                        <th>Personalización</th>
-                        <th>Opción efectiva</th>
-                        <th>Sobrecoste</th>
-                        <th>Estado</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var customization in tradeCategory.Customizations)
+            @foreach (var customization in tradeCategory.Customizations)
+            {
+                var badge = customization.Status.ToBadge();
+                var canConfirm = tradeCategory.IsExpired && customization.Status is HomeCustomizationChoiceStatus.Pending or HomeCustomizationChoiceStatus.Selected;
+                var canMarkAsPaid = customization.Status == HomeCustomizationChoiceStatus.Confirmed;
+                <div class="d-flex flex-wrap align-items-center gap-3 px-4 py-3" style="border-bottom:1px solid var(--kiwbi-border-soft);">
+                    <div class="flex-fill">
+                        <div class="fw-medium">@customization.CustomizationName</div>
+                        <div class="small text-muted">@(customization.EffectiveOptionName ?? "-")</div>
+                    </div>
+                    @if (customization.EffectiveOptionSurchargeAmount is { } surcharge && surcharge > 0)
                     {
-                        var (badgeClass, statusLabel) = customization.Status switch
-                        {
-                            HomeCustomizationChoiceStatus.Pending => ("bg-secondary", "Pendiente"),
-                            HomeCustomizationChoiceStatus.Selected => ("bg-info text-dark", "Seleccionada"),
-                            HomeCustomizationChoiceStatus.Confirmed => ("bg-primary", "Confirmada"),
-                            HomeCustomizationChoiceStatus.Paid => ("bg-success", "Pagada"),
-                            _ => ("bg-light text-dark", customization.Status.ToString()),
-                        };
-                        var canConfirm = tradeCategory.IsExpired && customization.Status is HomeCustomizationChoiceStatus.Pending or HomeCustomizationChoiceStatus.Selected;
-                        var canMarkAsPaid = customization.Status == HomeCustomizationChoiceStatus.Confirmed;
-                        <tr>
-                            <td>@customization.CustomizationName</td>
-                            <td>@(customization.EffectiveOptionName ?? "-")</td>
-                            <td>@(customization.EffectiveOptionSurchargeAmount is { } surcharge ? $"{surcharge:C}" : "-")</td>
-                            <td><span class="badge @badgeClass">@statusLabel</span></td>
-                            <td>
-                                @if (canConfirm)
-                                {
-                                    <form asp-controller="HousingPromotionChoices" asp-action="Confirm" method="post" class="d-inline">
-                                        <input type="hidden" name="housingUnitId" value="@housingUnitId" />
-                                        <input type="hidden" name="customizationId" value="@customization.CustomizationId" />
-                                        <button type="submit" class="btn btn-outline-primary btn-sm">Confirmar</button>
-                                    </form>
-                                }
-                                @if (canMarkAsPaid)
-                                {
-                                    <form asp-controller="HousingPromotionChoices" asp-action="MarkAsPaid" method="post" class="d-inline">
-                                        <input type="hidden" name="housingUnitId" value="@housingUnitId" />
-                                        <input type="hidden" name="customizationId" value="@customization.CustomizationId" />
-                                        <button type="submit" class="btn btn-outline-success btn-sm">Marcar como pagada</button>
-                                    </form>
-                                }
-                            </td>
-                        </tr>
+                        <span class="small text-muted">@surcharge.ToString("C")</span>
                     }
-                </tbody>
-            </table>
+                    <span class="kiwbi-badge @badge.CssClass">@badge.Label</span>
+                    @if (canConfirm)
+                    {
+                        <form asp-controller="HousingPromotionChoices" asp-action="Confirm" method="post" class="d-inline">
+                            <input type="hidden" name="housingUnitId" value="@housingUnitId" />
+                            <input type="hidden" name="customizationId" value="@customization.CustomizationId" />
+                            <button type="submit" class="btn btn-kiwbi-primary btn-sm d-flex align-items-center gap-1">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12" /></svg>
+                                Confirmar
+                            </button>
+                        </form>
+                    }
+                    else if (canMarkAsPaid)
+                    {
+                        <form asp-controller="HousingPromotionChoices" asp-action="MarkAsPaid" method="post" class="d-inline">
+                            <input type="hidden" name="housingUnitId" value="@housingUnitId" />
+                            <input type="hidden" name="customizationId" value="@customization.CustomizationId" />
+                            <button type="submit" class="btn btn-sm btn-outline-secondary d-flex align-items-center gap-1">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 5H9.5a3.5 3.5 0 1 0 0 7h5a3.5 3.5 0 1 1 0 7H6" /></svg>
+                                Marcar como pagada
+                            </button>
+                        </form>
+                    }
+                    else
+                    {
+                        <span class="small text-muted">Sin acciones</span>
+                    }
+                </div>
+            }
         </div>
     }
 }

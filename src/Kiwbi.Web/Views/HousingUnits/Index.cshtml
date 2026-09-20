@@ -6,66 +6,86 @@
     var statuses = Enum.GetValues<HousingUnitStatus>();
 }
 
-<h1>Viviendas de @ViewBag.PromotionName</h1>
+<div class="kiwbi-breadcrumb mb-1">
+    <span>@ViewBag.PromotionName</span>
+    <span>/</span>
+    <span class="current">Viviendas</span>
+</div>
 
 @if (TempData["Error"] is string error)
 {
     <div class="alert alert-danger">@error</div>
 }
 
-<p>
-    <a asp-controller="HousingUnits" asp-action="Create" asp-route-promotionId="@promotionId" class="btn btn-primary">Nueva vivienda</a>
-    <a asp-controller="HousingPromotions" asp-action="Details" asp-route-id="@promotionId" class="btn btn-secondary">Volver a la promoción</a>
-</p>
+<div class="d-flex flex-wrap align-items-end justify-content-between gap-3 mb-3">
+    <h1 class="h4 mb-0" style="font-weight:600;">Viviendas</h1>
+    <a asp-controller="HousingUnits" asp-action="Create" asp-route-promotionId="@promotionId" class="btn btn-kiwbi-primary btn-sm d-flex align-items-center gap-1">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" /></svg>
+        Nueva vivienda
+    </a>
+</div>
 
 @if (!Model.Any())
 {
-    <p>Todavía no hay viviendas dadas de alta.</p>
+    <div class="kiwbi-empty-state">
+        <div class="kiwbi-empty-icon">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 10.5 12 3l9 7.5" /><path d="M5 9.5V21h14V9.5" /></svg>
+        </div>
+        <h3>Todavía no hay viviendas dadas de alta</h3>
+        <p>Crea la primera vivienda de esta promoción para empezar a gestionar tipologías, estados y compradores.</p>
+    </div>
 }
 else
 {
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Planta</th>
-                <th>Puerta</th>
-                <th>Tipología</th>
-                <th>Superficie construida</th>
-                <th>Superficie útil</th>
-                <th>Estado</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var unit in Model)
-            {
+    <div class="kiwbi-table-card">
+        <div class="kiwbi-table-card-header">
+            <span class="title">Todas las viviendas</span>
+            <span class="count">@Model.Count unidades</span>
+        </div>
+        <table class="kiwbi-table">
+            <thead>
                 <tr>
-                    <td>@unit.Floor</td>
-                    <td>@unit.Door</td>
-                    <td>@(unit.TypologyName ?? "-")</td>
-                    <td>@unit.BuiltAreaSqm m²</td>
-                    <td>@(unit.UsableAreaSqm is { } usable ? $"{usable} m²" : "-")</td>
-                    <td>
-                        <form asp-controller="HousingUnits" asp-action="ChangeStatus" asp-route-id="@unit.Id" asp-route-promotionId="@promotionId" method="post" class="d-flex gap-1">
-                            <select name="status" class="form-select form-select-sm">
-                                @foreach (var status in statuses)
-                                {
-                                    <option value="@status" selected="@(status.ToString() == unit.Status)">@status</option>
-                                }
-                            </select>
-                            <button type="submit" class="btn btn-sm btn-outline-primary">Guardar</button>
-                        </form>
-                    </td>
-                    <td>
-                        <a asp-controller="HousingUnits" asp-action="Edit" asp-route-id="@unit.Id" class="btn btn-sm btn-outline-secondary">Editar</a>
-                        <a asp-controller="HousingUnits" asp-action="Invitations" asp-route-id="@unit.Id" class="btn btn-sm btn-outline-primary">Compradores</a>
-                        <form asp-controller="HousingUnits" asp-action="Delete" asp-route-id="@unit.Id" asp-route-promotionId="@promotionId" method="post" class="d-inline"
-                              onsubmit="return confirm('¿Seguro que quieres eliminar esta vivienda?');">
-                            <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
-                        </form>
-                    </td>
+                    <th>Planta</th>
+                    <th>Puerta</th>
+                    <th class="kiwbi-col-optional">Tipología</th>
+                    <th class="text-end kiwbi-col-optional">Sup. construida</th>
+                    <th class="text-end kiwbi-col-optional">Sup. útil</th>
+                    <th>Estado</th>
+                    <th class="text-end">Acciones</th>
                 </tr>
-            }
-        </tbody>
-    </table>
+            </thead>
+            <tbody>
+                @foreach (var unit in Model)
+                {
+                    <tr>
+                        <td class="kiwbi-row-title">@unit.Floor</td>
+                        <td>@unit.Door</td>
+                        <td class="kiwbi-col-optional text-muted">@(unit.TypologyName ?? "-")</td>
+                        <td class="text-end kiwbi-col-optional">@unit.BuiltAreaSqm m²</td>
+                        <td class="text-end kiwbi-col-optional">@(unit.UsableAreaSqm is { } usable ? $"{usable} m²" : "-")</td>
+                        <td>
+                            <form asp-controller="HousingUnits" asp-action="ChangeStatus" asp-route-id="@unit.Id" asp-route-promotionId="@promotionId" method="post" class="d-flex gap-1">
+                                <select name="status" class="form-select form-select-sm">
+                                    @foreach (var status in statuses)
+                                    {
+                                        var badge = status.ToBadge();
+                                        <option value="@status" selected="@(status.ToString() == unit.Status)">@badge.Label</option>
+                                    }
+                                </select>
+                                <button type="submit" class="btn btn-sm btn-outline-secondary">Guardar</button>
+                            </form>
+                        </td>
+                        <td class="text-end">
+                            <a asp-controller="HousingUnits" asp-action="Edit" asp-route-id="@unit.Id" class="btn btn-sm btn-outline-secondary">Editar</a>
+                            <a asp-controller="HousingUnits" asp-action="Invitations" asp-route-id="@unit.Id" class="btn btn-sm btn-outline-secondary">Compradores</a>
+                            <form asp-controller="HousingUnits" asp-action="Delete" asp-route-id="@unit.Id" asp-route-promotionId="@promotionId" method="post" class="d-inline"
+                                  onsubmit="return confirm('¿Seguro que quieres eliminar esta vivienda?');">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
 }

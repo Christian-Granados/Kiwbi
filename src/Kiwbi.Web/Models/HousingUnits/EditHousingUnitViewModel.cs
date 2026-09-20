@@ -36,4 +36,7 @@ public class EditHousingUnitViewModel
     public IFormFile? FloorPlanImageFile { get; set; }
 
     public List<SelectListItem> TypologyOptions { get; set; } = [];
+
+    /// <summary>Estado comercial, solo lectura en este formulario (se gestiona desde Index).</summary>
+    public string Status { get; set; } = string.Empty;
 }
