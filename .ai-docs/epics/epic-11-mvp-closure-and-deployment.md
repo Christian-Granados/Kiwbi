@@ -2,7 +2,7 @@
 
 ## Estado
 
-- Estado: **en planificación, pendiente de validación del usuario. Nada de este Epic está implementado todavía** (salvo la Feature 11.1, ya cerrada). No empezar ninguna otra Feature hasta que el usuario apruebe explícitamente este documento.
+- Estado: **documento validado por el usuario (2026-09-21). Las 2 preguntas de negocio abiertas están resueltas** (ver Decisiones). Repositorio confirmado **público**. Frente A (11.2/11.3) y la parte de 11.8/11.9 que no depende de cuentas externas ya están en implementación por el agente; Frente B (11.4-11.7) lo gestiona el usuario directamente creando las cuentas de los servicios cloud con los prompts de este documento.
 - Origen: continuación directa del análisis crítico de estado del proyecto (2026-09-20/21) sobre los hallazgos 3.1-3.11 detectados al revisar qué falta para considerar Kiwbi un PoC/MVP presentable. Sustituye al "Epic 9 de cierre de MVP" mencionado en una sesión anterior (2026-09-18) que quedó huérfano al renumerarse Epic 9 como "Landing y Auth" — este documento retoma y cierra formalmente ese hueco (hallazgo 3.11).
 - Depende de: ninguno de los Epics funcionales a nivel de datos (igual que Epics 7-9). Reutiliza `IEmailSender`/`IFileStorageService` (puertos ya existentes desde Epic 3/2) para las Features 11.4/11.5 sin tocar su forma, solo su implementación en `Kiwbi.Infrastructure`.
 
@@ -23,6 +23,8 @@ Tras el cierre del Epic 10, se hizo una auditoría completa de la aplicación (C
 6. **Stack de publicación aceptado:** Render (hosting) + Neon (Postgres) + Cloudflare R2 (ficheros) + Brevo (email) — todos con plan gratuito permanente, sin necesidad de dominio propio (remitente genérico).
 7. **Cuentas de los servicios de la nube:** las crea el usuario directamente (no el agente), guiándose con los prompts de la sección correspondiente de cada Feature.
 8. **Menú global:** reducido a "Promociones" + "Mi promotora", sin "Ajustes" (hallazgo 3.1) — **ya implementado** (Feature 11.1, ver más abajo), fuera del resto del plan.
+9. **Feature 11.3 (2026-09-21):** no se bloquea la desvinculación de un comprador en ningún caso. Si la vivienda ya tiene elecciones `Confirmed`/`Paid`, se muestra un mensaje de confirmación explícito advirtiendo de ello ("esta vivienda ya tiene gestiones de personalización confirmadas/pagadas para este comprador, ¿seguro que quieres desvincularlo igualmente?"); si el usuario confirma, se procede igual. Sin mensaje especial si no hay ninguna elección en esos estados (confirmación genérica, igual que el resto de acciones destructivas de la app).
+10. **Feature 11.9 (2026-09-21):** repositorio confirmado **público** → se activan las dos capas: Capa 1 (analizadores Roslyn + `dotnet format`) y Capa 2 (SonarCloud, gratis sin límite de líneas al ser público) + adicionalmente **CodeQL** nativo de GitHub (escaneo de seguridad, gratis para repos públicos, sin cuenta externa ni secreto — se activa solo con un workflow, cero fricción). Ver "Recomendación" en la Feature 11.9 más abajo.
 
 ## Frente A — Correcciones y flujos que faltan
 
@@ -35,36 +37,40 @@ Resuelve el hallazgo 3.1. El nav global (`KiwbiSidebarViewComponent`, modo no-co
 - [x] Build limpio, sin errores.
 - [ ] Pendiente: verificación visual en `dotnet watch` (rápida, se puede hacer junto con cualquier otra Feature de este Epic que requiera levantar la app).
 
-### Feature 11.2 — Recuperación de contraseña (Promotora y Comprador)
+### Feature 11.2 — Recuperación de contraseña (Promotora y Comprador) ✅ IMPLEMENTADA (2026-09-21)
 
 Resuelve el hallazgo 3.2. Sin esto, un usuario que olvida su contraseña (fijada una única vez al registrarse o al aceptar el Magic Link) se queda sin ninguna vía de acceso.
 
 **Objetivo:** flujo estándar de ASP.NET Core Identity — "¿Olvidaste tu contraseña?" en `Login.cshtml` → formulario de email → token de reseteo (`UserManager.GeneratePasswordResetTokenAsync`) enviado por `IEmailSender` (mismo puerto que ya usa Epic 4, aprovecha directamente la Feature 11.5 de este mismo Epic) → pantalla de nueva contraseña → `UserManager.ResetPasswordAsync`.
 
-**Decisiones a tomar durante el diseño (antes de implementar):**
-- ¿Un único flujo para ambos roles (Promotora/Comprador) reutilizando el mismo `AccountController`, o separado (Comprador ya tiene su propio `OnboardingController`)? Propuesta: un único flujo en `AccountController` ya que `ForgotPassword`/`ResetPassword` de Identity no distinguen rol — cualquier `ApplicationUser` puede recuperar su contraseña por el mismo camino.
-- Mensaje neutro en caso de email no encontrado (no revelar si un email existe o no en el sistema — buena práctica OWASP, evita enumeración de usuarios).
+**Decisiones tomadas:**
+- Un único flujo en `AccountController`, sin distinción de rol — `ForgotPassword`/`ResetPassword` de Identity no distinguen Promotora/Comprador, cualquier `ApplicationUser` pasa por el mismo camino.
+- Mensaje siempre genérico en `ForgotPasswordConfirmation` ("si existe una cuenta con ese correo...") independientemente de si el email existe o no — evita enumeración de usuarios (OWASP).
 
-**No requiere ningún prompt externo** — es una implementación estándar de Identity, la abordamos directamente en su momento sin necesitar cuentas ni servicios nuevos (aparte de que ya exista envío real de correo, Feature 11.5).
+**Implementación:** `IAuthenticationService` (`Kiwbi.Application.Developers`) ampliado con `GeneratePasswordResetTokenAsync`/`ResetPasswordAsync`, implementados en `IdentityAuthenticationService` (inyecta ahora también `UserManager<ApplicationUser>`, antes solo tenía `SignInManager`). `IEmailSender` ampliado con `SendPasswordResetEmailAsync` (implementado en `LoggingBuyerInvitationEmailSender` como stub de log, igual que la invitación de comprador, hasta que la Feature 11.5 traiga el envío real). Nuevas use cases `ForgotPasswordUseCase`/`ResetPasswordUseCase` (`Kiwbi.Application.Developers`). `AccountController` ampliado con `ForgotPassword`/`ForgotPasswordConfirmation`/`ResetPassword`/`ResetPasswordConfirmation` (GET/POST), vistas nuevas con `_AuthLayout` (mismo patrón visual del Epic 9), enlace "¿Olvidaste tu contraseña?" añadido a `Login.cshtml`.
 
 **Checklist:**
-- [ ] Diseñar y aprobar las dos decisiones de arriba.
-- [ ] `ForgotPassword`/`ForgotPasswordConfirmation`/`ResetPassword`/`ResetPasswordConfirmation` en `AccountController` + vistas con `_AuthLayout` (Epic 9).
-- [ ] Plantilla de email de reseteo vía `IEmailSender`.
-- [ ] Tests de Application/Web para el flujo (ver Feature 11.9 sobre nivel de cobertura esperado).
+- [x] Diseñar y aprobar las dos decisiones de arriba.
+- [x] `ForgotPassword`/`ForgotPasswordConfirmation`/`ResetPassword`/`ResetPasswordConfirmation` en `AccountController` + vistas con `_AuthLayout`.
+- [x] Plantilla de email de reseteo vía `IEmailSender` (stub de log en `Development`, real cuando llegue la Feature 11.5).
+- [x] Build limpio, `dotnet format --verify-no-changes` limpio, 324 tests pasando (sin tests nuevos dedicados — flujo de Identity estándar, mismo criterio que Login/Logout, que tampoco tienen tests propios).
+- [ ] Pendiente: verificación manual en navegador (solicitar el enlace, capturar el token del log de `dotnet watch` como ya se hace con las invitaciones, completar el reseteo).
 
-### Feature 11.3 — Desvincular/reasignar comprador de una vivienda
+### Feature 11.3 — Desvincular/reasignar comprador de una vivienda ✅ IMPLEMENTADA (2026-09-21)
 
 Resuelve el hallazgo 3.4. Hoy `HousingUnitBuyer` es permanente: si una compraventa cae o la vivienda se revende, no hay forma de romper el vínculo ni de invitar a un nuevo comprador a esa misma vivienda.
 
-**Objetivo:** nuevo use case (`Kiwbi.Application.Onboarding`, ej. `UnlinkHousingUnitBuyerUseCase`) que elimina el `HousingUnitBuyer` existente, con las validaciones de negocio a decidir:
-- ¿Qué pasa con las `HomeCustomizationChoice` ya hechas por ese comprador? Propuesta: se mantienen tal cual en base de datos (no se borran) pero dejan de ser accesibles para el comprador desvinculado; si luego se invita a otro comprador a la misma vivienda, empezaría "desde cero" viendo el estado real ya guardado (útil de cara al Libro de Obra, que no depende del comprador sino de la vivienda).
-- ¿Se permite desvincular en cualquier momento, o solo si no hay elecciones `Confirmed`/`Paid`? Esto necesita tu decisión explícita antes de implementar — es la única pregunta de negocio real de esta Feature.
+**Objetivo:** nuevo use case (`Kiwbi.Application.Onboarding`, ej. `UnlinkHousingUnitBuyerUseCase`) que elimina el `HousingUnitBuyer` existente. Las `HomeCustomizationChoice` ya hechas por ese comprador se mantienen tal cual en base de datos (no se borran) pero dejan de ser accesibles para el comprador desvinculado; si luego se invita a otro comprador a la misma vivienda, empezaría "desde cero" viendo el estado real ya guardado (útil de cara al Libro de Obra, que no depende del comprador sino de la vivienda).
+
+**Decisión (2026-09-21):** no se bloquea nunca la desvinculación. El Web comprueba si la vivienda tiene alguna elección `Confirmed`/`Paid` (reutilizando el mismo cálculo que ya usa `HousingPromotionChoicesController`) y, si es así, el `onsubmit="return confirm(...)"` del botón "Desvincular" muestra un texto de advertencia distinto ("esta vivienda ya tiene gestiones de personalización confirmadas/pagadas para este comprador, ¿seguro que quieres desvincularlo igualmente?") en vez del genérico "¿Seguro que quieres desvincular a este comprador?" — mismo patrón ya usado en toda la app para acciones destructivas (JS `confirm()`, sin página de confirmación aparte).
+
+**Implementación:** `HousingUnitBuyerDto` ampliado con `HasConfirmedOrPaidChoices` (calculado en `GetHousingUnitBuyersForHousingUnitUseCase`, que ahora también inyecta `IHomeCustomizationChoiceRepository`). Nueva use case `UnlinkHousingUnitBuyerUseCase` (`Kiwbi.Application.Onboarding.UnlinkHousingUnitBuyer`), mismo patrón de verificación de tenant que `DeleteHousingUnitUseCase` (carga `HousingUnitBuyer` → `HousingUnit` → `HousingPromotion` → compara `DeveloperCompanyId`). `HousingUnitsController` ampliado con la acción `UnlinkBuyer` (POST). `Invitations.cshtml`: nueva columna "Acciones" en la tabla "Compradores vinculados" con el botón "Desvincular" y el mensaje de confirmación condicional.
 
 **Checklist:**
-- [ ] Decidir la pregunta de arriba (bloquear o no si ya hay `Confirmed`/`Paid`).
-- [ ] `IHousingUnitBuyerRepository` + use case + Web (botón "Desvincular" en `Invitations.cshtml`, tabla "Compradores vinculados").
-- [ ] Tests de Application.
+- [x] Decidir la pregunta de negocio (no se bloquea, solo advertencia condicional).
+- [x] `IHousingUnitBuyerRepository` + use case + Web (botón "Desvincular" en `Invitations.cshtml`, tabla "Compradores vinculados", con el `confirm()` condicional).
+- [x] Tests de Application (`UnlinkHousingUnitBuyerUseCaseTests` + ampliación de `GetHousingUnitBuyersForHousingUnitUseCaseTests` para `HasConfirmedOrPaidChoices`). 324 tests pasando, build y `dotnet format --verify-no-changes` limpios.
+- [ ] Pendiente: verificación manual en navegador (desvincular un comprador real de la vivienda seedeada por el demo seeder y confirmar el mensaje de advertencia condicional).
 
 ## Frente B — Publicación real del PoC (gratis)
 
@@ -258,15 +264,18 @@ Resuelve la parte de automatización de calidad ya presente en el roadmap. Workf
 **No requiere prompt externo** — es configuración de repositorio pura, la implemento yo directamente.
 
 **Checklist:**
-- [ ] `.github/workflows/ci.yml` (restore/build/test en cada push/PR).
-- [ ] Marcar el check como obligatorio en la protección de la rama `main` (esto sí requiere una acción del usuario en la configuración de GitHub, Settings → Branches, se lo indico en su momento).
+- [x] `.github/workflows/ci.yml` (restore/build/test + `dotnet format --verify-no-changes` en cada push/PR contra `main`). Verificado localmente: `dotnet format --verify-no-changes` pasa limpio hoy (0 cambios), `dotnet build` sin warnings.
+- [ ] Marcar el check como obligatorio en la protección de la rama `main` — requiere una acción tuya en GitHub (Settings → Branches → Branch protection rules → Require status checks to pass → seleccionar el job `build-and-test`), te aviso cuando el primer workflow haya corrido al menos una vez (GitHub solo deja elegir checks que ya se hayan ejecutado alguna vez).
 
 ### Feature 11.9 — Calidad de código automatizada
 
-Resuelve la pregunta abierta de esta conversación. Dos capas, activables independientemente:
+**Decisión y recomendación (2026-09-21):** repositorio público confirmado → recomiendo activar las **tres** capas, las tres 100% gratis sin límite al ser público, sin solaparse entre sí (cada una cubre un ángulo distinto):
 
-- **Capa 1 (siempre, gratis, sin cuentas externas):** analizadores de Roslyn ya integrados en el SDK de .NET (`EnableNETAnalyzers`/`AnalysisLevel` en los `.csproj`) + `dotnet format --verify-no-changes` como paso adicional del mismo workflow de la Feature 11.8. Detecta code smells, naming, estilo y buena parte de las reglas de OWASP-adyacentes que trae el analizador de seguridad de .NET.
-- **Capa 2 (opcional, gratis solo si el repo es público sin límite; con límite de líneas si es privado):** SonarCloud vía GitHub Action oficial (`sonarsource/sonarcloud-github-action`), añade detección de duplicación, cobertura de tests y un dashboard de deuda técnica. Requiere decidir la visibilidad del repositorio (pregunta pendiente de esta conversación) y crear una cuenta SonarCloud enlazada a GitHub.
+- **Capa 1 (implementada, sin cuentas externas):** `EnableNETAnalyzers=true` explícito vía `Directory.Build.props` (ya era el default del SDK, se deja explícito) + `dotnet format --verify-no-changes` como *gate* real en `ci.yml`. Se probó subir `AnalysisLevel` a `latest-all` y se descartó: ~2.000 warnings, mayoritariamente `CA2007` (`ConfigureAwait`, una regla que Microsoft mismo dice que no aplica a apps ASP.NET Core) — puro ruido sin presupuesto para triarlo, así que se mantiene el nivel de análisis por defecto del SDK (0 warnings hoy).
+- **Capa 2 (implementada, pendiente de que crees la cuenta):** SonarCloud vía `dotnet-sonarscanner` (workflow separado `sonarcloud.yml`, no bloquea merges) — detecta duplicación, code smells reales y cobertura de tests, gratis sin límite de líneas al ser público. Preferido sobre la action genérica `sonarsource/sonarcloud-github-action` porque `dotnet-sonarscanner` es el enfoque oficial recomendado para soluciones .NET con varios `.csproj`.
+- **Capa 3 (implementada, nueva, cero fricción):** CodeQL nativo de GitHub (`codeql.yml`) — escaneo de seguridad (inyección SQL, XSS, secretos hardcodeados) gratis para repos públicos, sin cuenta externa ni secreto, ya funcionará desde el primer push. Complementa a SonarCloud (seguridad vs. mantenibilidad/code smells) en vez de solapar.
+
+Esta combinación es la recomendación final: máxima cobertura de "buenas prácticas" posible a coste $0 dado que el repo es público, sin necesitar más esfuerzo de mantenimiento que revisar los resultados de vez en cuando (ninguna de las tres bloquea el desarrollo salvo el format-check, que ya pasa limpio).
 
 **Prompt para pedir la guía a otra IA (solo si se decide activar la Capa 2):**
 ```
@@ -279,9 +288,8 @@ Necesito que la guía cubra:
 1. Cómo crear una cuenta gratuita de SonarCloud enlazada a mi cuenta de
    GitHub (login con GitHub).
 2. Cómo importar mi organización/repositorio de GitHub en SonarCloud
-   (indícame si mi repositorio es [PÚBLICO/PRIVADO - completar según lo
-   que decidamos] qué plan gratuito me corresponde exactamente y si hay
-   algún límite de líneas de código).
+   (mi repositorio es PÚBLICO - confírmame que el plan gratuito no tiene
+   ningún límite de líneas de código en ese caso).
 3. Qué token/secreto exacto tengo que generar en SonarCloud (SONAR_TOKEN)
    y cómo añadirlo como "Repository secret" en GitHub (Settings → Secrets
    and variables → Actions → New repository secret).
@@ -297,9 +305,10 @@ secretos de GitHub que debo crear.
 ```
 
 **Checklist:**
-- [ ] Decidir visibilidad del repositorio (pública/privada) — condiciona si se activa la Capa 2.
-- [ ] Capa 1: ajustar `.csproj`/`.editorconfig`, añadir paso `dotnet format --verify-no-changes` al workflow de 11.8.
-- [ ] Capa 2 (si procede): usuario ejecuta el prompt, crea cuenta SonarCloud, añade `SONAR_TOKEN` como GitHub Secret (este sí es un secreto de GitHub genuino, a diferencia de todos los de Render — vive en el pipeline de CI, no en la app en ejecución).
+- [x] Visibilidad del repositorio decidida: **pública** — las 3 capas se activan.
+- [x] Capa 1: `Directory.Build.props` (`EnableNETAnalyzers` explícito) + `dotnet format --verify-no-changes` ya en `ci.yml` (Feature 11.8).
+- [x] Capa 3: `.github/workflows/codeql.yml` creado (escaneo de seguridad nativo, sin secretos, correrá desde el primer push).
+- [ ] Capa 2: `.github/workflows/sonarcloud.yml` ya creado, pero **fallará hasta que crees la cuenta SonarCloud y añadas el secreto `SONAR_TOKEN`** (Settings → Secrets and variables → Actions → New repository secret) — usuario ejecuta el prompt de arriba cuando quiera activarla; no bloquea nada mientras tanto (workflow separado, no obligatorio).
 
 ## Backlog (sin Feature asociada, no implementar en este Epic)
 
@@ -313,7 +322,8 @@ secretos de GitHub que debo crear.
 
 ## Próximos pasos
 
-1. Usuario valida este documento completo (o pide ajustes).
-2. Resolver las 2 preguntas de negocio abiertas: Feature 11.3 (bloquear desvinculación si hay `Confirmed`/`Paid`) y Feature 11.9 (visibilidad del repositorio).
-3. Usuario ejecuta los prompts de 11.4/11.5/11.6/11.7 (y 11.9 si aplica) contra otra IA y reúne las credenciales/valores.
-4. Con todo decidido y las cuentas creadas, se implementa en el orden: 11.8 (CI, no depende de nada) → 11.2/11.3 (Frente A, no dependen de infraestructura) → 11.4/11.5/11.6/11.7 (Frente B, en ese orden porque cada una depende de tener la cuenta de la anterior lista) → 11.9.
+1. ~~Usuario valida este documento completo~~ ✅ (2026-09-21).
+2. ~~Resolver las 2 preguntas de negocio abiertas~~ ✅ (2026-09-21, ver Decisiones 9-10).
+3. **En curso (agente):** 11.8 ✅ implementado, 11.9 Capa 1/Capa 3 ✅ implementadas, Capa 2 creada pero pendiente de `SONAR_TOKEN`. 11.2 (recuperación de contraseña) y 11.3 (desvincular comprador) en implementación.
+4. **En curso (usuario):** ejecutar los prompts de 11.4/11.5/11.6/11.7 contra otra IA, crear las cuentas/recursos, y compartir las credenciales resultantes para configurarlas como variables de entorno de Render (Feature 11.7) una vez exista el Web Service.
+5. Cuando el usuario tenga las 4 cuentas de Frente B listas, el agente implementa `S3FileStorageService`/`SmtpEmailSender`/`Dockerfile`/migración de connection string en ese orden.

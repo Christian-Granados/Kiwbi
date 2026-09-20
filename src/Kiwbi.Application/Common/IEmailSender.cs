@@ -9,4 +9,10 @@ public interface IEmailSender
         string token,
         DateTime expiresAtUtc,
         CancellationToken cancellationToken = default);
+
+    /// <summary>Sends the password reset email (Epic 11, Feature 11.2), shared by both Promotora and Comprador accounts.</summary>
+    Task SendPasswordResetEmailAsync(
+        string email,
+        string token,
+        CancellationToken cancellationToken = default);
 }

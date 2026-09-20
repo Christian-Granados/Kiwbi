@@ -1,0 +1,32 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Restore
+        run: dotnet restore Kiwbi.slnx
+
+      # Capa 1 (Epic 11, Feature 11.9): keeps formatting/style consistent, fails the build if anyone
+      # forgets to run `dotnet format` before pushing. Verified to pass cleanly as of 2026-09-21.
+      - name: Verify code formatting
+        run: dotnet format Kiwbi.slnx --verify-no-changes --verbosity diagnostic
+
+      - name: Build
+        run: dotnet build Kiwbi.slnx --no-restore /consoleloggerparameters:NoSummary
+
+      - name: Test
+        run: dotnet test Kiwbi.slnx --no-build --verbosity normal

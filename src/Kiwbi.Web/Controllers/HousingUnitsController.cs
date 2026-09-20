@@ -12,6 +12,7 @@ using Kiwbi.Application.Onboarding.ResendBuyerInvitation;
 using Kiwbi.Application.Onboarding.CancelBuyerInvitation;
 using Kiwbi.Application.Onboarding.GetBuyerInvitationsForHousingUnit;
 using Kiwbi.Application.Onboarding.GetHousingUnitBuyersForHousingUnit;
+using Kiwbi.Application.Onboarding.UnlinkHousingUnitBuyer;
 using Kiwbi.Domain.RealEstate;
 using Kiwbi.Web.Models.HousingUnits;
 using Kiwbi.Web.Models.Onboarding;
@@ -38,6 +39,7 @@ public class HousingUnitsController : Controller
     private readonly CancelBuyerInvitationUseCase _cancelBuyerInvitationUseCase;
     private readonly GetBuyerInvitationsForHousingUnitUseCase _getBuyerInvitationsForHousingUnitUseCase;
     private readonly GetHousingUnitBuyersForHousingUnitUseCase _getHousingUnitBuyersForHousingUnitUseCase;
+    private readonly UnlinkHousingUnitBuyerUseCase _unlinkHousingUnitBuyerUseCase;
 
     public HousingUnitsController(
         CreateHousingUnitUseCase createHousingUnitUseCase,
@@ -53,7 +55,8 @@ public class HousingUnitsController : Controller
         ResendBuyerInvitationUseCase resendBuyerInvitationUseCase,
         CancelBuyerInvitationUseCase cancelBuyerInvitationUseCase,
         GetBuyerInvitationsForHousingUnitUseCase getBuyerInvitationsForHousingUnitUseCase,
-        GetHousingUnitBuyersForHousingUnitUseCase getHousingUnitBuyersForHousingUnitUseCase)
+        GetHousingUnitBuyersForHousingUnitUseCase getHousingUnitBuyersForHousingUnitUseCase,
+        UnlinkHousingUnitBuyerUseCase unlinkHousingUnitBuyerUseCase)
     {
         _createHousingUnitUseCase = createHousingUnitUseCase;
         _updateHousingUnitUseCase = updateHousingUnitUseCase;
@@ -69,6 +72,7 @@ public class HousingUnitsController : Controller
         _cancelBuyerInvitationUseCase = cancelBuyerInvitationUseCase;
         _getBuyerInvitationsForHousingUnitUseCase = getBuyerInvitationsForHousingUnitUseCase;
         _getHousingUnitBuyersForHousingUnitUseCase = getHousingUnitBuyersForHousingUnitUseCase;
+        _unlinkHousingUnitBuyerUseCase = unlinkHousingUnitBuyerUseCase;
     }
 
     [HttpGet]
@@ -337,6 +341,20 @@ public class HousingUnitsController : Controller
     public async Task<IActionResult> CancelInvitation(Guid invitationId, Guid id, CancellationToken cancellationToken)
     {
         var result = await _cancelBuyerInvitationUseCase.ExecuteAsync(invitationId, cancellationToken);
+
+        if (result.IsFailure)
+        {
+            TempData["Error"] = result.Error;
+        }
+
+        return RedirectToAction(nameof(Invitations), new { id });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> UnlinkBuyer(Guid housingUnitBuyerId, Guid id, CancellationToken cancellationToken)
+    {
+        var result = await _unlinkHousingUnitBuyerUseCase.ExecuteAsync(housingUnitBuyerId, cancellationToken);
 
         if (result.IsFailure)
         {

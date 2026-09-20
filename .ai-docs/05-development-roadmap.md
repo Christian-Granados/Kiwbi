@@ -94,13 +94,13 @@ La Feature 6.3 (Epic 6) implementó y testeó unitariamente la generación de re
 ### EPIC 11: Cierre de Circuitos Pendientes, Calidad y Publicación del PoC
 Nace de una auditoría crítica del estado del proyecto (2026-09-20/21) tras el cierre del Epic 10, para pasar de "funciona en la máquina de desarrollo" a "PoC presentable públicamente". Retoma y cierra formalmente el hueco de un "Epic 9 de cierre de MVP" (notificaciones/recuperación de cuenta/producción) mencionado en una sesión anterior (2026-09-18) que quedó huérfano cuando el número Epic 9 se reasignó a "Landing y Auth". Dos frentes independientes sin dependencias de base de datos entre sí ni con los Epics 1-6: correcciones de flujos (menú, recuperación de contraseña, desvinculación de comprador) y publicación real del PoC (almacenamiento en la nube, email real, base de datos gestionada, hosting, CI, calidad de código), todo con coste $0. Ver `epic-11-mvp-closure-and-deployment.md`.
 - **Feature 11.1 (✅ IMPLEMENTADA 2026-09-21):** menú global simplificado a "Promociones" + "Mi promotora", eliminado el placeholder "Ajustes".
-- **Feature 11.2 (planificada):** recuperación de contraseña (Promotora y Comprador).
-- **Feature 11.3 (planificada):** desvincular/reasignar un comprador de una vivienda.
+- **Feature 11.2 (✅ IMPLEMENTADA 2026-09-21):** recuperación de contraseña (Promotora y Comprador), pendiente solo de verificación manual.
+- **Feature 11.3 (✅ IMPLEMENTADA 2026-09-21):** desvincular un comprador de una vivienda (sin bloqueo, con advertencia condicional si ya hay elecciones `Confirmed`/`Paid`), pendiente solo de verificación manual.
 - **Feature 11.4 (planificada):** almacenamiento de ficheros en la nube (Cloudflare R2), sustituyendo el disco local y resolviendo también la subida real de logo.
 - **Feature 11.5 (planificada):** envío real de correo (Brevo SMTP), sustituyendo el adaptador de logging de Epic 4.
 - **Feature 11.6 (planificada):** base de datos gestionada (Neon Postgres) para el entorno publicado.
 - **Feature 11.7 (planificada):** publicación de la aplicación (Render + Dockerfile + auto-deploy desde GitHub).
-- **Feature 11.8 (planificada):** integración continua (GitHub Actions: build + test como gate obligatorio).
-- **Feature 11.9 (planificada):** calidad de código automatizada (analizadores de Roslyn + `dotnet format`, y opcionalmente SonarCloud).
+- **Feature 11.8 (✅ IMPLEMENTADA 2026-09-21):** integración continua (GitHub Actions: build + test + `dotnet format` como gate obligatorio).
+- **Feature 11.9 (✅ Capa 1/3 IMPLEMENTADAS, Capa 2 pendiente de cuenta SonarCloud):** calidad de código automatizada — analizadores de Roslyn + `dotnet format` (Capa 1) y CodeQL (Capa 3, seguridad, repo público) ya activos; SonarCloud (Capa 2, code smells/duplicación) con workflow creado, pendiente del secreto `SONAR_TOKEN`.
 - Descartado explícitamente (sin reabrir sin nueva decisión): auditoría de acciones manuales, notificaciones/recordatorios proactivos, validación de contraste de `BrandColor`.
 - Backlog sin Feature asociada: multi-usuario por tenant (futurible).

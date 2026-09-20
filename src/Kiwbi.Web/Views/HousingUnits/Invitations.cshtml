@@ -104,12 +104,16 @@
                 <tr>
                     <th>Email</th>
                     <th>Aceptada</th>
+                    <th class="text-end">Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach (var buyer in buyers)
                 {
                     var initial = string.IsNullOrWhiteSpace(buyer.Email) ? "?" : buyer.Email.Trim()[0].ToString().ToUpperInvariant();
+                    var confirmMessage = buyer.HasConfirmedOrPaidChoices
+                        ? "Esta vivienda ya tiene gestiones de personalización confirmadas/pagadas para este comprador. ¿Seguro que quieres desvincularlo igualmente?"
+                        : "¿Seguro que quieres desvincular a este comprador?";
                     <tr>
                         <td>
                             <div class="d-flex align-items-center gap-2">
@@ -118,6 +122,12 @@
                             </div>
                         </td>
                         <td class="text-muted">@buyer.CreatedAtUtc.ToLocalTime().ToString("d MMM yyyy · HH:mm")</td>
+                        <td class="text-end">
+                            <form asp-controller="HousingUnits" asp-action="UnlinkBuyer" asp-route-housingUnitBuyerId="@buyer.Id" asp-route-id="@housingUnitId" method="post" class="d-inline"
+                                  onsubmit="return confirm('@confirmMessage');">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Desvincular</button>
+                            </form>
+                        </td>
                     </tr>
                 }
             </tbody>

@@ -8,10 +8,12 @@ namespace Kiwbi.Infrastructure.Identity;
 public class IdentityAuthenticationService : IAuthenticationService
 {
     private readonly SignInManager<ApplicationUser> _signInManager;
+    private readonly UserManager<ApplicationUser> _userManager;
 
-    public IdentityAuthenticationService(SignInManager<ApplicationUser> signInManager)
+    public IdentityAuthenticationService(SignInManager<ApplicationUser> signInManager, UserManager<ApplicationUser> userManager)
     {
         _signInManager = signInManager;
+        _userManager = userManager;
     }
 
     public async Task<Result> SignInAsync(string email, string password, bool rememberMe, CancellationToken cancellationToken = default)
@@ -32,4 +34,31 @@ public class IdentityAuthenticationService : IAuthenticationService
     }
 
     public Task SignOutAsync(CancellationToken cancellationToken = default) => _signInManager.SignOutAsync();
+
+    public async Task<string?> GeneratePasswordResetTokenAsync(string email, CancellationToken cancellationToken = default)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+
+        return user is null ? null : await _userManager.GeneratePasswordResetTokenAsync(user);
+    }
+
+    public async Task<Result> ResetPasswordAsync(string email, string token, string newPassword, CancellationToken cancellationToken = default)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+
+        if (user is null)
+        {
+            // Same generic message as an invalid/expired token, so this never reveals whether the email is registered.
+            return Result.Failure("El enlace de restablecimiento no es válido o ha caducado.");
+        }
+
+        var result = await _userManager.ResetPasswordAsync(user, token, newPassword);
+
+        if (result.Succeeded)
+        {
+            return Result.Success();
+        }
+
+        return Result.Failure("El enlace de restablecimiento no es válido o ha caducado.");
+    }
 }

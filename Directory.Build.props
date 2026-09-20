@@ -1,0 +1,14 @@
+<Project>
+
+  <!-- Epic 11 Feature 11.9 (Capa 1): explicit Roslyn analyzers (built into the .NET SDK, no NuGet
+       package/external account needed). EnableNETAnalyzers is already the SDK default for net5.0+, kept
+       here to be explicit; AnalysisLevel deliberately left at the SDK default, NOT "latest-all"
+       (tried "latest-all" and it surfaced ~2,000 warnings, mostly CA2007 ConfigureAwait, which Microsoft
+       itself says doesn't apply to ASP.NET Core apps, with zero real bugs found, pure noise with no
+       triage budget behind it). The real enforced gate is the "dotnet format" verification step in CI
+       (already passes cleanly) plus SonarCloud (Feature 11.9 Capa 2) for actual code smell detection. -->
+  <PropertyGroup>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+  </PropertyGroup>
+
+</Project>

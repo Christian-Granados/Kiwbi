@@ -1,0 +1,52 @@
+name: SonarCloud
+
+# NOT a required check for merging (informational quality dashboard, Epic 11 Feature 11.9 Capa 2).
+# Will fail until the SONAR_TOKEN repository secret is created (see epic-11-mvp-closure-and-deployment.md,
+# Feature 11.9) - that's expected and does not block CI or deploys.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  sonarcloud:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # SonarCloud needs full git history for blame/new-code analysis.
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "10.0.x"
+
+      - name: Setup Java (required by the Sonar scanner)
+        uses: actions/setup-java@v4
+        with:
+          distribution: "zulu"
+          java-version: "17"
+
+      - name: Cache SonarCloud packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+
+      - name: Install SonarCloud scanner
+        run: dotnet tool install --global dotnet-sonarscanner
+
+      # TODO (Epic 11, Feature 11.9): confirm the real organization/project key once the SonarCloud
+      # project has been created (Settings > Project Information in the SonarCloud dashboard) - the
+      # values below follow SonarCloud's default "Owner_Repo" convention for GitHub imports.
+      - name: Build and analyze
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          dotnet-sonarscanner begin /k:"Christian-Granados_Kiwbi" /o:"christian-granados" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+          dotnet build Kiwbi.slnx /consoleloggerparameters:NoSummary
+          dotnet test Kiwbi.slnx --no-build
+          dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"

@@ -34,4 +34,16 @@ public class LoggingBuyerInvitationEmailSender : IEmailSender
 
         return Task.CompletedTask;
     }
+
+    public Task SendPasswordResetEmailAsync(string email, string token, CancellationToken cancellationToken = default)
+    {
+        var appBaseUrl = _configuration["AppBaseUrl"]?.TrimEnd('/') ?? string.Empty;
+        var encodedToken = Uri.EscapeDataString(token);
+        var encodedEmail = Uri.EscapeDataString(email);
+        var resetUrl = $"{appBaseUrl}/Account/ResetPassword?email={encodedEmail}&token={encodedToken}";
+
+        _logger.LogInformation("[DEV EMAIL STUB] Password reset for {Email}: {ResetUrl}", email, resetUrl);
+
+        return Task.CompletedTask;
+    }
 }

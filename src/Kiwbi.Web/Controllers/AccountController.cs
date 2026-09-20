@@ -1,5 +1,7 @@
 using Kiwbi.Application.Developers.Login;
 using Kiwbi.Application.Developers.Logout;
+using Kiwbi.Application.Developers.ForgotPassword;
+using Kiwbi.Application.Developers.ResetPassword;
 using Kiwbi.Application.Developers.RegisterDeveloper;
 using Kiwbi.Web.Models.Account;
 using Microsoft.AspNetCore.Authorization;
@@ -13,15 +15,21 @@ public class AccountController : Controller
     private readonly RegisterDeveloperUseCase _registerDeveloperUseCase;
     private readonly LoginUseCase _loginUseCase;
     private readonly LogoutUseCase _logoutUseCase;
+    private readonly ForgotPasswordUseCase _forgotPasswordUseCase;
+    private readonly ResetPasswordUseCase _resetPasswordUseCase;
 
     public AccountController(
         RegisterDeveloperUseCase registerDeveloperUseCase,
         LoginUseCase loginUseCase,
-        LogoutUseCase logoutUseCase)
+        LogoutUseCase logoutUseCase,
+        ForgotPasswordUseCase forgotPasswordUseCase,
+        ResetPasswordUseCase resetPasswordUseCase)
     {
         _registerDeveloperUseCase = registerDeveloperUseCase;
         _loginUseCase = loginUseCase;
         _logoutUseCase = logoutUseCase;
+        _forgotPasswordUseCase = forgotPasswordUseCase;
+        _resetPasswordUseCase = resetPasswordUseCase;
     }
 
     [HttpGet]
@@ -87,6 +95,63 @@ public class AccountController : Controller
         await _logoutUseCase.ExecuteAsync(cancellationToken);
         return RedirectToAction("Index", "Home");
     }
+
+    [HttpGet]
+    public IActionResult ForgotPassword() => View(new ForgotPasswordViewModel());
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ForgotPassword(ForgotPasswordViewModel model, CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        // Always redirects to the same confirmation page regardless of whether the email is registered
+        // (the use case itself never reveals it either) - avoids user enumeration.
+        await _forgotPasswordUseCase.ExecuteAsync(model.Email, cancellationToken);
+
+        return RedirectToAction(nameof(ForgotPasswordConfirmation));
+    }
+
+    [HttpGet]
+    public IActionResult ForgotPasswordConfirmation() => View();
+
+    [HttpGet]
+    public IActionResult ResetPassword(string? email = null, string? token = null)
+    {
+        if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(token))
+        {
+            return RedirectToAction(nameof(ForgotPassword));
+        }
+
+        return View(new ResetPasswordViewModel { Email = email, Token = token });
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> ResetPassword(ResetPasswordViewModel model, CancellationToken cancellationToken)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        var command = new ResetPasswordCommand(model.Email, model.Token, model.Password);
+        var result = await _resetPasswordUseCase.ExecuteAsync(command, cancellationToken);
+
+        if (result.IsFailure)
+        {
+            ModelState.AddModelError(string.Empty, result.Error!);
+            return View(model);
+        }
+
+        return RedirectToAction(nameof(ResetPasswordConfirmation));
+    }
+
+    [HttpGet]
+    public IActionResult ResetPasswordConfirmation() => View();
 
     [HttpGet]
     public IActionResult AccessDenied() => View();
