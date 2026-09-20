@@ -1,64 +1,131 @@
 @model Kiwbi.Web.Models.Onboarding.AcceptInvitationViewModel
 @{
     ViewData["Title"] = "Aceptar invitación";
+    Layout = "_AuthLayout";
+    var initial = Model.CompanyName.Length > 0 ? Model.CompanyName[..1].ToUpperInvariant() : "?";
 }
 
-<h1>Bienvenido/a a Kiwbi</h1>
-
-@if (!Model.CanAccept)
-{
-    <div class="alert alert-warning">
-        @if (Model.Status == "Cancelled")
-        {
-            <text>Esta invitación ha sido cancelada por la promotora. Contacta con ella para solicitar una nueva.</text>
-        }
-        else if (Model.Status == "Accepted")
-        {
-            <text>Esta invitación ya fue aceptada anteriormente. Si es tu cuenta, <a asp-controller="Account" asp-action="Login">inicia sesión</a>.</text>
-        }
-        else if (Model.IsExpired)
-        {
-            <text>Este enlace ha caducado. Pide a tu promotora que te reenvíe la invitación.</text>
-        }
-        else
-        {
-            <text>Esta invitación no está disponible.</text>
-        }
-    </div>
-}
-else
-{
-    <p>
-        Vivienda <strong>@Model.Floor @Model.Door</strong> de <strong>@Model.HousingPromotionName</strong>,
-        para el correo <strong>@Model.Email</strong>.
-    </p>
-
-    @if (Model.AccountAlreadyExists)
+<div class="kiwbi-pub-auth-brand">
+    @if (!string.IsNullOrEmpty(Model.CompanyLogoPath))
     {
-        <p>Ya tienes una cuenta con este correo. Introduce tu contraseña para vincular esta vivienda.</p>
+        <img src="@Model.CompanyLogoPath" alt="@Model.CompanyName" class="kiwbi-pub-invite-mark" style="width:2.5rem;height:2.5rem;font-size:1rem;object-fit:cover;" />
     }
     else
     {
-        <p>Crea una contraseña para acceder a tu cuenta.</p>
+        <span class="kiwbi-pub-invite-mark" style="width:2.5rem;height:2.5rem;font-size:1rem;">@initial</span>
     }
+    <p class="text-muted small mb-0">Invitación de comprador &middot; gestionado con Kiwbi</p>
+</div>
 
-    <div class="row">
-        <div class="col-md-6">
-            <form asp-controller="Onboarding" asp-action="Accept" method="post">
-                <input type="hidden" asp-for="Token" />
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                <div class="form-group mb-3">
-                    <label asp-for="Password" class="form-label"></label>
-                    <input asp-for="Password" class="form-control" />
-                    <span asp-validation-for="Password" class="text-danger"></span>
-                </div>
-                <div class="form-group mb-3">
-                    <label asp-for="ConfirmPassword" class="form-label"></label>
-                    <input asp-for="ConfirmPassword" class="form-control" />
-                    <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-                </div>
-                <button type="submit" class="btn btn-primary">Confirmar acceso</button>
-            </form>
+<div class="kiwbi-pub-auth-card">
+    @if (!Model.CanAccept)
+    {
+        <div class="text-center">
+            <span class="kiwbi-pub-state-icon warning">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>
+            </span>
+            <h2 class="h5 mb-2">Este enlace ya no es válido</h2>
+            <p class="text-muted small mb-0">
+                @if (Model.Status == "Cancelled")
+                {
+                    <text>Esta invitación ha sido cancelada por la promotora. Contacta con ella para solicitar una nueva.</text>
+                }
+                else if (Model.Status == "Accepted")
+                {
+                    <text>Esta invitación ya fue aceptada anteriormente. Si es tu cuenta, <a asp-controller="Account" asp-action="Login">inicia sesión</a>.</text>
+                }
+                else if (Model.IsExpired)
+                {
+                    <text>Este enlace ha caducado. Pide a tu promotora que te reenvíe la invitación.</text>
+                }
+                else
+                {
+                    <text>Esta invitación no está disponible.</text>
+                }
+            </p>
         </div>
-    </div>
+    }
+    else
+    {
+        <div class="kiwbi-pub-invite-tenant">
+            @if (!string.IsNullOrEmpty(Model.CompanyLogoPath))
+            {
+                <img src="@Model.CompanyLogoPath" alt="@Model.CompanyName" class="kiwbi-pub-invite-mark" style="object-fit:cover;" />
+            }
+            else
+            {
+                <span class="kiwbi-pub-invite-mark">@initial</span>
+            }
+            <div class="min-w-0">
+                <div class="kiwbi-pub-invite-label">Te ha invitado</div>
+                <div class="fw-semibold text-truncate">@Model.CompanyName</div>
+            </div>
+        </div>
+
+        <div class="kiwbi-pub-invite-summary">
+            <div class="kiwbi-pub-invite-label mb-2">Vivienda vinculada</div>
+            <div class="row g-3">
+                <div class="col-4">
+                    <dt>Promoción</dt>
+                    <dd>@Model.HousingPromotionName</dd>
+                </div>
+                <div class="col-4">
+                    <dt>Planta</dt>
+                    <dd>@Model.Floor</dd>
+                </div>
+                <div class="col-4">
+                    <dt>Puerta</dt>
+                    <dd>@Model.Door</dd>
+                </div>
+            </div>
+        </div>
+
+        <form asp-controller="Onboarding" asp-action="Accept" method="post">
+            <input type="hidden" asp-for="Token" />
+            <div asp-validation-summary="ModelOnly" class="kiwbi-validation-summary mb-3"></div>
+
+            <div class="mb-3">
+                <label class="form-label small fw-semibold">Correo electrónico</label>
+                <div class="kiwbi-pub-field-icon">
+                    <span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" /><polyline points="22 6 12 13 2 6" /></svg></span>
+                    <input type="email" class="form-control" value="@Model.Email" readonly disabled />
+                </div>
+                <div class="form-text">Este correo viene fijado en tu invitación.</div>
+            </div>
+
+            @if (Model.AccountAlreadyExists)
+            {
+                <p class="small text-muted">Ya tienes una cuenta con este correo. Introduce tu contraseña para vincular esta vivienda.</p>
+            }
+            else
+            {
+                <p class="small text-muted">Crea una contraseña para acceder a tu cuenta.</p>
+            }
+
+            <div class="mb-3">
+                <label asp-for="Password" class="form-label small fw-semibold"></label>
+                <div class="kiwbi-pub-field-icon">
+                    <span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg></span>
+                    <input asp-for="Password" class="form-control" />
+                </div>
+                <span asp-validation-for="Password" class="kiwbi-field-error"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="ConfirmPassword" class="form-label small fw-semibold"></label>
+                <div class="kiwbi-pub-field-icon">
+                    <span class="icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" /><path d="M7 11V7a5 5 0 0 1 10 0v4" /></svg></span>
+                    <input asp-for="ConfirmPassword" class="form-control" />
+                </div>
+                <span asp-validation-for="ConfirmPassword" class="kiwbi-field-error"></span>
+            </div>
+
+            <button type="submit" class="btn w-100 fw-semibold text-white" style="background: var(--kiwbi-pub-glow, var(--kiwbi-brand-primary));">
+                Aceptar invitación y crear mi cuenta
+            </button>
+        </form>
+    }
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
 }

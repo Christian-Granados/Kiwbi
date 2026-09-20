@@ -15,6 +15,11 @@
   --kiwbi-accent-2: #1c5540;
   --kiwbi-sidebar-width: 224px;
   --kiwbi-sidebar-width-collapsed: 64px;
+
+  /* Marca propia de Kiwbi (Epic 9): usada en Landing/Login/Registro, donde todavía no hay
+     ningún tenant resuelto. Independiente de --kiwbi-accent (siempre el color de la promotora). */
+  --kiwbi-brand-primary: #0f766e;
+  --kiwbi-brand-accent: #2dd4bf;
 }
 
 body {
@@ -365,3 +370,112 @@ table.kiwbi-table tbody tr:last-child td { border-bottom: none; }
 @media (max-width: 767.98px) {
   .kiwbi-col-optional { display: none; }
 }
+
+/* =====================================================================================
+   Epic 9 — Landing pública y Auth (Login/Registro/Aceptación de invitación).
+   Marca propia de Kiwbi (--kiwbi-brand-primary/--kiwbi-brand-accent), sin ningún tenant
+   resuelto todavía. La Aceptación de invitación es la única excepción: usa el acento de
+   la promotora invitante vía --kiwbi-pub-glow (inline style calculado por el Controller).
+   ===================================================================================== */
+.kiwbi-pub { background: var(--kiwbi-bg); }
+
+.btn-kiwbi-brand { background: var(--kiwbi-brand-primary); border-color: var(--kiwbi-brand-primary); color: #fff; }
+.btn-kiwbi-brand:hover, .btn-kiwbi-brand:focus { background: #0d5f58; border-color: #0d5f58; color: #fff; }
+
+/* ---- Landing: navbar ---- */
+.kiwbi-pub-navbar { position: sticky; top: 0; z-index: 30; background: rgba(255, 255, 255, .9); backdrop-filter: blur(6px); border-bottom: 1px solid var(--kiwbi-border); }
+.kiwbi-pub-logo { display: inline-flex; align-items: center; gap: 0.5rem; text-decoration: none; color: inherit; }
+.kiwbi-pub-mark { display: flex; align-items: center; justify-content: center; width: 2rem; height: 2rem; border-radius: 0.5rem; background: var(--kiwbi-brand-primary); color: #fff; font-weight: 700; font-size: .9rem; flex-shrink: 0; }
+.kiwbi-pub-logo-text { font-weight: 700; font-size: 1.1rem; color: var(--kiwbi-text); }
+
+/* ---- Landing: hero ---- */
+.kiwbi-pub-hero-badge { display: inline-flex; align-items: center; gap: 0.4rem; border: 1px solid #99f6e4; background: #f0fdfa; color: var(--kiwbi-brand-primary); border-radius: 999px; padding: 0.3rem 0.75rem; font-size: 0.75rem; font-weight: 600; }
+.kiwbi-pub-hero-badge .dot { width: 0.4rem; height: 0.4rem; border-radius: 50%; background: var(--kiwbi-brand-accent); display: inline-block; }
+.kiwbi-pub-hero h1 { font-weight: 700; letter-spacing: -0.02em; line-height: 1.1; }
+
+.kiwbi-pub-panel-mock { position: relative; }
+.kiwbi-pub-panel-mock-glow { position: absolute; inset: -1rem; z-index: 0; border-radius: 1.5rem; background: linear-gradient(135deg, #ccfbf1, #f0fdfa, transparent); }
+.kiwbi-pub-panel-card { position: relative; z-index: 1; border: 1px solid var(--kiwbi-border); border-radius: 1rem; background: #fff; box-shadow: 0 20px 40px -20px rgba(15, 23, 42, .2); overflow: hidden; }
+.kiwbi-pub-panel-chrome { display: flex; align-items: center; gap: 0.5rem; background: var(--kiwbi-bg); border-bottom: 1px solid var(--kiwbi-border-soft); padding: 0.6rem 0.9rem; }
+.kiwbi-pub-panel-mark { display: flex; align-items: center; justify-content: center; width: 1.25rem; height: 1.25rem; border-radius: 0.35rem; background: var(--kiwbi-brand-primary); color: #fff; font-size: 0.6rem; font-weight: 700; flex-shrink: 0; }
+.kiwbi-pub-panel-kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.6rem; padding: 0.9rem; }
+.kiwbi-pub-panel-kpi { border: 1px solid var(--kiwbi-border-soft); background: var(--kiwbi-bg); border-radius: 0.5rem; padding: 0.5rem 0.6rem; }
+.kiwbi-pub-panel-kpi .value { font-weight: 700; font-size: 1.05rem; color: var(--kiwbi-text); }
+.kiwbi-pub-panel-kpi .label { font-size: 0.65rem; color: var(--kiwbi-text-faint); }
+.kiwbi-pub-panel-rows { padding: 0 0.9rem 0.9rem; display: flex; flex-direction: column; gap: 0.5rem; }
+.kiwbi-pub-panel-row { display: flex; align-items: center; gap: 0.6rem; font-size: 0.7rem; }
+.kiwbi-pub-panel-unit { width: 2.2rem; flex-shrink: 0; font-weight: 600; color: var(--kiwbi-text); }
+.kiwbi-pub-panel-trade { width: 5.5rem; flex-shrink: 0; color: var(--kiwbi-text-faint); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.kiwbi-pub-panel-bar { flex: 1; height: 0.4rem; border-radius: 999px; background: var(--kiwbi-border-soft); overflow: hidden; }
+.kiwbi-pub-panel-bar > span { display: block; height: 100%; background: var(--kiwbi-brand-primary); border-radius: 999px; }
+.kiwbi-pub-panel-pct { width: 2rem; flex-shrink: 0; text-align: right; color: var(--kiwbi-text-muted); }
+
+/* ---- Landing: KPI strip ---- */
+.kiwbi-pub-kpi-strip { border-top: 1px solid var(--kiwbi-border); border-bottom: 1px solid var(--kiwbi-border); background: #fff; }
+.kiwbi-pub-kpi-value { font-size: 2.5rem; font-weight: 700; color: var(--kiwbi-brand-primary); letter-spacing: -0.02em; }
+
+/* ---- Landing: "Cómo funciona" (radio-driven tabs, sin JS) ---- */
+.kiwbi-pub-tab-input { position: absolute; opacity: 0; pointer-events: none; }
+.kiwbi-pub-tabs { display: inline-flex; border: 1px solid var(--kiwbi-border); background: var(--kiwbi-bg); border-radius: 0.75rem; padding: 0.25rem; }
+.kiwbi-pub-tab { border-radius: 0.5rem; padding: 0.5rem 1rem; font-size: 0.875rem; font-weight: 600; color: var(--kiwbi-text-muted); cursor: pointer; display: inline-flex; align-items: center; gap: 0.4rem; user-select: none; }
+#kiwbi-pub-tab-promotora:checked ~ .kiwbi-pub-tabs label[for="kiwbi-pub-tab-promotora"],
+#kiwbi-pub-tab-comprador:checked ~ .kiwbi-pub-tabs label[for="kiwbi-pub-tab-comprador"] { background: #fff; color: var(--kiwbi-brand-primary); box-shadow: 0 1px 2px rgba(15, 23, 42, .08); }
+.kiwbi-pub-steps-comprador { display: none; }
+#kiwbi-pub-tab-comprador:checked ~ .kiwbi-pub-steps .kiwbi-pub-steps-promotora { display: none; }
+#kiwbi-pub-tab-comprador:checked ~ .kiwbi-pub-steps .kiwbi-pub-steps-comprador { display: grid; }
+
+.kiwbi-pub-step { border: 1px solid var(--kiwbi-border); border-radius: 1rem; background: #fff; padding: 1.25rem; box-shadow: 0 1px 2px rgba(15, 23, 42, .04); height: 100%; }
+.kiwbi-pub-step-icon { width: 2.75rem; height: 2.75rem; border-radius: 0.75rem; background: #f0fdfa; color: var(--kiwbi-brand-primary); display: flex; align-items: center; justify-content: center; }
+.kiwbi-pub-step-num { font-weight: 700; color: #cbd5e1; font-size: 0.9rem; }
+
+/* ---- Landing: beneficios ---- */
+.kiwbi-pub-benefit { border: 1px solid var(--kiwbi-border); border-radius: 1rem; background: #fff; padding: 1.25rem; height: 100%; }
+.kiwbi-pub-benefit-icon { width: 2.75rem; height: 2.75rem; border-radius: 0.75rem; background: var(--kiwbi-brand-primary); color: #fff; display: flex; align-items: center; justify-content: center; }
+
+/* ---- Landing: CTA final ---- */
+.kiwbi-pub-cta-band { position: relative; overflow: hidden; border-radius: 1.5rem; background: var(--kiwbi-brand-primary); color: #fff; padding: 3rem 1.5rem; text-align: center; }
+.kiwbi-pub-cta-band::before, .kiwbi-pub-cta-band::after { content: ""; position: absolute; border-radius: 50%; filter: blur(40px); }
+.kiwbi-pub-cta-band::before { width: 16rem; height: 16rem; background: rgba(45, 212, 191, .35); top: -6rem; right: -4rem; }
+.kiwbi-pub-cta-band::after { width: 14rem; height: 14rem; background: rgba(45, 212, 191, .2); bottom: -5rem; left: -2rem; }
+.kiwbi-pub-cta-band > * { position: relative; z-index: 1; }
+.kiwbi-pub-cta-checks { display: flex; flex-wrap: wrap; gap: 1rem 1.5rem; justify-content: center; font-size: 0.875rem; color: #ccfbf1; }
+
+/* ---- Landing: footer ---- */
+.kiwbi-pub-footer { border-top: 1px solid var(--kiwbi-border); background: #fff; }
+
+/* ---- Auth shell (Login/Registro/Aceptación de invitación) ---- */
+.kiwbi-pub-auth-shell { min-height: 100vh; display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden; padding: 2.5rem 1rem; }
+.kiwbi-pub-auth-backdrop { position: absolute; inset: 0; z-index: 0; background: linear-gradient(to bottom, #f0fdfa, var(--kiwbi-bg) 55%); }
+.kiwbi-pub-auth-backdrop::before {
+  content: ""; position: absolute; top: -8rem; left: 50%; transform: translateX(-50%);
+  width: 28rem; height: 28rem; border-radius: 50%; filter: blur(60px);
+  background: var(--kiwbi-pub-glow, var(--kiwbi-brand-accent)); opacity: .35;
+}
+.kiwbi-pub-auth-wrap { width: 100%; max-width: 26rem; position: relative; z-index: 1; }
+.kiwbi-pub-auth-brand { display: flex; flex-direction: column; align-items: center; gap: 0.5rem; margin-bottom: 1.25rem; text-align: center; }
+.kiwbi-pub-auth-card { border: 1px solid var(--kiwbi-border); border-radius: 0.9rem; background: #fff; box-shadow: 0 20px 40px -20px rgba(15, 23, 42, .2); padding: 1.5rem; }
+
+.kiwbi-pub-auth-tabs { display: grid; grid-template-columns: 1fr 1fr; gap: 0.25rem; border-radius: 0.6rem; background: var(--kiwbi-bg); padding: 0.25rem; margin-bottom: 1.25rem; }
+.kiwbi-pub-auth-tab { text-align: center; border-radius: 0.45rem; padding: 0.4rem 0.5rem; font-size: 0.85rem; font-weight: 600; color: var(--kiwbi-text-muted); text-decoration: none; }
+.kiwbi-pub-auth-tab.active { background: #fff; color: var(--kiwbi-text); box-shadow: 0 1px 2px rgba(15, 23, 42, .08); }
+
+.kiwbi-pub-field-icon { position: relative; }
+.kiwbi-pub-field-icon .icon { position: absolute; left: 0.7rem; top: 50%; transform: translateY(-50%); color: var(--kiwbi-text-faint); pointer-events: none; }
+.kiwbi-pub-field-icon .form-control { padding-left: 2.2rem; }
+
+.kiwbi-pub-auth-hint { text-align: center; font-size: 0.75rem; color: var(--kiwbi-text-faint); margin-top: 0.75rem; }
+.kiwbi-pub-auth-footer-link { text-align: center; font-size: 0.875rem; color: var(--kiwbi-text-muted); margin-top: 1.5rem; }
+.kiwbi-pub-auth-footer-link a { font-weight: 600; color: var(--kiwbi-brand-primary); text-decoration: none; }
+.kiwbi-pub-auth-footer-link a:hover { text-decoration: underline; }
+
+/* ---- Aceptación de invitación: cabecera de marca + resumen de vivienda + estados ---- */
+.kiwbi-pub-invite-tenant { display: flex; align-items: center; gap: 0.75rem; border-bottom: 1px solid var(--kiwbi-border-soft); padding-bottom: 1.1rem; margin-bottom: 1.1rem; }
+.kiwbi-pub-invite-mark { width: 3rem; height: 3rem; border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; color: #fff; font-weight: 700; font-size: 1.25rem; flex-shrink: 0; background: var(--kiwbi-pub-glow, var(--kiwbi-brand-primary)); }
+.kiwbi-pub-invite-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--kiwbi-text-faint); }
+.kiwbi-pub-invite-summary { border: 1px solid var(--kiwbi-border); border-radius: 0.6rem; background: var(--kiwbi-bg); padding: 0.9rem; margin-bottom: 1.1rem; }
+.kiwbi-pub-invite-summary dt { font-size: 0.7rem; color: var(--kiwbi-text-faint); margin-bottom: 0.15rem; }
+.kiwbi-pub-invite-summary dd { font-weight: 600; color: var(--kiwbi-text); margin-bottom: 0; }
+
+.kiwbi-pub-state-icon { width: 3rem; height: 3rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; }
+.kiwbi-pub-state-icon.warning { background: #fef2f2; color: #dc2626; }
+.kiwbi-pub-state-icon.success { background: var(--kiwbi-pub-glow, var(--kiwbi-brand-primary)); color: #fff; }

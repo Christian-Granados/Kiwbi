@@ -1,3 +1,4 @@
+using Kiwbi.Application.Developers.GetBrandingForHousingUnit;
 using Kiwbi.Application.Onboarding;
 using Kiwbi.Application.Onboarding.AcceptBuyerInvitation;
 using Kiwbi.Application.Onboarding.GetBuyerInvitationByToken;
@@ -13,13 +14,16 @@ public class OnboardingController : Controller
 {
     private readonly GetBuyerInvitationByTokenUseCase _getBuyerInvitationByTokenUseCase;
     private readonly AcceptBuyerInvitationUseCase _acceptBuyerInvitationUseCase;
+    private readonly GetBrandingForHousingUnitUseCase _getBrandingForHousingUnitUseCase;
 
     public OnboardingController(
         GetBuyerInvitationByTokenUseCase getBuyerInvitationByTokenUseCase,
-        AcceptBuyerInvitationUseCase acceptBuyerInvitationUseCase)
+        AcceptBuyerInvitationUseCase acceptBuyerInvitationUseCase,
+        GetBrandingForHousingUnitUseCase getBrandingForHousingUnitUseCase)
     {
         _getBuyerInvitationByTokenUseCase = getBuyerInvitationByTokenUseCase;
         _acceptBuyerInvitationUseCase = acceptBuyerInvitationUseCase;
+        _getBrandingForHousingUnitUseCase = getBrandingForHousingUnitUseCase;
     }
 
     [HttpGet]
@@ -33,6 +37,7 @@ public class OnboardingController : Controller
         }
 
         var model = ToViewModel(token, result.Value!);
+        await ApplyInvitingCompanyBrandingAsync(model, result.Value!.HousingUnitId, cancellationToken);
 
         return View(model);
     }
@@ -51,6 +56,7 @@ public class OnboardingController : Controller
         var refreshedModel = ToViewModel(model.Token, invitationResult.Value!);
         refreshedModel.Password = model.Password;
         refreshedModel.ConfirmPassword = model.ConfirmPassword;
+        await ApplyInvitingCompanyBrandingAsync(refreshedModel, invitationResult.Value!.HousingUnitId, cancellationToken);
 
         if (!ModelState.IsValid)
         {
@@ -71,11 +77,22 @@ public class OnboardingController : Controller
             return View(refreshedModel);
         }
 
+        // The invitation/token no longer resolves anything useful once accepted, so the promotora's
+        // brand is carried over via TempData for the Welcome screen instead of re-querying by token.
+        TempData["WelcomeCompanyName"] = refreshedModel.CompanyName;
+        TempData["WelcomeAccentColor"] = ViewBag.AuthAccentColor as string;
+
         return RedirectToAction(nameof(Welcome));
     }
 
     [HttpGet]
-    public IActionResult Welcome() => View();
+    public IActionResult Welcome()
+    {
+        ViewBag.CompanyName = TempData["WelcomeCompanyName"] as string;
+        ViewBag.AuthAccentColor = TempData["WelcomeAccentColor"] as string;
+
+        return View();
+    }
 
     private static AcceptInvitationViewModel ToViewModel(string token, BuyerInvitationAcceptanceDto dto) => new()
     {
@@ -89,4 +106,19 @@ public class OnboardingController : Controller
         Status = dto.Status.ToString(),
         IsExpired = dto.IsExpired,
     };
+
+    /// <summary>Resolves the inviting promotora's brand (Epic 9) to tint this anonymous screen, reusing the same use case already applied to the buyer's HousingUnit detail (Epic 8). Best-effort: leaves the model/ViewBag untouched if branding cannot be resolved.</summary>
+    private async Task ApplyInvitingCompanyBrandingAsync(AcceptInvitationViewModel model, Guid housingUnitId, CancellationToken cancellationToken)
+    {
+        var brandingResult = await _getBrandingForHousingUnitUseCase.ExecuteAsync(housingUnitId, cancellationToken);
+
+        if (brandingResult.IsFailure)
+        {
+            return;
+        }
+
+        model.CompanyName = brandingResult.Value!.Name;
+        model.CompanyLogoPath = brandingResult.Value.LogoPath;
+        ViewBag.AuthAccentColor = brandingResult.Value.PrimaryColor;
+    }
 }

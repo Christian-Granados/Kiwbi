@@ -1,9 +1,26 @@
 @{
     ViewData["Title"] = "Invitación no válida";
+    Layout = "_AuthLayout";
 }
 
-<h1>Invitación no válida</h1>
-
-<div class="alert alert-danger">
-    Este enlace no existe o ya no es válido. Contacta con tu promotora para solicitar una nueva invitación.
+<div class="kiwbi-pub-auth-brand">
+    <span class="kiwbi-pub-mark" style="width:2.25rem;height:2.25rem;font-size:1rem;">K</span>
+    <span class="kiwbi-pub-logo-text" style="font-size:1.25rem;">Kiwbi</span>
+    <p class="text-muted small mb-0">Invitación de comprador</p>
 </div>
+
+<div class="kiwbi-pub-auth-card text-center">
+    <span class="kiwbi-pub-state-icon warning">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>
+    </span>
+    <h2 class="h5 mb-2">Este enlace ya no es válido</h2>
+    <p class="text-muted small">
+        Este enlace no existe o ya no es válido. Puede haber caducado, haber sido cancelado por la
+        promotora o haberse usado anteriormente. Contacta con tu promotora para solicitar una nueva
+        invitación.
+    </p>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary w-100 fw-semibold">
+        Volver a la página de Kiwbi
+    </a>
+</div>
+

@@ -1,9 +1,34 @@
 @{
     ViewData["Title"] = "Bienvenido/a";
+    Layout = "_AuthLayout";
+    var companyName = ViewBag.CompanyName as string;
+    var initial = !string.IsNullOrEmpty(companyName) ? companyName[..1].ToUpperInvariant() : "K";
 }
 
-<h1>¡Ya estás dentro!</h1>
-
-<div class="alert alert-success">
-    Tu cuenta ha quedado vinculada a la vivienda. Muy pronto podrás ver aquí tus personalizaciones disponibles.
+<div class="kiwbi-pub-auth-brand">
+    <span class="kiwbi-pub-invite-mark" style="width:2.25rem;height:2.25rem;font-size:1rem;">@initial</span>
+    <span class="kiwbi-pub-logo-text" style="font-size:1.25rem;">Kiwbi</span>
 </div>
+
+<div class="kiwbi-pub-auth-card text-center">
+    <span class="kiwbi-pub-state-icon success">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10" /><path d="M8 14s1.5 2 4 2 4-2 4-2" /><line x1="9" y1="9" x2="9.01" y2="9" /><line x1="15" y1="9" x2="15.01" y2="9" /></svg>
+    </span>
+    <h2 class="h5 mb-2">¡Cuenta creada!</h2>
+    <p class="text-muted small">
+        @if (!string.IsNullOrEmpty(companyName))
+        {
+            <text>Ya formas parte de <span class="fw-semibold text-body">@companyName</span>. </text>
+        }
+        Tu cuenta ha quedado vinculada a la vivienda. Desde tu panel de comprador podrás ver tu
+        vivienda y elegir tus personalizaciones antes de cada fecha límite.
+    </p>
+    <a asp-controller="Buyer" asp-action="Index" class="btn w-100 fw-semibold text-white" style="background: var(--kiwbi-pub-glow, var(--kiwbi-brand-primary));">
+        Ir a mi panel de comprador
+    </a>
+    <a asp-controller="Account" asp-action="Login" class="d-block mt-3 small text-muted text-decoration-none">
+        Iniciar sesión más tarde
+    </a>
+</div>
+
+

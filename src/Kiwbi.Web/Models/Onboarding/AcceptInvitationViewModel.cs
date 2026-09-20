@@ -26,4 +26,8 @@ public class AcceptInvitationViewModel
     public bool CanAccept { get; set; }
     public string Status { get; set; } = string.Empty;
     public bool IsExpired { get; set; }
+
+    /// <summary>Nombre/logo de la promotora invitante (Epic 9), para el acento de marca de la pantalla de aceptación.</summary>
+    public string CompanyName { get; set; } = string.Empty;
+    public string? CompanyLogoPath { get; set; }
 }
