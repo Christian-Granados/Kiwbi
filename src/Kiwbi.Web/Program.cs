@@ -1,6 +1,7 @@
 using System.Globalization;
 using Kiwbi.Application;
 using Kiwbi.Infrastructure;
+using Kiwbi.Web.DemoSeeding;
 using Microsoft.AspNetCore.Localization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -9,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddApplicationServices();
 builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services.AddScoped<DemoDataSeeder>();
 
 // Enables header-based antiforgery validation for the buyer's HTMX selection requests (Feature 5.3), which are not <form> submits.
 builder.Services.AddAntiforgery(options => options.HeaderName = "X-CSRF-TOKEN");
@@ -21,6 +23,16 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 var app = builder.Build();
+
+// Feature 10.1: `dotnet run --project src/Kiwbi.Web -- --seed-demo` populates/resets the demo tenant, then exits
+// without starting Kestrel.
+if (args.Contains("--seed-demo"))
+{
+    using var seedScope = app.Services.CreateScope();
+    var seeder = seedScope.ServiceProvider.GetRequiredService<DemoDataSeeder>();
+    await seeder.SeedAsync();
+    return;
+}
 
 // Force invariant number/date formatting (period decimals) regardless of the server's OS culture, since HTML5
 // number inputs and model binding always use "." — only Razor's literal Spanish text is UI-language dependent.

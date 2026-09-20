@@ -2,7 +2,8 @@
 
 ## Estado
 
-- Estado: **diseño aprobado por el usuario (2026-09-20), pendiente de implementación.**
+- Estado: **Feature 10.1 (seeder de datos de demo) IMPLEMENTADA y verificada (2026-09-20). Features 10.2/10.3/10.4 pendientes.**
+- Feature 10.1 resultado: `DemoDataSeeder` (`src/Kiwbi.Web/DemoSeeding/`), invocado vía `dotnet run --project src/Kiwbi.Web -- --seed-demo`, siembra el tenant "Kiwbi Demo" con las 3 Promociones descritas más abajo, reutilizando los métodos de fábrica/transición de Domain tal cual (sin cambios en Domain/Application). Idempotencia verificada ejecutando el seeder dos veces seguidas contra el Postgres local y comprobando por SQL que no quedan duplicados (exactamente 1 `DeveloperCompany` "Kiwbi Demo", 3 Promociones, conteos de Viviendas/Gremios/Personalizaciones/usuarios exactamente los esperados). La limpieza idempotente marca todo el grafo de entidades para borrado y lo confirma en una única `SaveChangesAsync` (EF Core ordena las sentencias DELETE automáticamente por dependencia de FK), y borra los `ApplicationUser` (comprador/promotora) vía `UserManager` en una fase posterior separada, una vez ya no quedan filas que los referencien (`home_buyer_assignments`/`developer_company_id` tienen FK `Restrict`). Un caso (invitación caducada) se "retrasa" en el tiempo mediante reflexión sobre los setters privados de `BuyerInvitation` (Domain no expone una fábrica para esto y no se quería añadir superficie solo para el seeder) — documentado con un comentario en el código. Credenciales y guion de demo en `demo-data-guide.md`.
 - Depende de: Epic 1 (Foundation & Promotora Tenant), Epic 2 (Real Estate Core), Epic 3 (Customization Engine), Epic 4 (Onboarding B2B2C), Epic 5 (Buyer Experience) y Epic 6 (Management & Exporting — en particular la Feature 6.3, cuyo cierre motiva este Epic). No introduce reglas de negocio de Domain nuevas; es exclusivamente datos de demo + cobertura de tests + verificación manual sobre funcionalidad ya construida.
 - Alcance ampliado respecto a la redacción original del roadmap (`05-development-roadmap.md`): el Epic 10 nació como una tarea de QA manual pura ("sin desarrollo de código previsto"). El usuario ha ampliado el alcance a tres bloques: (1) un seeder de datos de demo reutilizable y con volumen/coherencia pensados para una demo real del producto (no solo datos mínimos de prueba), documentado en un fichero aparte con credenciales; (2) cobertura de tests automáticos reales sobre la generación de Excel/PDF (hoy inexistente — ver "Contexto"); (3) la verificación manual original, que pasa a ser el último paso, no el único.
 
@@ -90,16 +91,16 @@ Hoy `ExportHousingPromotionReportUseCaseTests` (4 tests) mockea por completo `IH
 
 ## Plan de Acción (Step-by-Step)
 
-### Feature 10.1 — Datos de demo
+### Feature 10.1 — Datos de demo (✅ COMPLETA, 2026-09-20)
 
-- [ ] Crear `DemoDataSeeder` (+ constantes de emails/nombre del tenant demo) en `Kiwbi.Web/DemoSeeding/`.
-- [ ] Implementar la limpieza idempotente (borrado del tenant demo previo, en orden seguro para FKs) antes de recrear los datos.
-- [ ] Sembrar las 3 Promociones con su composición completa (Tipologías, Viviendas, Gremios, Personalizaciones/Opciones/Asignaciones, invitaciones, cuentas de Comprador, elecciones) tal como se detalla en "Diseño de datos de demo".
-- [ ] Añadir la rama `--seed-demo` en `Program.cs`.
-- [ ] Ejecutar `dotnet run --project src/Kiwbi.Web -- --seed-demo` contra el Postgres local (con las migraciones ya aplicadas) y repetir una segunda vez para confirmar la idempotencia.
-- [ ] Verificar manualmente en la app en ejecución (login como la Promotora demo) que las 3 Promociones y sus datos son coherentes antes de redactar la guía.
-- [ ] Redactar `.ai-docs/demo-data-guide.md` (credenciales + narrativa de cada Promoción + guion de la demo).
-- [ ] Añadir una referencia cruzada a `demo-data-guide.md` desde este documento y desde la entrada del Epic 10 en `05-development-roadmap.md`.
+- [x] Crear `DemoDataSeeder` (+ constantes de emails/nombre del tenant demo) en `Kiwbi.Web/DemoSeeding/`.
+- [x] Implementar la limpieza idempotente (borrado del tenant demo previo, en orden seguro para FKs) antes de recrear los datos.
+- [x] Sembrar las 3 Promociones con su composición completa (Tipologías, Viviendas, Gremios, Personalizaciones/Opciones/Asignaciones, invitaciones, cuentas de Comprador, elecciones) tal como se detalla en "Diseño de datos de demo".
+- [x] Añadir la rama `--seed-demo` en `Program.cs`.
+- [x] Ejecutar `dotnet run --project src/Kiwbi.Web -- --seed-demo` contra el Postgres local (con las migraciones ya aplicadas) y repetir una segunda vez para confirmar la idempotencia (verificado por SQL: exactamente 1 `DeveloperCompany` "Kiwbi Demo", 3 Promociones, conteos de Viviendas/Gremios/Personalizaciones/usuarios correctos tras la 2ª ejecución).
+- [x] Verificar manualmente en la app en ejecución (login como la Promotora demo) que las 3 Promociones y sus datos son coherentes antes de redactar la guía (verificado en navegador: listado de 3 promociones, detalle de Residencial Vistalar con las 8 viviendas/tipologías correctas, y el caso "Confirmar en vivo" de 1ºB/Armario empotrado renderiza el botón "Confirmar" tal como estaba previsto).
+- [x] Redactar `.ai-docs/demo-data-guide.md` (credenciales + narrativa de cada Promoción + guion de la demo).
+- [x] Añadir una referencia cruzada a `demo-data-guide.md` desde este documento y desde la entrada del Epic 10 en `05-development-roadmap.md`.
 
 ### Features 10.2/10.3 — Cobertura de tests + verificación manual de exportación
 
