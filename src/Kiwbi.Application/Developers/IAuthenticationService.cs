@@ -1,7 +1,5 @@
 using Kiwbi.Application.Common;
 
-using Kiwbi.Application.Common;
-
 namespace Kiwbi.Application.Developers;
 
 /// <summary>Port for sign-in/sign-out operations, isolated from the concrete Identity implementation.</summary>

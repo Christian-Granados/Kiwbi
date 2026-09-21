@@ -6,6 +6,7 @@ using Kiwbi.Application.Developers.ForgotPassword;
 using Kiwbi.Application.Developers.ResetPassword;
 using Kiwbi.Application.Developers.RegisterDeveloper;
 using Kiwbi.Application.Developers.UpdateDeveloperBranding;
+using Kiwbi.Application.Developers.UploadDeveloperBrandingLogo;
 using Kiwbi.Application.Developers.UpdateDeveloperProfile;
 using Kiwbi.Application.RealEstate.ChangeHousingUnitStatus;
 using Kiwbi.Application.RealEstate.CreateHousingPromotion;
@@ -77,6 +78,7 @@ public static class DependencyInjection
         services.AddScoped<GetBrandingForHousingUnitUseCase>();
         services.AddScoped<UpdateDeveloperProfileUseCase>();
         services.AddScoped<UpdateDeveloperBrandingUseCase>();
+        services.AddScoped<UploadDeveloperBrandingLogoUseCase>();
 
         services.AddScoped<CreateHousingPromotionUseCase>();
         services.AddScoped<UpdateHousingPromotionUseCase>();

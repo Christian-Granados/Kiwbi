@@ -1,0 +1,8 @@
+**/bin/
+**/obj/
+.git/
+.vscode/
+.idea/
+src/Kiwbi.Web/wwwroot/uploads/
+*.log
+.ai-docs/

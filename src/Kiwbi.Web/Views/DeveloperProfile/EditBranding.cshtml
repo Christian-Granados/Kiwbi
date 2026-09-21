@@ -14,14 +14,12 @@
 <h1 class="h4 mb-4" style="font-weight:600;">Editar marca de la promotora</h1>
 
 <div style="max-width: 46rem;">
-    <form asp-controller="DeveloperProfile" asp-action="EditBranding" method="post" class="d-flex flex-column gap-3"
+    <form asp-controller="DeveloperProfile" asp-action="EditBranding" method="post" enctype="multipart/form-data" class="d-flex flex-column gap-3"
           style="--preview-accent: @Model.PrimaryColor; --preview-accent-2: @previewSecondary;">
         <div asp-validation-summary="ModelOnly" class="kiwbi-validation-summary"></div>
 
         <div class="kiwbi-fieldset">
             <div class="kiwbi-legend">Logo</div>
-            <!-- Ronda 5: `UpdateDeveloperBrandingCommand.LogoPath` es hoy un texto/URL, sin subida
-                 de fichero real (a diferencia del plano de Vivienda/Promoción). -->
             <div class="row g-3 align-items-center">
                 <div class="col-auto d-flex align-items-center gap-3">
                     @if (!string.IsNullOrWhiteSpace(Model.LogoPath))
@@ -35,10 +33,15 @@
                     <div class="small text-muted" style="font-size:.7rem;max-width:9rem;">Sin logo, se usan las iniciales sobre el color primario.</div>
                 </div>
                 <div class="col">
-                    <label asp-for="LogoPath" class="form-label small fw-medium">URL del logo</label>
-                    <input asp-for="LogoPath" class="form-control form-control-sm" placeholder="https://…/logo-promotora.svg" />
-                    <span asp-validation-for="LogoPath" class="kiwbi-field-error"></span>
-                    <p class="small text-muted mb-0 mt-1" style="font-size:.7rem;">Enlace a una imagen ya alojada. La subida directa de fichero no está disponible todavía.</p>
+                    <input type="hidden" asp-for="LogoPath" />
+                    <label asp-for="LogoImageFile" class="kiwbi-dropzone" style="padding:1.25rem 1rem;">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="9" cy="9" r="2" /><path d="m21 15-5-5L5 21" /></svg>
+                        <strong>Arrastra el logo o haz clic para subirlo</strong>
+                        <span class="small kiwbi-dropzone-filename">PNG, JPG o WEBP · máx. 10 MB</span>
+                        <input asp-for="LogoImageFile" type="file" accept=".jpg,.jpeg,.png,.webp" class="visually-hidden" />
+                    </label>
+                    <span asp-validation-for="LogoImageFile" class="kiwbi-field-error"></span>
+                    <p class="small text-muted mb-0 mt-1" style="font-size:.7rem;">Opcional. Si no subes uno nuevo, se conserva el logo actual.</p>
                 </div>
             </div>
         </div>

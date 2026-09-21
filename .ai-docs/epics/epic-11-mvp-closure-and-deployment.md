@@ -2,7 +2,7 @@
 
 ## Estado
 
-- Estado: **documento validado por el usuario (2026-09-21). Las 2 preguntas de negocio abiertas están resueltas** (ver Decisiones). Repositorio confirmado **público**. Frente A (11.2/11.3) y la parte de 11.8/11.9 que no depende de cuentas externas ya están en implementación por el agente; Frente B (11.4-11.7) lo gestiona el usuario directamente creando las cuentas de los servicios cloud con los prompts de este documento.
+- Estado: **todo el código de las Features 11.1-11.9 implementado (2026-09-21).** Solo quedan pasos manuales de configuración/despliegue: crear el Web Service en Render, rellenar sus variables de entorno con las credenciales ya obtenidas (R2/Brevo/Neon), y verificar el entorno público desplegado. 324 tests pasando, build y `dotnet format --verify-no-changes` limpios (0 warnings).
 - Origen: continuación directa del análisis crítico de estado del proyecto (2026-09-20/21) sobre los hallazgos 3.1-3.11 detectados al revisar qué falta para considerar Kiwbi un PoC/MVP presentable. Sustituye al "Epic 9 de cierre de MVP" mencionado en una sesión anterior (2026-09-18) que quedó huérfano al renumerarse Epic 9 como "Landing y Auth" — este documento retoma y cierra formalmente ese hueco (hallazgo 3.11).
 - Depende de: ninguno de los Epics funcionales a nivel de datos (igual que Epics 7-9). Reutiliza `IEmailSender`/`IFileStorageService` (puertos ya existentes desde Epic 3/2) para las Features 11.4/11.5 sin tocar su forma, solo su implementación en `Kiwbi.Infrastructure`.
 
@@ -83,9 +83,47 @@ Resuelve el hallazgo 3.4. Hoy `HousingUnitBuyer` es permanente: si una compraven
 | Credenciales SMTP de Brevo | Variables de entorno de Render | Ídem |
 | Ninguna (el workflow de CI no llama a servicios externos) | — | El único secreto de GitHub que podríamos llegar a necesitar es un *deploy hook* de Render, y ni eso: Render se autodespliega vigilando el repo, sin que GitHub necesite saber nada de Render |
 
-### Feature 11.4 — Almacenamiento de ficheros en la nube (Cloudflare R2)
+### Variables de entorno exactas a rellenar en Render (Settings → Environment del Web Service)
 
-Resuelve el hallazgo 3.8. Hoy `LocalFileStorageService` (`Kiwbi.Infrastructure`) escribe en disco local (`wwwroot/uploads`) — en Render (y en la inmensa mayoría de PaaS gratuitos) el sistema de archivos del contenedor **no persiste** entre despliegues/reinicios, así que cualquier plano/logo subido desaparecería. Se sustituye por un nuevo adaptador `S3FileStorageService` (mismo puerto `IFileStorageService`, cero cambios en Application/Domain/Controllers) contra Cloudflare R2 (API compatible con S3). Esto también resuelve de raíz el logo de marca (hoy un campo de texto/URL): al tener ya subida real de fichero para planos, extender `DeveloperProfileController`/`UpdateDeveloperBrandingCommand` para aceptar un fichero real es una extensión pequeña sobre el mismo mecanismo, no un problema aparte.
+Ninguno de estos valores debe pegarse en el chat, en `appsettings.json` ni en ningún fichero del repo — solo en este panel:
+
+```
+ConnectionStrings__DefaultConnection = <cadena de conexión completa de Neon>
+
+Storage__Provider          = S3
+Storage__S3__ServiceUrl    = <endpoint S3 de R2, https://<account-id>.r2.cloudflarestorage.com>
+Storage__S3__AccessKeyId   = <Access Key ID de R2>
+Storage__S3__SecretAccessKey = <Secret Access Key de R2>
+Storage__S3__BucketName    = <nombre del bucket, p.ej. kiwbi-uploads>
+Storage__S3__PublicBaseUrl = <URL pública del bucket, p.ej. https://pub-xxxx.r2.dev>
+
+Email__Provider        = Smtp
+Email__Smtp__Host      = <servidor SMTP de Brevo, p.ej. smtp-relay.brevo.com>
+Email__Smtp__Port      = <puerto SMTP de Brevo, normalmente 587>
+Email__Smtp__Username  = <usuario/login SMTP de Brevo>
+Email__Smtp__Password  = <clave SMTP de Brevo>
+Email__Smtp__FromEmail = <remitente autorizado en Brevo>
+Email__Smtp__FromName  = Kiwbi
+
+ASPNETCORE_ENVIRONMENT  = Production
+AppBaseUrl              = <URL pública que asigne Render, p.ej. https://kiwbi.onrender.com>
+```
+
+Si cualquiera de las variables `Storage__*`/`Email__*` no está presente, la app cae automáticamente en los adaptadores locales de `Development` (`LocalFileStorageService`/`LoggingBuyerInvitationEmailSender`) — seguro por defecto, nunca falla el arranque por falta de configuración de la nube.
+
+### Feature 11.4 — Almacenamiento de ficheros en la nube (Cloudflare R2) ✅ CÓDIGO IMPLEMENTADO (2026-09-21), pendiente de credenciales reales
+
+Resuelve el hallazgo 3.8. Hoy `LocalFileStorageService` (`Kiwbi.Infrastructure`) escribe en disco local (`wwwroot/uploads`) — en Render (y en la inmensa mayoría de PaaS gratuitos) el sistema de archivos del contenedor **no persiste** entre despliegues/reinicios, así que cualquier plano/logo subido desaparecería. Se sustituye por un nuevo adaptador `S3FileStorageService` (mismo puerto `IFileStorageService`, cero cambios en Application/Domain/Controllers) contra Cloudflare R2 (API compatible con S3). Esto también resuelve de raíz el logo de marca: ahora `DeveloperProfileController`/`EditBranding.cshtml` tienen subida real de fichero (dropzone), no un campo de texto/URL.
+
+**Implementación:** `IFileStorageService.SaveAsync` ahora documenta y garantiza que devuelve una URL directamente usable en `src`/`href` (antes devolvía una ruta relativa tipo `uploads/x.png` que las vistas resolvían con el prefijo Razor `~/`; ahora es o bien raíz-relativa `/uploads/x.png` — local — o absoluta `https://.../x.png` — S3/R2 —, así que las 5 vistas que usaban `~/@Model.X` para planos se simplificaron a `@Model.X` directamente, igual que ya hacía `LogoPath`). `S3FileStorageService` (nuevo, `Kiwbi.Infrastructure/Storage/`, paquete `AWSSDK.S3` añadido) lee la configuración directamente de `IConfiguration` (mismo patrón que `LoggingBuyerInvitationEmailSender`, sin clases `Options` fuertemente tipadas): `Storage:S3:ServiceUrl`, `Storage:S3:AccessKeyId`, `Storage:S3:SecretAccessKey`, `Storage:S3:BucketName`, `Storage:S3:PublicBaseUrl`. `Kiwbi.Infrastructure/DependencyInjection.cs` elige el adaptador según `Storage:Provider` (`S3` → `S3FileStorageService`, cualquier otro valor/ausente → `LocalFileStorageService`, el default seguro para `Development`). Nueva use case `UploadDeveloperBrandingLogoUseCase` (`Kiwbi.Application.Developers`) + `EditDeveloperBrandingViewModel.LogoImageFile` + `DeveloperProfileController.EditBranding` sube el fichero primero (si se proporciona) y pasa la URL resultante a `UpdateDeveloperBrandingUseCase` tal cual (mismo patrón de dos pasos que `HousingUnit`/`HousingPromotion`).
+
+**Checklist:**
+- [x] Usuario ejecuta el prompt de arriba y crea la cuenta/bucket/token.
+- [x] Usuario ya tiene las credenciales — se configurarán como variables de entorno de Render (ver tabla al final de este documento), nunca como secreto de GitHub ni committeadas en `appsettings.json`.
+- [x] Implementado `S3FileStorageService`, registrado condicionalmente por `Storage:Provider`; `LocalFileStorageService` se mantiene para `Development`.
+- [x] Subida real de fichero para el logo de marca.
+- [x] Build limpio, `dotnet format --verify-no-changes` limpio.
+- [ ] Pendiente: rellenar las variables de entorno reales en Render y verificar en el entorno desplegado (subir un plano/logo real y confirmar que persiste tras un redeploy).
 
 **Prompt para pedir la guía a otra IA:**
 ```
@@ -163,10 +201,10 @@ Usuario SMTP / Clave SMTP / Remitente autorizado a usar.
 ```
 
 **Checklist:**
-- [ ] Usuario ejecuta el prompt y crea la cuenta/credenciales SMTP.
-- [ ] Usuario comparte los valores (van a variables de entorno de Render, nunca a `appsettings.json` ni a GitHub).
-- [ ] Implementar `SmtpEmailSender` (paquete `MailKit` o `System.Net.Mail.SmtpClient`), registrado condicionalmente por entorno en `Kiwbi.Infrastructure`/`DependencyInjection.cs`.
-- [ ] Verificación manual: invitar a un comprador real (email propio del usuario) desde el entorno desplegado y confirmar que llega el correo.
+- [x] Usuario ejecuta el prompt y crea la cuenta/credenciales SMTP.
+- [x] Usuario ya tiene los valores — se configurarán como variables de entorno de Render (ver tabla al final de este documento), nunca a `appsettings.json` ni a GitHub.
+- [x] Implementado `SmtpEmailSender` (`Kiwbi.Infrastructure/Email/`, usando `System.Net.Mail.SmtpClient` — ya incluido en el runtime de .NET, sin paquete nuevo), registrado condicionalmente por `Email:Provider` en `Kiwbi.Infrastructure/DependencyInjection.cs` (`Smtp` → `SmtpEmailSender`, cualquier otro valor/ausente → `LoggingBuyerInvitationEmailSender`, el default seguro para `Development`). Config: `Email:Smtp:Host`, `Email:Smtp:Port`, `Email:Smtp:Username`, `Email:Smtp:Password`, `Email:Smtp:FromEmail`, `Email:Smtp:FromName` (opcional).
+- [ ] Pendiente: rellenar las variables de entorno reales en Render y verificar invitando a un comprador real (email propio del usuario) desde el entorno desplegado.
 
 ### Feature 11.6 — Base de datos gestionada (Neon Postgres)
 
@@ -203,9 +241,9 @@ para cada parte (host/puerto/db/usuario/contraseña/parámetros extra).
 ```
 
 **Checklist:**
-- [ ] Usuario ejecuta el prompt y crea el proyecto Neon.
-- [ ] Usuario comparte la cadena de conexión (va a la variable de entorno de Render `ConnectionStrings__DefaultConnection`, nunca a `appsettings.json`).
-- [ ] Confirmar que `Program.cs` aplica migraciones al arrancar (`dbContext.Database.Migrate()`) para no depender de un paso manual.
+- [x] Usuario ejecuta el prompt y crea el proyecto Neon.
+- [x] Usuario ya tiene la cadena de conexión — va a la variable de entorno de Render `ConnectionStrings__DefaultConnection` (ver tabla al final de este documento), nunca a `appsettings.json`.
+- [x] `Program.cs` ahora aplica migraciones automáticamente al arrancar (`dbContext.Database.MigrateAsync()`, antes de cualquier otra cosa incluido el flag `--seed-demo`) — no depende de ningún paso manual, necesario porque Neon no permite ejecutar `dotnet ef database update` contra la instancia desplegada.
 
 ### Feature 11.7 — Publicación de la aplicación (Render + Dockerfile + auto-deploy desde GitHub)
 
@@ -251,9 +289,9 @@ manual si hiciera falta.
 ```
 
 **Checklist:**
-- [ ] Crear `Dockerfile` multi-stage para `Kiwbi.Web` (build SDK + runtime ASP.NET Core).
+- [x] Crear `Dockerfile` multi-stage para `Kiwbi.Web` (build SDK + runtime ASP.NET Core) — en la raíz del repo, publica solo `Kiwbi.Web.csproj` (las 3 dependencias se compilan igualmente vía `ProjectReference`). Lee `$PORT` en el arranque (`--urls http://+:${PORT:-8080}`) para encajar con el contrato de Render sin necesitar configuración adicional. `.dockerignore` añadido (excluye `bin/obj/`, `wwwroot/uploads`, `.ai-docs`, etc.).
 - [ ] Usuario ejecuta el prompt y crea el Web Service en Render, conectado al repo.
-- [ ] Configurar variables de entorno en Render (connection string de Neon, credenciales R2, credenciales Brevo, `ASPNETCORE_ENVIRONMENT=Production`).
+- [ ] Configurar variables de entorno en Render (ver tabla al final de este documento) + `ASPNETCORE_ENVIRONMENT=Production`.
 - [ ] Verificar auto-deploy: un push a `main` dispara un despliegue visible en el panel de Render.
 - [ ] Smoke test manual del entorno público: login, crear promoción, subir un plano, invitar a un comprador con email real.
 
@@ -324,6 +362,7 @@ secretos de GitHub que debo crear.
 
 1. ~~Usuario valida este documento completo~~ ✅ (2026-09-21).
 2. ~~Resolver las 2 preguntas de negocio abiertas~~ ✅ (2026-09-21, ver Decisiones 9-10).
-3. **En curso (agente):** 11.8 ✅ implementado, 11.9 Capa 1/Capa 3 ✅ implementadas, Capa 2 creada pero pendiente de `SONAR_TOKEN`. 11.2 (recuperación de contraseña) y 11.3 (desvincular comprador) en implementación.
-4. **En curso (usuario):** ejecutar los prompts de 11.4/11.5/11.6/11.7 contra otra IA, crear las cuentas/recursos, y compartir las credenciales resultantes para configurarlas como variables de entorno de Render (Feature 11.7) una vez exista el Web Service.
-5. Cuando el usuario tenga las 4 cuentas de Frente B listas, el agente implementa `S3FileStorageService`/`SmtpEmailSender`/`Dockerfile`/migración de connection string en ese orden.
+3. ~~Agente implementa 11.2/11.3/11.8/11.9~~ ✅ (2026-09-21).
+4. ~~Agente implementa el código de 11.4/11.5/11.6/11.7~~ ✅ (2026-09-21): `S3FileStorageService`, `SmtpEmailSender`, subida real de logo, migración automática al arranque, `Dockerfile`.
+5. **Pendiente (usuario):** crear el Web Service en Render (prompt de la Feature 11.7), rellenar las variables de entorno con los valores ya obtenidos (tabla de arriba), y confirmar el primer despliegue automático.
+6. **Pendiente (usuario + agente):** verificación manual completa en el entorno público: login, crear promoción, subir un plano y el logo de marca (persisten tras un redeploy), invitar a un comprador con email real (llega de verdad), exportar un reporte.

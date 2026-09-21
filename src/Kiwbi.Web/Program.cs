@@ -1,8 +1,10 @@
 using System.Globalization;
 using Kiwbi.Application;
 using Kiwbi.Infrastructure;
+using Kiwbi.Infrastructure.Persistence;
 using Kiwbi.Web.DemoSeeding;
 using Microsoft.AspNetCore.Localization;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +25,15 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 var app = builder.Build();
+
+// Epic 11, Feature 11.6/11.7: apply pending EF Core migrations automatically at startup - a managed Postgres
+// (Neon) has no way to run `dotnet ef database update` manually against the deployed instance. A no-op when
+// the schema is already up to date, so it's safe to run unconditionally in every environment.
+using (var migrationScope = app.Services.CreateScope())
+{
+    var dbContext = migrationScope.ServiceProvider.GetRequiredService<KiwbiDbContext>();
+    await dbContext.Database.MigrateAsync();
+}
 
 // Feature 10.1: `dotnet run --project src/Kiwbi.Web -- --seed-demo` populates/resets the demo tenant, then exits
 // without starting Kestrel.

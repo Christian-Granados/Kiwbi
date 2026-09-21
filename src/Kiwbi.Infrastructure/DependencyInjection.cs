@@ -7,6 +7,7 @@ using Kiwbi.Domain.Developers;
 using Kiwbi.Domain.Onboarding;
 using Kiwbi.Domain.RealEstate;
 using Kiwbi.Infrastructure.Identity;
+using Kiwbi.Infrastructure.Email;
 using Kiwbi.Infrastructure.Onboarding;
 using Kiwbi.Infrastructure.Persistence;
 using Kiwbi.Infrastructure.Reporting;
@@ -51,8 +52,28 @@ public static class DependencyInjection
         services.AddScoped<ICurrentUser, CurrentUser>();
         services.AddScoped<IAccountProvisioningService, IdentityAccountProvisioningService>();
         services.AddScoped<IAuthenticationService, IdentityAuthenticationService>();
-        services.AddScoped<IFileStorageService, LocalFileStorageService>();
-        services.AddScoped<IEmailSender, LoggingBuyerInvitationEmailSender>();
+
+        // Epic 11, Feature 11.4/11.5: pick the cloud adapter when configured (Storage:Provider=S3 /
+        // Email:Provider=Smtp - both set as Render environment variables, never committed), otherwise fall back
+        // to the local-disk/logging adapters used by `dotnet run`/`dotnet watch` in Development.
+        if (string.Equals(configuration["Storage:Provider"], "S3", StringComparison.OrdinalIgnoreCase))
+        {
+            services.AddScoped<IFileStorageService, S3FileStorageService>();
+        }
+        else
+        {
+            services.AddScoped<IFileStorageService, LocalFileStorageService>();
+        }
+
+        if (string.Equals(configuration["Email:Provider"], "Smtp", StringComparison.OrdinalIgnoreCase))
+        {
+            services.AddScoped<IEmailSender, SmtpEmailSender>();
+        }
+        else
+        {
+            services.AddScoped<IEmailSender, LoggingBuyerInvitationEmailSender>();
+        }
+
         services.AddScoped<IBuyerAccountProvisioningService, IdentityBuyerAccountProvisioningService>();
         services.AddScoped<IHousingPromotionReportGenerator, HousingPromotionReportGenerator>();
 

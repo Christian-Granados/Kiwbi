@@ -1,5 +1,6 @@
 using Kiwbi.Application.Developers.GetCurrentDeveloperProfile;
 using Kiwbi.Application.Developers.UpdateDeveloperBranding;
+using Kiwbi.Application.Developers.UploadDeveloperBrandingLogo;
 using Kiwbi.Application.Developers.UpdateDeveloperProfile;
 using Kiwbi.Web.Models.DeveloperProfile;
 using Microsoft.AspNetCore.Authorization;
@@ -13,15 +14,18 @@ public class DeveloperProfileController : Controller
     private readonly GetCurrentDeveloperProfileUseCase _getCurrentDeveloperProfileUseCase;
     private readonly UpdateDeveloperProfileUseCase _updateDeveloperProfileUseCase;
     private readonly UpdateDeveloperBrandingUseCase _updateDeveloperBrandingUseCase;
+    private readonly UploadDeveloperBrandingLogoUseCase _uploadDeveloperBrandingLogoUseCase;
 
     public DeveloperProfileController(
         GetCurrentDeveloperProfileUseCase getCurrentDeveloperProfileUseCase,
         UpdateDeveloperProfileUseCase updateDeveloperProfileUseCase,
-        UpdateDeveloperBrandingUseCase updateDeveloperBrandingUseCase)
+        UpdateDeveloperBrandingUseCase updateDeveloperBrandingUseCase,
+        UploadDeveloperBrandingLogoUseCase uploadDeveloperBrandingLogoUseCase)
     {
         _getCurrentDeveloperProfileUseCase = getCurrentDeveloperProfileUseCase;
         _updateDeveloperProfileUseCase = updateDeveloperProfileUseCase;
         _updateDeveloperBrandingUseCase = updateDeveloperBrandingUseCase;
+        _uploadDeveloperBrandingLogoUseCase = uploadDeveloperBrandingLogoUseCase;
     }
 
     [HttpGet]
@@ -97,6 +101,20 @@ public class DeveloperProfileController : Controller
         if (!ModelState.IsValid)
         {
             return View(model);
+        }
+
+        if (model.LogoImageFile is { Length: > 0 } file)
+        {
+            await using var stream = file.OpenReadStream();
+            var uploadResult = await _uploadDeveloperBrandingLogoUseCase.ExecuteAsync(stream, file.FileName, cancellationToken);
+
+            if (uploadResult.IsFailure)
+            {
+                ModelState.AddModelError(string.Empty, uploadResult.Error!);
+                return View(model);
+            }
+
+            model.LogoPath = uploadResult.Value;
         }
 
         var command = new UpdateDeveloperBrandingCommand(model.PrimaryColor, model.SecondaryColor, model.LogoPath);

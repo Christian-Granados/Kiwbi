@@ -45,7 +45,7 @@ public class LocalFileStorageService : IFileStorageService
 
         var relativePath = Path.Combine("uploads", subFolder, storedFileName).Replace('\\', '/');
 
-        return Result.Success(relativePath);
+        return Result.Success($"/{relativePath}");
     }
 
     public void Delete(string relativePath)
@@ -55,7 +55,7 @@ public class LocalFileStorageService : IFileStorageService
             return;
         }
 
-        var absolutePath = Path.Combine(_environment.WebRootPath, relativePath.Replace('/', Path.DirectorySeparatorChar));
+        var absolutePath = Path.Combine(_environment.WebRootPath, relativePath.TrimStart('/').Replace('/', Path.DirectorySeparatorChar));
 
         if (File.Exists(absolutePath))
         {
