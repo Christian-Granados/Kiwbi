@@ -244,6 +244,7 @@ para cada parte (host/puerto/db/usuario/contraseña/parámetros extra).
 - [x] Usuario ejecuta el prompt y crea el proyecto Neon.
 - [x] Usuario ya tiene la cadena de conexión — va a la variable de entorno de Render `ConnectionStrings__DefaultConnection` (ver tabla al final de este documento), nunca a `appsettings.json`.
 - [x] `Program.cs` ahora aplica migraciones automáticamente al arrancar (`dbContext.Database.MigrateAsync()`, antes de cualquier otra cosa incluido el flag `--seed-demo`) — no depende de ningún paso manual, necesario porque Neon no permite ejecutar `dotnet ef database update` contra la instancia desplegada.
+- [x] **Bug encontrado y corregido en el primer despliegue real (2026-09-21):** Neon entrega la cadena de conexión en formato URI/libpq (`postgresql://usuario:contraseña@host/db?sslmode=require`), que Npgsql **no** sabe parsear directamente (solo entiende el formato `Host=...;Username=...;...`) — provocaba `KeyNotFoundException`/`ArgumentException` al arrancar y el contenedor moría (`status 139`). Corregido en `Kiwbi.Infrastructure/DependencyInjection.cs` con `NormalizeConnectionString`: detecta el prefijo `postgres://`/`postgresql://` y lo convierte al formato nativo de Npgsql (incluyendo el `sslmode` de la query string) antes de pasarlo a `UseNpgsql`; si ya viene en el formato nativo, no hace nada. Así funciona con cualquiera de los dos formatos que un proveedor de Postgres gestionado pueda entregar.
 
 ### Feature 11.7 — Publicación de la aplicación (Render + Dockerfile + auto-deploy desde GitHub)
 

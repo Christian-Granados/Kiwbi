@@ -17,6 +17,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Npgsql;
 
 namespace Kiwbi.Infrastructure;
 
@@ -24,7 +25,7 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = configuration.GetConnectionString("DefaultConnection");
+        var connectionString = NormalizeConnectionString(configuration.GetConnectionString("DefaultConnection"));
 
         services.AddDbContext<KiwbiDbContext>(options =>
             options.UseNpgsql(connectionString));
@@ -78,5 +79,53 @@ public static class DependencyInjection
         services.AddScoped<IHousingPromotionReportGenerator, HousingPromotionReportGenerator>();
 
         return services;
+    }
+
+    /// <summary>Converts a libpq/URI-style connection string (postgresql://user:password@host/db?sslmode=require -
+    /// the format Neon's dashboard and most managed Postgres providers hand out) into Npgsql's native
+    /// "Host=...;Username=...;Password=...;..." keyword=value format, which is the ONLY format Npgsql's own
+    /// connection string parser understands - passing the URI form as-is throws a KeyNotFoundException deep
+    /// inside NpgsqlConnectionStringBuilder. A no-op if the value is already in Npgsql's native format.</summary>
+    private static string? NormalizeConnectionString(string? connectionString)
+    {
+        if (string.IsNullOrWhiteSpace(connectionString))
+        {
+            return connectionString;
+        }
+
+        var isUri = connectionString.StartsWith("postgres://", StringComparison.OrdinalIgnoreCase)
+            || connectionString.StartsWith("postgresql://", StringComparison.OrdinalIgnoreCase);
+
+        if (!isUri)
+        {
+            return connectionString;
+        }
+
+        var uri = new Uri(connectionString);
+        var userInfoParts = uri.UserInfo.Split(':', 2);
+
+        var builder = new NpgsqlConnectionStringBuilder
+        {
+            Host = uri.Host,
+            Port = uri.Port > 0 ? uri.Port : 5432,
+            Database = uri.AbsolutePath.TrimStart('/'),
+            Username = Uri.UnescapeDataString(userInfoParts[0]),
+            Password = userInfoParts.Length > 1 ? Uri.UnescapeDataString(userInfoParts[1]) : null,
+            SslMode = SslMode.Require, // Safe default for a managed cloud Postgres; overridden below if the URI specifies one.
+        };
+
+        foreach (var pair in uri.Query.TrimStart('?').Split('&', StringSplitOptions.RemoveEmptyEntries))
+        {
+            var keyValue = pair.Split('=', 2);
+
+            if (keyValue.Length == 2
+                && string.Equals(keyValue[0], "sslmode", StringComparison.OrdinalIgnoreCase)
+                && Enum.TryParse<SslMode>(keyValue[1], ignoreCase: true, out var sslMode))
+            {
+                builder.SslMode = sslMode;
+            }
+        }
+
+        return builder.ConnectionString;
     }
 }
