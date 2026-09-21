@@ -1,8 +1,8 @@
 name: SonarCloud
 
 # NOT a required check for merging (informational quality dashboard, Epic 11 Feature 11.9 Capa 2).
-# Will fail until the SONAR_TOKEN repository secret is created (see epic-11-mvp-closure-and-deployment.md,
-# Feature 11.9) - that's expected and does not block CI or deploys.
+# If the SONAR_TOKEN repository secret has not been created yet (see epic-11-mvp-closure-and-deployment.md,
+# Feature 11.9), the scan is skipped so CI and deploys are not blocked.
 on:
   push:
     branches: [main]
@@ -46,6 +46,11 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: |
+          if [ -z "${SONAR_TOKEN}" ]; then
+            echo "::notice title=SonarCloud skipped::SONAR_TOKEN is not configured; skipping SonarCloud analysis."
+            exit 0
+          fi
+
           dotnet-sonarscanner begin /k:"Christian-Granados_Kiwbi" /o:"christian-granados" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
           dotnet build Kiwbi.slnx /consoleloggerparameters:NoSummary
           dotnet test Kiwbi.slnx --no-build
