@@ -128,6 +128,26 @@
     });
   }
 
+  // Selects marcados con .kiwbi-status-select (p.ej. Estado en Viviendas): retinta el propio <select> con la
+  // clase kiwbi-status-select-{suffix} de la opción elegida (cada <option> trae data-status-suffix).
+  function initStatusSelectColors() {
+    var selects = document.querySelectorAll('.kiwbi-status-select');
+    if (!selects.length) return;
+
+    function applySuffix(select) {
+      var suffix = select.options[select.selectedIndex].dataset.statusSuffix;
+      Array.prototype.slice.call(select.classList)
+        .filter(function (c) { return c.indexOf('kiwbi-status-select-') === 0; })
+        .forEach(function (c) { select.classList.remove(c); });
+      if (suffix) select.classList.add('kiwbi-status-select-' + suffix);
+    }
+
+    selects.forEach(function (select) {
+      applySuffix(select);
+      select.addEventListener('change', function () { applySuffix(select); });
+    });
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
     initSidebarCollapse();
     initScopeSelector();
@@ -135,5 +155,6 @@
     initDropzoneFileNames();
     initColorFieldSync();
     initPalettePresets();
+    initStatusSelectColors();
   });
 })();

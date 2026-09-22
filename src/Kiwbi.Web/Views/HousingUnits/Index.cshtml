@@ -65,11 +65,12 @@ else
                         <td class="text-end kiwbi-col-optional">@(unit.UsableAreaSqm is { } usable ? $"{usable} m²" : "-")</td>
                         <td>
                             <form asp-controller="HousingUnits" asp-action="ChangeStatus" asp-route-id="@unit.Id" asp-route-promotionId="@promotionId" method="post" class="d-flex gap-1">
-                                <select name="status" class="form-select form-select-sm">
+                                <select name="status" class="form-select form-select-sm kiwbi-status-select">
                                     @foreach (var status in statuses)
                                     {
                                         var badge = status.ToBadge();
-                                        <option value="@status" selected="@(status.ToString() == unit.Status)">@badge.Label</option>
+                                        var suffix = badge.CssClass.Replace("kiwbi-badge-", "");
+                                        <option value="@status" data-status-suffix="@suffix" selected="@(status.ToString() == unit.Status)">@badge.Label</option>
                                     }
                                 </select>
                                 <button type="submit" class="btn btn-sm btn-outline-secondary">Guardar</button>

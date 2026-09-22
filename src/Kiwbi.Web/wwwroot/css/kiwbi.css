@@ -167,6 +167,12 @@ table.kiwbi-table tbody tr:last-child td { border-bottom: none; }
 .kiwbi-badge-amber { background: #fffbeb; color: #b45309; }
 .kiwbi-badge-amber .kiwbi-dot { background: #d97706; }
 
+/* ---- Status select (dropdown tinted to match the currently selected kiwbi-badge-* color) ---- */
+.kiwbi-status-select { font-weight: 500; border-width: 1px; }
+.kiwbi-status-select-success { color: #047857; background-color: #ecfdf5; border-color: #a7f3d0; }
+.kiwbi-status-select-amber   { color: #b45309; background-color: #fffbeb; border-color: #fde68a; }
+.kiwbi-status-select-neutral { color: #64748b; background-color: #f1f5f9; border-color: #e2e8f0; }
+
 .kiwbi-progress { height: 0.35rem; width: 5rem; border-radius: 999px; background: var(--kiwbi-border-soft); overflow: hidden; display: inline-block; vertical-align: middle; }
 .kiwbi-progress > span { display: block; height: 100%; border-radius: 999px; background: var(--kiwbi-accent); }
 
