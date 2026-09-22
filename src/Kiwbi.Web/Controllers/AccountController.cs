@@ -85,7 +85,14 @@ public class AccountController : Controller
             return Redirect(model.ReturnUrl);
         }
 
-        return RedirectToAction("Index", "DeveloperProfile");
+        // Login (as opposed to Register, which always lands on Mi promotora for first-time setup) always
+        // goes straight to the working area: Promociones for a promotora, "Mis viviendas" for a buyer.
+        if (User.IsInRole("Buyer"))
+        {
+            return RedirectToAction("Index", "Buyer");
+        }
+
+        return RedirectToAction("Index", "HousingPromotions");
     }
 
     [HttpPost]

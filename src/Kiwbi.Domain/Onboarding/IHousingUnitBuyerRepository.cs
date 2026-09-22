@@ -7,6 +7,8 @@ public interface IHousingUnitBuyerRepository : IRepository<HousingUnitBuyer>
 {
     Task<IReadOnlyList<HousingUnitBuyer>> GetByHousingUnitIdAsync(Guid housingUnitId, CancellationToken cancellationToken = default);
 
+    Task<IReadOnlyList<HousingUnitBuyer>> GetByHousingUnitIdsAsync(IEnumerable<Guid> housingUnitIds, CancellationToken cancellationToken = default);
+
     Task<IReadOnlyList<HousingUnitBuyer>> GetByBuyerUserIdAsync(string buyerUserId, CancellationToken cancellationToken = default);
 
     Task<bool> ExistsByHousingUnitIdAndBuyerUserIdAsync(Guid housingUnitId, string buyerUserId, CancellationToken cancellationToken = default);

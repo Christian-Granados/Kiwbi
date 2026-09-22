@@ -1,3 +1,4 @@
+using Amazon.Runtime;
 using Amazon.S3;
 using Amazon.S3.Model;
 using Kiwbi.Application.Common;
@@ -29,6 +30,10 @@ public class S3FileStorageService : IFileStorageService
         {
             ServiceURL = serviceUrl,
             ForcePathStyle = true, // required by R2 and most other S3-compatible providers.
+            // AWSSDK.S3's newer default (WHEN_SUPPORTED) streams a trailing checksum
+            // (STREAMING-AWS4-HMAC-SHA256-PAYLOAD-TRAILER) that R2 rejects with 501 NotImplemented.
+            RequestChecksumCalculation = RequestChecksumCalculation.WHEN_REQUIRED,
+            ResponseChecksumValidation = ResponseChecksumValidation.WHEN_REQUIRED,
         });
     }
 
@@ -56,6 +61,9 @@ public class S3FileStorageService : IFileStorageService
             Key = key,
             InputStream = content,
             ContentType = GetContentType(extension),
+            // R2 doesn't support the SDK's default chunked/streaming SigV4 signature either; our streams are
+            // always seekable so a normal single-pass signed hash works fine.
+            UseChunkEncoding = false,
         }, cancellationToken);
 
         return Result.Success($"{_publicBaseUrl}/{key}");

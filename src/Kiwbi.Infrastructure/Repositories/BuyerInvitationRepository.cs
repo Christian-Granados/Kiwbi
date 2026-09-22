@@ -25,6 +25,11 @@ public class BuyerInvitationRepository : IBuyerInvitationRepository
             .OrderByDescending(i => i.CreatedAtUtc)
             .ToListAsync(cancellationToken);
 
+    public async Task<IReadOnlyList<BuyerInvitation>> GetByHousingUnitIdsAsync(IEnumerable<Guid> housingUnitIds, CancellationToken cancellationToken = default) =>
+        await _dbContext.BuyerInvitations
+            .Where(i => housingUnitIds.Contains(i.HousingUnitId))
+            .ToListAsync(cancellationToken);
+
     public Task<BuyerInvitation?> GetByTokenAsync(string token, CancellationToken cancellationToken = default) =>
         _dbContext.BuyerInvitations.FirstOrDefaultAsync(i => i.Token == token, cancellationToken);
 

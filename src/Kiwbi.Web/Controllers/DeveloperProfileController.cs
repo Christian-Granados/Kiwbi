@@ -1,4 +1,5 @@
 using Kiwbi.Application.Developers.GetCurrentDeveloperProfile;
+using Kiwbi.Application.Developers.GetDeveloperCompanyOverview;
 using Kiwbi.Application.Developers.UpdateDeveloperBranding;
 using Kiwbi.Application.Developers.UploadDeveloperBrandingLogo;
 using Kiwbi.Application.Developers.UpdateDeveloperProfile;
@@ -12,17 +13,20 @@ namespace Kiwbi.Web.Controllers;
 public class DeveloperProfileController : Controller
 {
     private readonly GetCurrentDeveloperProfileUseCase _getCurrentDeveloperProfileUseCase;
+    private readonly GetDeveloperCompanyOverviewUseCase _getDeveloperCompanyOverviewUseCase;
     private readonly UpdateDeveloperProfileUseCase _updateDeveloperProfileUseCase;
     private readonly UpdateDeveloperBrandingUseCase _updateDeveloperBrandingUseCase;
     private readonly UploadDeveloperBrandingLogoUseCase _uploadDeveloperBrandingLogoUseCase;
 
     public DeveloperProfileController(
         GetCurrentDeveloperProfileUseCase getCurrentDeveloperProfileUseCase,
+        GetDeveloperCompanyOverviewUseCase getDeveloperCompanyOverviewUseCase,
         UpdateDeveloperProfileUseCase updateDeveloperProfileUseCase,
         UpdateDeveloperBrandingUseCase updateDeveloperBrandingUseCase,
         UploadDeveloperBrandingLogoUseCase uploadDeveloperBrandingLogoUseCase)
     {
         _getCurrentDeveloperProfileUseCase = getCurrentDeveloperProfileUseCase;
+        _getDeveloperCompanyOverviewUseCase = getDeveloperCompanyOverviewUseCase;
         _updateDeveloperProfileUseCase = updateDeveloperProfileUseCase;
         _updateDeveloperBrandingUseCase = updateDeveloperBrandingUseCase;
         _uploadDeveloperBrandingLogoUseCase = uploadDeveloperBrandingLogoUseCase;
@@ -38,7 +42,10 @@ public class DeveloperProfileController : Controller
             return Forbid();
         }
 
-        return View(DeveloperProfileViewModel.FromDto(result.Value!));
+        var overviewResult = await _getDeveloperCompanyOverviewUseCase.ExecuteAsync(cancellationToken);
+        var overview = overviewResult.IsSuccess ? overviewResult.Value! : new DeveloperCompanyOverviewDto(0, 0, 0, 0);
+
+        return View(DeveloperProfileViewModel.FromDto(result.Value!, overview));
     }
 
     [HttpGet]

@@ -25,6 +25,11 @@ public class HousingUnitBuyerRepository : IHousingUnitBuyerRepository
             .OrderBy(b => b.CreatedAtUtc)
             .ToListAsync(cancellationToken);
 
+    public async Task<IReadOnlyList<HousingUnitBuyer>> GetByHousingUnitIdsAsync(IEnumerable<Guid> housingUnitIds, CancellationToken cancellationToken = default) =>
+        await _dbContext.HousingUnitBuyers
+            .Where(b => housingUnitIds.Contains(b.HousingUnitId))
+            .ToListAsync(cancellationToken);
+
     public async Task<IReadOnlyList<HousingUnitBuyer>> GetByBuyerUserIdAsync(string buyerUserId, CancellationToken cancellationToken = default) =>
         await _dbContext.HousingUnitBuyers
             .Where(b => b.BuyerUserId == buyerUserId)
