@@ -65,6 +65,7 @@ public class SmtpEmailSender : IEmailSender
         {
             Credentials = new NetworkCredential(username, password),
             EnableSsl = true,
+            Timeout = 15000, // fail fast instead of SmtpClient's 100s default - a hang almost always means the SMTP port is unreachable, not a slow-but-working send.
         };
 
         using var message = new MailMessage
@@ -78,7 +79,15 @@ public class SmtpEmailSender : IEmailSender
 
         _logger.LogInformation("Sending email to {Email} with subject {Subject}", toEmail, subject);
 
-        await client.SendMailAsync(message, cancellationToken);
+        try
+        {
+            await client.SendMailAsync(message, cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Failed to send email to {Email} via {Host}:{Port}", toEmail, host, port);
+            throw;
+        }
     }
 
     private string RequireConfig(string key) =>
