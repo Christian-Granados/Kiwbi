@@ -24,7 +24,7 @@ Tras el cierre del Epic 10, se hizo una auditoría completa de la aplicación (C
 7. **Cuentas de los servicios de la nube:** las crea el usuario directamente (no el agente), guiándose con los prompts de la sección correspondiente de cada Feature.
 8. **Menú global:** reducido a "Promociones" + "Mi promotora", sin "Ajustes" (hallazgo 3.1) — **ya implementado** (Feature 11.1, ver más abajo), fuera del resto del plan.
 9. **Feature 11.3 (2026-09-21):** no se bloquea la desvinculación de un comprador en ningún caso. Si la vivienda ya tiene elecciones `Confirmed`/`Paid`, se muestra un mensaje de confirmación explícito advirtiendo de ello ("esta vivienda ya tiene gestiones de personalización confirmadas/pagadas para este comprador, ¿seguro que quieres desvincularlo igualmente?"); si el usuario confirma, se procede igual. Sin mensaje especial si no hay ninguna elección en esos estados (confirmación genérica, igual que el resto de acciones destructivas de la app).
-10. **Feature 11.9 (2026-09-21):** repositorio confirmado **público** → se activan las dos capas: Capa 1 (analizadores Roslyn + `dotnet format`) y Capa 2 (SonarCloud, gratis sin límite de líneas al ser público) + adicionalmente **CodeQL** nativo de GitHub (escaneo de seguridad, gratis para repos públicos, sin cuenta externa ni secreto — se activa solo con un workflow, cero fricción). Ver "Recomendación" en la Feature 11.9 más abajo.
+10. **Feature 11.9 (2026-09-21, corregido 2026-09-22):** se activan las tres capas asumiendo repositorio público, pero **el repositorio es hoy privado** (el usuario tiene previsto hacerlo público en breve). SonarCloud funciona igual en privado (verificado: analiza 17k líneas sin bloqueo del plan gratuito). CodeQL puede requerir GitHub Advanced Security en repos privados — pendiente de confirmar si el workflow `codeql.yml` corre sin restricciones hasta que el repo pase a público (que lo resolvería automáticamente, gratis, sin cambios de código). Ver "Resultado" en la Feature 11.9 más abajo.
 
 ## Frente A — Correcciones y flujos que faltan
 
@@ -308,13 +308,22 @@ Resuelve la parte de automatización de calidad ya presente en el roadmap. Workf
 
 ### Feature 11.9 — Calidad de código automatizada
 
-**Decisión y recomendación (2026-09-21):** repositorio público confirmado → recomiendo activar las **tres** capas, las tres 100% gratis sin límite al ser público, sin solaparse entre sí (cada una cubre un ángulo distinto):
+**Decisión y recomendación (2026-09-21):** se activan las **tres** capas. Corrección (2026-09-22): el repositorio es **privado** hoy, no público como se asumió — no cambia la implementación (SonarCloud ya funciona igual en privado, verificado con datos reales), solo el `CodeQL` podría estar limitado por GitHub Advanced Security hasta que el repo pase a público (previsto por el usuario en breve, lo resolvería sin tocar nada):
 
 - **Capa 1 (implementada, sin cuentas externas):** `EnableNETAnalyzers=true` explícito vía `Directory.Build.props` (ya era el default del SDK, se deja explícito) + `dotnet format --verify-no-changes` como *gate* real en `ci.yml`. Se probó subir `AnalysisLevel` a `latest-all` y se descartó: ~2.000 warnings, mayoritariamente `CA2007` (`ConfigureAwait`, una regla que Microsoft mismo dice que no aplica a apps ASP.NET Core) — puro ruido sin presupuesto para triarlo, así que se mantiene el nivel de análisis por defecto del SDK (0 warnings hoy).
-- **Capa 2 (implementada, pendiente de que crees la cuenta):** SonarCloud vía `dotnet-sonarscanner` (workflow separado `sonarcloud.yml`, no bloquea merges) — detecta duplicación, code smells reales y cobertura de tests, gratis sin límite de líneas al ser público. Preferido sobre la action genérica `sonarsource/sonarcloud-github-action` porque `dotnet-sonarscanner` es el enfoque oficial recomendado para soluciones .NET con varios `.csproj`.
-- **Capa 3 (implementada, nueva, cero fricción):** CodeQL nativo de GitHub (`codeql.yml`) — escaneo de seguridad (inyección SQL, XSS, secretos hardcodeados) gratis para repos públicos, sin cuenta externa ni secreto, ya funcionará desde el primer push. Complementa a SonarCloud (seguridad vs. mantenibilidad/code smells) en vez de solapar.
+- **Capa 2 (implementada y verificada con datos reales 2026-09-22):** SonarCloud vía `dotnet-sonarscanner` (workflow separado `sonarcloud.yml`, no bloquea merges) — detecta duplicación, code smells reales y cobertura de tests. Preferido sobre la action genérica `sonarsource/sonarcloud-github-action` porque `dotnet-sonarscanner` es el enfoque oficial recomendado para soluciones .NET con varios `.csproj`.
+- **Capa 3 (implementada, pendiente de verificar en repo privado):** CodeQL nativo de GitHub (`codeql.yml`) — escaneo de seguridad (inyección SQL, XSS, secretos hardcodeados). Gratis sin restricciones para repos públicos; en repos privados puede requerir GitHub Advanced Security — pendiente de comprobar si corre hoy sin bloqueos.
 
-Esta combinación es la recomendación final: máxima cobertura de "buenas prácticas" posible a coste $0 dado que el repo es público, sin necesitar más esfuerzo de mantenimiento que revisar los resultados de vez en cuando (ninguna de las tres bloquea el desarrollo salvo el format-check, que ya pasa limpio).
+Esta combinación es la recomendación final: máxima cobertura de "buenas prácticas" posible a coste $0, sin necesitar más esfuerzo de mantenimiento que revisar los resultados de vez en cuando (ninguna de las tres bloquea el desarrollo salvo el format-check, que ya pasa limpio).
+
+### Resultado — primer análisis real de SonarCloud (2026-09-22)
+
+- **Overall Code** (17k líneas, todo el histórico del proyecto): Security 5 issues abiertos (rating C), Reliability 55 issues abiertos (rating C), Maintainability 50 issues abiertos (rating A), Duplicación 10.1% sobre 21k líneas.
+- **New Code** (364 líneas nuevas desde hace 2 días, es decir el propio trabajo de este Epic 11): Quality Gate **Failed** — únicamente por `Security Rating` (2 issues nuevos, rating obtenido inferior al `A` exigido por el perfil `Sonar way`). Cobertura de tests no configurada todavía en SonarCloud (paso adicional pendiente, no bloqueante). Duplicación 0.0% en el código nuevo.
+- **Plan de triaje acordado (no arreglar los 110 issues del histórico de golpe, es un PoC):** 1) revisar primero los 2 issues de seguridad del **New Code** (los que rompen el Quality Gate y son del trabajo reciente, tamaño manejable) — pendiente de que el usuario abra la pestaña "Issues" de SonarCloud (filtro Type=Vulnerability + New Code) y comparta regla/fichero concretos, ya que no son visibles desde aquí; 2) el resto (5 Security/55 Reliability/50 Maintainability acumulados en todo el histórico) queda como backlog a revisar de forma incremental, no bloqueante para cerrar este Epic.
+- **Pendiente de confirmar:** si `codeql.yml` corre sin bloqueos en el repo privado actual (Security → Code scanning alerts) o si necesita esperar a que el repo pase a público.
+
+**Novedad (2026-09-22):** los 3 workflows (`ci.yml`/`codeql.yml`/`sonarcloud.yml`) ahora incluyen `workflow_dispatch`, así que se pueden lanzar manualmente desde la pestaña Actions eligiendo cualquier rama, sin necesidad de un push/PR real.
 
 **Prompt para pedir la guía a otra IA (solo si se decide activar la Capa 2):**
 ```
@@ -348,6 +357,9 @@ secretos de GitHub que debo crear.
 - [x] Capa 1: `Directory.Build.props` (`EnableNETAnalyzers` explícito) + `dotnet format --verify-no-changes` ya en `ci.yml` (Feature 11.8).
 - [x] Capa 3: `.github/workflows/codeql.yml` creado (escaneo de seguridad nativo, sin secretos, correrá desde el primer push).
 - [ ] Capa 2: `.github/workflows/sonarcloud.yml` ya creado, pero **fallará hasta que crees la cuenta SonarCloud y añadas el secreto `SONAR_TOKEN`** (Settings → Secrets and variables → Actions → New repository secret) — usuario ejecuta el prompt de arriba cuando quiera activarla; no bloquea nada mientras tanto (workflow separado, no obligatorio).
+- [x] Capa 2 verificada con datos reales (2026-09-22): cuenta creada, `SONAR_TOKEN` configurado, primer análisis completo (ver "Resultado" arriba). Quality Gate del New Code en rojo por Security Rating — pendiente de triaje (ver plan arriba).
+- [ ] Pendiente: usuario comparte el detalle de los 2 issues de seguridad del New Code (pestaña Issues de SonarCloud) para poder corregirlos.
+- [ ] Pendiente: confirmar si `codeql.yml` corre sin bloqueos en el repo privado actual.
 
 ## Backlog (sin Feature asociada, no implementar en este Epic)
 

@@ -5,6 +5,7 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch: {} # Allows a manual "Run workflow" from the Actions tab, choosing any branch.
 
 jobs:
   build-and-test:

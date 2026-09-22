@@ -5,6 +5,7 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch: {} # Allows a manual "Run workflow" from the Actions tab, choosing any branch.
   schedule:
     # Weekly scan even without pushes, catches newly-disclosed vulnerability patterns.
     - cron: "0 4 * * 1"

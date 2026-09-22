@@ -1,13 +1,14 @@
 name: SonarCloud
 
 # NOT a required check for merging (informational quality dashboard, Epic 11 Feature 11.9 Capa 2).
-# Will fail until the SONAR_TOKEN repository secret is created (see epic-11-mvp-closure-and-deployment.md,
-# Feature 11.9) - that's expected and does not block CI or deploys.
+# SONAR_TOKEN repository secret configured and verified working (2026-09-22) - see
+# epic-11-mvp-closure-and-deployment.md, Feature 11.9, for the current Quality Gate status/triage plan.
 on:
   push:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch: {} # Allows a manual "Run workflow" from the Actions tab, choosing any branch.
 
 jobs:
   sonarcloud:
