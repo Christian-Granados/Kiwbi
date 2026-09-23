@@ -428,7 +428,7 @@ table.kiwbi-table tbody tr:last-child td { border-bottom: none; }
 #kiwbi-pub-tab-comprador:checked ~ .kiwbi-pub-tabs label[for="kiwbi-pub-tab-comprador"] { background: #fff; color: var(--kiwbi-brand-primary); box-shadow: 0 1px 2px rgba(15, 23, 42, .08); }
 .kiwbi-pub-steps-comprador { display: none; }
 #kiwbi-pub-tab-comprador:checked ~ .kiwbi-pub-steps .kiwbi-pub-steps-promotora { display: none; }
-#kiwbi-pub-tab-comprador:checked ~ .kiwbi-pub-steps .kiwbi-pub-steps-comprador { display: grid; }
+#kiwbi-pub-tab-comprador:checked ~ .kiwbi-pub-steps .kiwbi-pub-steps-comprador { display: flex; }
 
 .kiwbi-pub-step { border: 1px solid var(--kiwbi-border); border-radius: 1rem; background: #fff; padding: 1.25rem; box-shadow: 0 1px 2px rgba(15, 23, 42, .04); height: 100%; }
 .kiwbi-pub-step-icon { width: 2.75rem; height: 2.75rem; border-radius: 0.75rem; background: #f0fdfa; color: var(--kiwbi-brand-primary); display: flex; align-items: center; justify-content: center; }
