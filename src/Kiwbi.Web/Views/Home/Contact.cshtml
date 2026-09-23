@@ -1,0 +1,48 @@
+@{
+    ViewData["Title"] = "Contacto";
+    Layout = "_LandingLayout";
+    string? contactEmail = ViewBag.ContactEmail as string;
+}
+
+<header class="kiwbi-pub-navbar">
+    <nav class="container-xl d-flex align-items-center justify-content-between py-3">
+        <a class="kiwbi-pub-logo" asp-controller="Home" asp-action="Index">
+            <span class="kiwbi-pub-mark">K</span>
+            <span class="kiwbi-pub-logo-text">Kiwbi</span>
+        </a>
+        <div class="d-flex align-items-center gap-2 gap-sm-3">
+            <a class="btn btn-link text-decoration-none text-body fw-semibold" asp-controller="Account" asp-action="Login">Iniciar sesión</a>
+            <a class="btn btn-kiwbi-brand rounded-3 fw-semibold px-3" asp-controller="Account" asp-action="Register">Crear cuenta gratis</a>
+        </div>
+    </nav>
+</header>
+
+<main>
+    <section class="container-xl py-5 text-center" style="max-width:36rem;">
+        <h1 class="display-6 mb-3">Contacto</h1>
+        @if (!string.IsNullOrWhiteSpace(contactEmail))
+        {
+            <p class="lead text-muted">¿Tienes alguna duda? Escríbenos y te respondemos lo antes posible.</p>
+            <a class="btn btn-kiwbi-brand rounded-3 fw-semibold px-4 mt-2" href="mailto:@contactEmail">@contactEmail</a>
+        }
+        else
+        {
+            <p class="lead text-muted">Todavía no hemos publicado un email de contacto. Vuelve pronto.</p>
+        }
+    </section>
+</main>
+
+<footer class="kiwbi-pub-footer">
+    <div class="container-xl py-4 d-flex flex-column flex-sm-row align-items-center justify-content-between gap-3">
+        <a class="kiwbi-pub-logo" asp-controller="Home" asp-action="Index">
+            <span class="kiwbi-pub-mark">K</span>
+            <span class="kiwbi-pub-logo-text">Kiwbi</span>
+        </a>
+        <nav class="d-flex flex-wrap align-items-center gap-4 small">
+            <a class="text-body text-decoration-none fw-semibold" asp-controller="Account" asp-action="Login">Iniciar sesión</a>
+            <a class="text-muted text-decoration-none" asp-controller="Home" asp-action="Privacy">Privacidad</a>
+            <a class="text-muted text-decoration-none" asp-controller="Home" asp-action="Contact">Contacto</a>
+        </nav>
+        <p class="text-muted small mb-0">© @DateTime.UtcNow.Year Kiwbi</p>
+    </div>
+</footer>

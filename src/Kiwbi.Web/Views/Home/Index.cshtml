@@ -261,8 +261,8 @@
         </a>
         <nav class="d-flex flex-wrap align-items-center gap-4 small">
             <a class="text-body text-decoration-none fw-semibold" asp-controller="Account" asp-action="Login">Iniciar sesión</a>
-            <a class="text-muted text-decoration-none" href="#">Privacidad</a>
-            <a class="text-muted text-decoration-none" href="#">Contacto</a>
+            <a class="text-muted text-decoration-none" asp-controller="Home" asp-action="Privacy">Privacidad</a>
+            <a class="text-muted text-decoration-none" asp-controller="Home" asp-action="Contact">Contacto</a>
         </nav>
         <p class="text-muted small mb-0">© @DateTime.UtcNow.Year Kiwbi</p>
     </div>

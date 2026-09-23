@@ -4,7 +4,7 @@ using Kiwbi.Web.Models;
 
 namespace Kiwbi.Web.Controllers;
 
-public class HomeController : Controller
+public class HomeController(IConfiguration configuration) : Controller
 {
     public IActionResult Index()
     {
@@ -13,6 +13,12 @@ public class HomeController : Controller
 
     public IActionResult Privacy()
     {
+        return View();
+    }
+
+    public IActionResult Contact()
+    {
+        ViewBag.ContactEmail = configuration["Contact:Email"];
         return View();
     }
 

@@ -1,6 +1,54 @@
 ﻿@{
-    ViewData["Title"] = "Privacy Policy";
+    ViewData["Title"] = "Privacidad";
+    Layout = "_LandingLayout";
 }
-<h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+<header class="kiwbi-pub-navbar">
+    <nav class="container-xl d-flex align-items-center justify-content-between py-3">
+        <a class="kiwbi-pub-logo" asp-controller="Home" asp-action="Index">
+            <span class="kiwbi-pub-mark">K</span>
+            <span class="kiwbi-pub-logo-text">Kiwbi</span>
+        </a>
+        <div class="d-flex align-items-center gap-2 gap-sm-3">
+            <a class="btn btn-link text-decoration-none text-body fw-semibold" asp-controller="Account" asp-action="Login">Iniciar sesión</a>
+            <a class="btn btn-kiwbi-brand rounded-3 fw-semibold px-3" asp-controller="Account" asp-action="Register">Crear cuenta gratis</a>
+        </div>
+    </nav>
+</header>
+
+<main>
+    <section class="container-xl py-5" style="max-width:48rem;">
+        <h1 class="display-6 mb-4">Política de privacidad</h1>
+        <p class="text-muted">Última actualización: @DateTime.UtcNow.ToString("d 'de' MMMM 'de' yyyy", new System.Globalization.CultureInfo("es-ES"))</p>
+
+        <h2 class="h5 mt-4">Qué datos recogemos</h2>
+        <p>Al crear una cuenta o aceptar una invitación en Kiwbi tratamos los datos que nos facilitas directamente: nombre, email y, si aplica, los datos de la promoción, vivienda o personalización asociados a tu cuenta.</p>
+
+        <h2 class="h5 mt-4">Para qué los usamos</h2>
+        <p>Usamos estos datos exclusivamente para prestar el servicio: gestionar tu acceso, mostrarte la información de tu promoción o vivienda, y enviarte las comunicaciones necesarias (por ejemplo, invitaciones o enlaces de acceso por email).</p>
+
+        <h2 class="h5 mt-4">Con quién los compartimos</h2>
+        <p>No vendemos ni cedemos tus datos a terceros con fines comerciales. Solo recurrimos a proveedores externos necesarios para operar el servicio (por ejemplo, envío de email transaccional o almacenamiento de archivos), que tratan los datos en nuestro nombre y bajo nuestras instrucciones.</p>
+
+        <h2 class="h5 mt-4">Cookies</h2>
+        <p>Kiwbi utiliza únicamente una cookie de sesión necesaria para mantener tu inicio de sesión. No usamos cookies de publicidad ni de seguimiento de terceros.</p>
+
+        <h2 class="h5 mt-4">Tus derechos</h2>
+        <p>Puedes solicitar el acceso, la rectificación o la eliminación de tus datos escribiéndonos a través de la página de <a asp-controller="Home" asp-action="Contact">contacto</a>.</p>
+    </section>
+</main>
+
+<footer class="kiwbi-pub-footer">
+    <div class="container-xl py-4 d-flex flex-column flex-sm-row align-items-center justify-content-between gap-3">
+        <a class="kiwbi-pub-logo" asp-controller="Home" asp-action="Index">
+            <span class="kiwbi-pub-mark">K</span>
+            <span class="kiwbi-pub-logo-text">Kiwbi</span>
+        </a>
+        <nav class="d-flex flex-wrap align-items-center gap-4 small">
+            <a class="text-body text-decoration-none fw-semibold" asp-controller="Account" asp-action="Login">Iniciar sesión</a>
+            <a class="text-muted text-decoration-none" asp-controller="Home" asp-action="Privacy">Privacidad</a>
+            <a class="text-muted text-decoration-none" asp-controller="Home" asp-action="Contact">Contacto</a>
+        </nav>
+        <p class="text-muted small mb-0">© @DateTime.UtcNow.Year Kiwbi</p>
+    </div>
+</footer>
