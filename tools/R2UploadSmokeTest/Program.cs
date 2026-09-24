@@ -1,6 +1,7 @@
 using Amazon.Runtime;
 using Amazon.S3;
 using Amazon.S3.Model;
+using static Kiwbi.Tools.Shared.ConsoleInput;
 
 // Standalone diagnostic tool (Feature 11.4, Cloudflare R2 smoke test). Intentionally NOT part of Kiwbi.slnx and NOT
 // referencing Kiwbi.Infrastructure: it only exists to confirm real R2 credentials/bucket work end-to-end, without
@@ -81,39 +82,3 @@ catch (Exception ex)
 
 Console.WriteLine();
 Console.WriteLine("Fin. Esta herramienta no ha escrito ninguna credencial en disco.");
-
-static string ReadValue(string label)
-{
-    Console.Write($"{label}: ");
-    return (Console.ReadLine() ?? string.Empty).Trim();
-}
-
-static string ReadSecret(string label)
-{
-    Console.Write($"{label}: ");
-    var secret = new System.Text.StringBuilder();
-    ConsoleKeyInfo key;
-
-    while ((key = Console.ReadKey(intercept: true)).Key != ConsoleKey.Enter)
-    {
-        if (key.Key == ConsoleKey.Backspace)
-        {
-            if (secret.Length > 0)
-            {
-                secret.Remove(secret.Length - 1, 1);
-                Console.Write("\b \b");
-            }
-
-            continue;
-        }
-
-        if (!char.IsControl(key.KeyChar))
-        {
-            secret.Append(key.KeyChar);
-            Console.Write('*');
-        }
-    }
-
-    Console.WriteLine();
-    return secret.ToString();
-}

@@ -8,4 +8,8 @@
     <InvariantGlobalization>true</InvariantGlobalization>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Compile Include="..\Shared\ConsoleInput.cs" Link="ConsoleInput.cs" />
+  </ItemGroup>
+
 </Project>

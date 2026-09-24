@@ -10,4 +10,8 @@
     <Project Path="tests/Kiwbi.Domain.Tests/Kiwbi.Domain.Tests.csproj" />
     <Project Path="tests/Kiwbi.Web.Tests/Kiwbi.Web.Tests.csproj" />
   </Folder>
+  <Folder Name="/tools/">
+    <Project Path="tools/R2UploadSmokeTest/R2UploadSmokeTest.csproj" />
+    <Project Path="tools/SmtpSendTest/SmtpSendTest.csproj" />
+  </Folder>
 </Solution>

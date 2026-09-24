@@ -12,4 +12,8 @@
     <PackageReference Include="AWSSDK.S3" Version="4.0.103.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Include="..\Shared\ConsoleInput.cs" Link="ConsoleInput.cs" />
+  </ItemGroup>
+
 </Project>
