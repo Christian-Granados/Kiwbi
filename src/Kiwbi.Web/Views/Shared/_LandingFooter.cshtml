@@ -1,0 +1,14 @@
+<footer class="kiwbi-pub-footer">
+    <div class="container-xl py-4 d-flex flex-column flex-sm-row align-items-center justify-content-between gap-3">
+        <a class="kiwbi-pub-logo" asp-controller="Home" asp-action="Index">
+            <span class="kiwbi-pub-mark">K</span>
+            <span class="kiwbi-pub-logo-text">Kiwbi</span>
+        </a>
+        <nav class="d-flex flex-wrap align-items-center gap-4 small" aria-label="Pie de página">
+            <a class="text-body text-decoration-none fw-semibold" asp-controller="Account" asp-action="Login">Iniciar sesión</a>
+            <a class="text-muted text-decoration-none" asp-controller="Home" asp-action="Privacy">Privacidad</a>
+            <a class="text-muted text-decoration-none" asp-controller="Home" asp-action="Contact">Contacto</a>
+        </nav>
+        <p class="text-muted small mb-0">© @DateTime.UtcNow.Year Kiwbi</p>
+    </div>
+</footer>
