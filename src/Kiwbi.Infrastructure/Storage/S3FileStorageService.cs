@@ -12,7 +12,7 @@ namespace Kiwbi.Infrastructure.Storage;
 public class S3FileStorageService : IFileStorageService
 {
     private const long MaxFileSizeBytes = 10 * 1024 * 1024;
-    private static readonly string[] AllowedExtensions = [".jpg", ".jpeg", ".png", ".webp", ".pdf"];
+    private static readonly string[] AllowedExtensions = [".jpg", ".jpeg", ".png", ".webp"];
 
     private readonly IAmazonS3 _s3Client;
     private readonly string _bucketName;
@@ -43,7 +43,7 @@ public class S3FileStorageService : IFileStorageService
 
         if (string.IsNullOrWhiteSpace(extension) || !AllowedExtensions.Contains(extension))
         {
-            return Result.Failure<string>("Formato de archivo no permitido. Usa JPG, PNG, WEBP o PDF.");
+            return Result.Failure<string>("Formato de archivo no permitido. Usa JPG, PNG o WEBP.");
         }
 
         if (content.Length > MaxFileSizeBytes)
@@ -91,7 +91,6 @@ public class S3FileStorageService : IFileStorageService
         ".jpg" or ".jpeg" => "image/jpeg",
         ".png" => "image/png",
         ".webp" => "image/webp",
-        ".pdf" => "application/pdf",
         _ => "application/octet-stream",
     };
 }

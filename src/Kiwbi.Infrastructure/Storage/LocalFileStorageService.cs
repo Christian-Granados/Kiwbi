@@ -7,7 +7,7 @@ namespace Kiwbi.Infrastructure.Storage;
 public class LocalFileStorageService : IFileStorageService
 {
     private const long MaxFileSizeBytes = 10 * 1024 * 1024;
-    private static readonly string[] AllowedExtensions = [".jpg", ".jpeg", ".png", ".webp", ".pdf"];
+    private static readonly string[] AllowedExtensions = [".jpg", ".jpeg", ".png", ".webp"];
 
     private readonly IWebHostEnvironment _environment;
 
@@ -22,7 +22,7 @@ public class LocalFileStorageService : IFileStorageService
 
         if (string.IsNullOrWhiteSpace(extension) || !AllowedExtensions.Contains(extension))
         {
-            return Result.Failure<string>("Formato de archivo no permitido. Usa JPG, PNG, WEBP o PDF.");
+            return Result.Failure<string>("Formato de archivo no permitido. Usa JPG, PNG o WEBP.");
         }
 
         if (content.Length > MaxFileSizeBytes)

@@ -53,8 +53,8 @@
             <label asp-for="MasterPlanImageFile" class="kiwbi-dropzone" style="padding:2rem 1rem;">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2" /><circle cx="9" cy="9" r="2" /><path d="m21 15-5-5L5 21" /></svg>
                 <strong>Arrastra el plano o haz clic para subirlo</strong>
-                <span class="small kiwbi-dropzone-filename">PNG, JPG, WEBP o PDF · máx. 10 MB</span>
-                <input asp-for="MasterPlanImageFile" type="file" accept=".jpg,.jpeg,.png,.webp,.pdf" class="visually-hidden" />
+                <span class="small kiwbi-dropzone-filename">PNG, JPG o WEBP · máx. 10 MB</span>
+                <input asp-for="MasterPlanImageFile" type="file" accept=".jpg,.jpeg,.png,.webp" class="visually-hidden" />
             </label>
             <span asp-validation-for="MasterPlanImageFile" class="kiwbi-field-error"></span>
         </div>
