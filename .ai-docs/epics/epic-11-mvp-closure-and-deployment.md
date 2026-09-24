@@ -367,6 +367,7 @@ secretos de GitHub que debo crear.
 ## Backlog (sin Feature asociada, no implementar en este Epic)
 
 - **3.7 — Multi-usuario por tenant:** una Promotora hoy es un único `ApplicationUser`. Anotado como futurible; requeriría un modelo de "miembros del equipo" nuevo en Domain/Application, fuera del alcance de este Epic.
+- **Documentación final de entrega del TFM (2026-09-24, ver EPIC 12 en `05-development-roadmap.md`):** el cierre técnico de este Epic (código+despliegue) no incluye los entregables formales del máster. **Pendientes:** slides/presentación del proyecto y vídeo explicativo, ambos con URL pública a añadir en el README. El despliegue ya tiene URL real y documentada (`https://kiwbi.onrender.com`) pero queda pendiente una verificación final antes de la entrega (accesibilidad el día de la corrección, visibilidad del repositorio).
 
 ## Descartado (no reabrir sin nueva decisión explícita)
 

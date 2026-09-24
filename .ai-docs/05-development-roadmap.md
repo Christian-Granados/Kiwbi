@@ -104,3 +104,11 @@ Nace de una auditoría crítica del estado del proyecto (2026-09-20/21) tras el 
 - **Feature 11.9 (✅ Capa 1/3 IMPLEMENTADAS, Capa 2 pendiente de cuenta SonarCloud):** calidad de código automatizada — analizadores de Roslyn + `dotnet format` (Capa 1) y CodeQL (Capa 3, seguridad, repo público) ya activos; SonarCloud (Capa 2, code smells/duplicación) con workflow creado, pendiente del secreto `SONAR_TOKEN`.
 - Descartado explícitamente (sin reabrir sin nueva decisión): auditoría de acciones manuales, notificaciones/recordatorios proactivos, validación de contraste de `BrandColor`.
 - Backlog sin Feature asociada: multi-usuario por tenant (futurible).
+
+### EPIC 12: Documentación final de entrega del TFM
+Requisitos formales de entrega definidos en `Documentacion-TFM-2.md` (documentación complementaria del máster), independientes del código de la aplicación. Sin dependencias con los Epics 1-11 a nivel de datos o infraestructura, pero **bloquean la entrega formal del TFM** aunque el PoC funcional (Epics 1-11) ya esté cerrado.
+- [x] README.md con las 6 secciones exigidas (descripción general, stack, instalación/ejecución, estructura del proyecto, funcionalidades principales, usuario/contraseña de prueba) — ya documentado.
+- [x] Despliegue en funcionamiento con URL pública (`https://kiwbi.onrender.com`, Render) enlazada en la documentación — ya implementado (Epic 11), **pendiente de una verificación/confirmación final** antes de la entrega (repo público u colaboradores añadidos, instancia accesible el día de la corrección).
+- [ ] **Pendiente:** Slides/presentación del proyecto (Google Slides, PowerPoint, Canva, etc.) con URL de acceso público, enlazada en la documentación y/o adjunta en el repositorio.
+- [ ] **Pendiente:** Vídeo explicativo del proyecto (con captura de pantalla obligatoria) con URL de acceso público, enlazada en la documentación.
+- [ ] **Pendiente:** decidir visibilidad final del repositorio (público vs. privado + colaborador `mouredev@gmail.com`) antes de rellenar el formulario de entrega.
