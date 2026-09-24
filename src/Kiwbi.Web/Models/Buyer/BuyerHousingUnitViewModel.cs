@@ -10,6 +10,7 @@ public class BuyerHousingUnitViewModel
     public string Floor { get; set; } = string.Empty;
     public string Door { get; set; } = string.Empty;
     public string? FloorPlanImagePath { get; set; }
+    public string? MasterPlanImagePath { get; set; }
 
     public static BuyerHousingUnitViewModel FromDto(BuyerHousingUnitDto dto) => new()
     {
@@ -19,5 +20,6 @@ public class BuyerHousingUnitViewModel
         Floor = dto.Floor,
         Door = dto.Door,
         FloorPlanImagePath = dto.FloorPlanImagePath,
+        MasterPlanImagePath = dto.MasterPlanImagePath,
     };
 }

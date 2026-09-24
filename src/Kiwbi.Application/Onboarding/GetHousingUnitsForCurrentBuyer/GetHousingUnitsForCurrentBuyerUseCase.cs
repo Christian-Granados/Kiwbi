@@ -58,7 +58,8 @@ public class GetHousingUnitsForCurrentBuyerUseCase
                 promotion.City,
                 unit.Floor,
                 unit.Door,
-                unit.FloorPlanImagePath));
+                unit.FloorPlanImagePath,
+                promotion.MasterPlanImagePath));
         }
 
         return Result.Success<IReadOnlyList<BuyerHousingUnitDto>>(dtos);

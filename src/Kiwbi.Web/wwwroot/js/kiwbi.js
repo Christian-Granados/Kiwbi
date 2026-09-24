@@ -66,6 +66,80 @@
     });
   }
 
+  // Arrastrar-y-soltar sobre una dropzone: sin esto el navegador trata el fichero soltado como una
+  // navegación normal (lo abre en una pestaña/página nueva) en vez de asignarlo al <input type="file">.
+  function initDropzoneDragAndDrop() {
+    var zones = document.querySelectorAll('.kiwbi-dropzone');
+    if (!zones.length) return;
+
+    // Red de seguridad: si el soltar ocurre justo fuera de la dropzone, evita igualmente la navegación.
+    document.addEventListener('dragover', function (e) { e.preventDefault(); });
+    document.addEventListener('drop', function (e) { e.preventDefault(); });
+
+    zones.forEach(function (zone) {
+      var input = zone.querySelector('input[type="file"]');
+      if (!input) return;
+
+      ['dragenter', 'dragover'].forEach(function (evt) {
+        zone.addEventListener(evt, function (e) {
+          e.preventDefault();
+          zone.classList.add('kiwbi-dropzone-dragover');
+        });
+      });
+
+      ['dragleave', 'drop'].forEach(function (evt) {
+        zone.addEventListener(evt, function (e) {
+          e.preventDefault();
+          zone.classList.remove('kiwbi-dropzone-dragover');
+        });
+      });
+
+      zone.addEventListener('drop', function (e) {
+        var files = e.dataTransfer && e.dataTransfer.files;
+        if (!files || !files.length) return;
+        input.files = files;
+        input.dispatchEvent(new Event('change', { bubbles: true }));
+      });
+    });
+  }
+
+  // Lightbox de un solo uso compartido por todas las imágenes .kiwbi-plan-zoomable (planos de
+  // vivienda/promoción): clic para ver a tamaño grande en la misma pantalla, sin abrir otra pestaña.
+  function initPlanLightbox() {
+    var images = document.querySelectorAll('.kiwbi-plan-zoomable');
+    if (!images.length) return;
+
+    var overlay = document.createElement('div');
+    overlay.className = 'kiwbi-lightbox-overlay';
+    overlay.innerHTML =
+      '<button type="button" class="kiwbi-lightbox-close" aria-label="Cerrar">' +
+      '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>' +
+      '</button><img alt="" />';
+    document.body.appendChild(overlay);
+
+    var overlayImg = overlay.querySelector('img');
+
+    function close() {
+      overlay.classList.remove('active');
+      overlayImg.src = '';
+    }
+
+    images.forEach(function (img) {
+      img.addEventListener('click', function (e) {
+        e.preventDefault();
+        overlayImg.src = img.src;
+        overlayImg.alt = img.alt || '';
+        overlay.classList.add('active');
+      });
+    });
+
+    overlay.addEventListener('click', close);
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') close();
+    });
+  }
+
   // Mi promotora (EditBranding): sincroniza cada input[type=color] con su hex de texto adyacente,
   // y actualiza la variable CSS (--preview-accent/--preview-accent-2) que alimenta la vista previa.
   function initColorFieldSync() {
@@ -153,6 +227,8 @@
     initScopeSelector();
     initPillToggles();
     initDropzoneFileNames();
+    initDropzoneDragAndDrop();
+    initPlanLightbox();
     initColorFieldSync();
     initPalettePresets();
     initStatusSelectColors();

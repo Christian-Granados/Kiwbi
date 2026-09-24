@@ -228,6 +228,7 @@ table.kiwbi-table tbody tr:last-child td { border-bottom: none; }
   padding: 1.5rem 1rem; text-align: center; cursor: pointer; color: var(--kiwbi-text-faint);
 }
 .kiwbi-dropzone:hover { border-color: #94a3b8; }
+.kiwbi-dropzone.kiwbi-dropzone-dragover { border-color: var(--kiwbi-accent); box-shadow: 0 0 0 2px var(--kiwbi-accent) inset; }
 .kiwbi-dropzone strong { font-size: 0.875rem; font-weight: 500; color: var(--kiwbi-text); }
 
 .kiwbi-plano-preview {
@@ -236,6 +237,19 @@ table.kiwbi-table tbody tr:last-child td { border-bottom: none; }
   align-items: center; justify-content: center; gap: 0.25rem; color: var(--kiwbi-text-faint);
 }
 .kiwbi-plano-preview img { width: 100%; height: 100%; object-fit: contain; padding: 0.5rem; }
+
+.kiwbi-plan-zoomable { cursor: zoom-in; }
+.kiwbi-lightbox-overlay {
+  display: none; position: fixed; inset: 0; z-index: 1080; background: rgba(15, 23, 42, .85);
+  align-items: center; justify-content: center; padding: 2rem; cursor: zoom-out;
+}
+.kiwbi-lightbox-overlay.active { display: flex; }
+.kiwbi-lightbox-overlay img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 0.5rem; box-shadow: 0 20px 60px rgba(0, 0, 0, .4); }
+.kiwbi-lightbox-close {
+  position: absolute; top: 1rem; right: 1.25rem; width: 2.25rem; height: 2.25rem; border-radius: 50%; border: none;
+  background: rgba(255, 255, 255, .15); color: #fff; display: flex; align-items: center; justify-content: center; cursor: pointer;
+}
+.kiwbi-lightbox-close:hover { background: rgba(255, 255, 255, .3); }
 
 /* Detalle de Personalización (opciones + asignación). */
 .kiwbi-option-row { display: flex; align-items: center; gap: 0.75rem; padding: 0.75rem 1rem; border-bottom: 1px solid var(--kiwbi-border-soft); }
@@ -338,6 +352,17 @@ table.kiwbi-table tbody tr:last-child td { border-bottom: none; }
 }
 .kiwbi-buyer-card:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(15, 23, 42, .08); color: inherit; }
 .kiwbi-buyer-card-plano { aspect-ratio: 4 / 3; background: var(--kiwbi-border-soft); display: flex; align-items: center; justify-content: center; color: var(--kiwbi-text-faint); }
+.kiwbi-buyer-card-planos { aspect-ratio: 4 / 3; background: var(--kiwbi-border-soft); display: flex; }
+.kiwbi-buyer-card-plano-half {
+  flex: 1 1 50%; position: relative; display: flex; align-items: center; justify-content: center;
+  color: var(--kiwbi-text-faint); overflow: hidden;
+}
+.kiwbi-buyer-card-plano-half + .kiwbi-buyer-card-plano-half { border-left: 1px solid var(--kiwbi-border); }
+.kiwbi-buyer-card-plano-half img { width: 100%; height: 100%; object-fit: cover; }
+.kiwbi-buyer-card-plano-caption {
+  position: absolute; left: 0.35rem; bottom: 0.35rem; font-size: 0.6rem; font-weight: 600;
+  padding: 0.05rem 0.4rem; border-radius: 999px; background: rgba(15, 23, 42, .6); color: #fff;
+}
 .kiwbi-buyer-card-body { padding: 1rem; }
 .kiwbi-buyer-tenant-dot { width: 0.5rem; height: 0.5rem; border-radius: 50%; display: inline-block; }
 

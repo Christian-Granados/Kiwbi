@@ -7,4 +7,5 @@ public sealed record BuyerHousingUnitDto(
     string City,
     string Floor,
     string Door,
-    string? FloorPlanImagePath);
+    string? FloorPlanImagePath,
+    string? MasterPlanImagePath);

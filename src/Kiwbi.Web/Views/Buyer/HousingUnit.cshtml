@@ -37,7 +37,7 @@
             <div class="kiwbi-table-card-header"><span class="title">Plano de tu vivienda</span></div>
             @if (!string.IsNullOrWhiteSpace(unit.FloorPlanImagePath))
             {
-                <img src="@unit.FloorPlanImagePath" alt="Plano de la vivienda" style="width:100%;aspect-ratio:16/9;object-fit:contain;background:var(--kiwbi-bg);" />
+                <img src="@unit.FloorPlanImagePath" alt="Plano de la vivienda" class="kiwbi-plan-zoomable" style="width:100%;aspect-ratio:16/9;object-fit:contain;background:var(--kiwbi-bg);" />
             }
             else
             {
