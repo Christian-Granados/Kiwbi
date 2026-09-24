@@ -1,6 +1,7 @@
 @model Kiwbi.Web.Models.Buyer.CustomizationCardViewModel
 @{
     var customization = Model.Customization;
+    var isLocked = !customization.CanSelect;
 }
 
 <div id="customization-@customization.Id" class="mb-4">
@@ -8,25 +9,22 @@
     <div class="row row-cols-1 row-cols-sm-3 g-2">
         @foreach (var option in customization.Options)
         {
+            var isOptionLocked = isLocked && !option.IsEffectiveSelection;
             <div class="col">
-                <div class="kiwbi-option-card @(option.IsEffectiveSelection ? "selected" : "")">
+                <div class="kiwbi-option-card @(option.IsEffectiveSelection ? "selected" : "") @(isOptionLocked ? "kiwbi-option-locked" : "")"
+                     title="@(isOptionLocked ? "El plazo de selección ha finalizado y ya no se puede cambiar" : null)">
                     <span class="kiwbi-option-thumb"></span>
                     <span class="flex-fill text-start">
-                        <span class="d-block fw-semibold" style="font-size:.85rem;">
-                            @option.Name
-                            @if (option.IsDefault)
-                            {
-                                <span class="small text-muted fw-normal">(por defecto)</span>
-                            }
-                        </span>
+                        <span class="d-block fw-semibold" style="font-size:.85rem;">@option.Name</span>
+                        <span class="kiwbi-option-default-tag @(option.IsDefault ? "" : "invisible")">Por defecto</span>
                     </span>
                     @if (option.SurchargeAmount > 0)
                     {
-                        <span class="small fw-semibold" style="color:var(--kiwbi-accent);">+@option.SurchargeAmount.ToString("0.##") €</span>
+                        <span class="small fw-semibold kiwbi-option-price" style="color:var(--kiwbi-accent);">+@option.SurchargeAmount.ToString("0.##") €</span>
                     }
                     else
                     {
-                        <span class="small fw-semibold text-muted">Incluido</span>
+                        <span class="small fw-semibold text-muted kiwbi-option-price">Incluido</span>
                     }
                     @if (option.IsEffectiveSelection)
                     {
@@ -44,14 +42,19 @@
                     }
                     else
                     {
-                        <span class="kiwbi-option-check"></span>
+                        <span class="kiwbi-option-check kiwbi-option-lock">
+                            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="5" y="11" width="14" height="9" rx="1.5" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg>
+                        </span>
                     }
                 </div>
             </div>
         }
     </div>
-    @if (!customization.CanSelect)
+    @if (isLocked)
     {
-        <p class="text-muted small mt-1">El plazo de selección para este gremio ha finalizado; se aplica la opción indicada arriba.</p>
+        <div class="kiwbi-closed-notice mt-2">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="9" rx="1.5" /><path d="M8 11V8a4 4 0 0 1 8 0v3" /></svg>
+            <span>El plazo de selección para este gremio ha finalizado; se aplica la opción marcada arriba y ya no se puede modificar.</span>
+        </div>
     }
 </div>

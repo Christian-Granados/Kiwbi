@@ -358,7 +358,10 @@ table.kiwbi-table tbody tr:last-child td { border-bottom: none; }
   display: inline-flex; align-items: center; gap: 0.3rem; border-radius: 999px; padding: 0.15rem 0.6rem; font-size: 0.7rem; font-weight: 500;
 }
 .kiwbi-gremio-badge-open { color: var(--kiwbi-accent); background: var(--kiwbi-bg); }
-.kiwbi-gremio-badge-expired { color: var(--kiwbi-text-muted); background: var(--kiwbi-border-soft); }
+.kiwbi-gremio-badge-expired { color: #b45309; background: #fef3c7; }
+/* El gremio cerrado necesita destacar más allá de la insignia: tiñe también el borde y la cabecera. */
+.kiwbi-gremio-card.expired { border-color: #fde68a; }
+.kiwbi-gremio-card.expired .kiwbi-gremio-card-header { background: #fffbeb; }
 .kiwbi-gremio-card.expired .kiwbi-option-card { opacity: .7; }
 
 .kiwbi-option-card {
@@ -366,12 +369,31 @@ table.kiwbi-table tbody tr:last-child td { border-bottom: none; }
   border: 1px solid var(--kiwbi-border); border-radius: 0.75rem; padding: 0.75rem; background: #fff;
 }
 .kiwbi-option-card.selected { border-color: var(--kiwbi-accent); background: var(--kiwbi-bg); }
+.kiwbi-option-card.kiwbi-option-locked { cursor: not-allowed; }
 .kiwbi-option-thumb { width: 2.75rem; height: 2.75rem; border-radius: 0.5rem; background: var(--kiwbi-border-soft); flex-shrink: 0; }
+/* Línea reservada para "(por defecto)": siempre ocupa el mismo alto (visible u oculta con .invisible)
+   para que ninguna tarjeta de opción crezca más que sus hermanas de la misma fila. */
+.kiwbi-option-default-tag { display: block; font-size: 0.68rem; line-height: 1.15; font-weight: 500; color: var(--kiwbi-text-faint); margin-top: 0.1rem; }
+.kiwbi-option-price { white-space: nowrap; flex-shrink: 0; }
 .kiwbi-option-check {
   width: 1.5rem; height: 1.5rem; border-radius: 50%; background: var(--kiwbi-border); flex-shrink: 0;
   display: flex; align-items: center; justify-content: center; color: #fff;
 }
 .kiwbi-option-card.selected .kiwbi-option-check { background: var(--kiwbi-accent); }
+.kiwbi-option-check.kiwbi-option-lock { background: var(--kiwbi-border-soft); color: var(--kiwbi-text-faint); }
+
+/* Aviso de plazo finalizado (bajo las opciones bloqueadas) y el "flash" al intentar tocar otra opción. */
+.kiwbi-closed-notice {
+  display: flex; align-items: center; gap: 0.4rem; border: 1px solid #fde68a; background: #fffbeb; color: #b45309;
+  border-radius: 0.5rem; padding: 0.45rem 0.7rem; font-size: 0.75rem; font-weight: 500;
+}
+.kiwbi-closed-notice svg { flex-shrink: 0; }
+.kiwbi-closed-notice.flash { animation: kiwbi-closed-flash .7s ease; }
+@keyframes kiwbi-closed-flash {
+  0% { box-shadow: 0 0 0 0 rgba(180, 83, 9, .4); }
+  60% { box-shadow: 0 0 0 6px rgba(180, 83, 9, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(180, 83, 9, 0); }
+}
 
 @media (max-width: 767.98px) {
   .kiwbi-col-optional { display: none; }

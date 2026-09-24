@@ -106,6 +106,21 @@
         document.body.addEventListener('htmx:configRequest', function (evt) {
             evt.detail.headers['X-CSRF-TOKEN'] = document.querySelector('meta[name="csrf-token"]').content;
         });
+        // Al tocar una opción bloqueada (plazo vencido) resaltamos el aviso de cierre en vez de no hacer nada.
+        document.body.addEventListener('click', function (evt) {
+            var lockedCard = evt.target.closest('.kiwbi-option-locked');
+            if (!lockedCard) {
+                return;
+            }
+            var container = lockedCard.closest('[id^="customization-"]');
+            var notice = container && container.querySelector('.kiwbi-closed-notice');
+            if (!notice) {
+                return;
+            }
+            notice.classList.remove('flash');
+            void notice.offsetWidth;
+            notice.classList.add('flash');
+        });
     </script>
 }
 
