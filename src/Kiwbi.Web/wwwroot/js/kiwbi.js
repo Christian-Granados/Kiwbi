@@ -104,11 +104,12 @@
   }
 
   // Lightbox de un solo uso compartido por todas las imágenes .kiwbi-plan-zoomable (planos de
-  // vivienda/promoción): clic para ver a tamaño grande en la misma pantalla, sin abrir otra pestaña.
+  // vivienda/promoción, miniaturas de opciones de personalización): clic para ver a tamaño grande en
+  // la misma pantalla, sin abrir otra pestaña. Usa delegación de eventos en document (en vez de
+  // engancharse a cada <img> concreta) porque algunas de estas imágenes se insertan después de cargar
+  // la página vía swap de HTMX (p.ej. al elegir una opción), y una lista estática tomada una sola vez
+  // en DOMContentLoaded no las incluiría.
   function initPlanLightbox() {
-    var images = document.querySelectorAll('.kiwbi-plan-zoomable');
-    if (!images.length) return;
-
     var overlay = document.createElement('div');
     overlay.className = 'kiwbi-lightbox-overlay';
     overlay.innerHTML =
@@ -124,13 +125,13 @@
       overlayImg.src = '';
     }
 
-    images.forEach(function (img) {
-      img.addEventListener('click', function (e) {
-        e.preventDefault();
-        overlayImg.src = img.src;
-        overlayImg.alt = img.alt || '';
-        overlay.classList.add('active');
-      });
+    document.addEventListener('click', function (e) {
+      var img = e.target.closest('.kiwbi-plan-zoomable');
+      if (!img) return;
+      e.preventDefault();
+      overlayImg.src = img.src;
+      overlayImg.alt = img.alt || '';
+      overlay.classList.add('active');
     });
 
     overlay.addEventListener('click', close);

@@ -43,6 +43,7 @@ using Kiwbi.Application.Customizations.AssignCustomizationToUnit;
 using Kiwbi.Application.Customizations.RemoveCustomizationAssignment;
 using Kiwbi.Application.Customizations.AddCustomizationOption;
 using Kiwbi.Application.Customizations.UpdateCustomizationOption;
+using Kiwbi.Application.Customizations.UpdateCustomizationOptionThumbnail;
 using Kiwbi.Application.Customizations.SetDefaultCustomizationOption;
 using Kiwbi.Application.Customizations.RemoveCustomizationOption;
 using Kiwbi.Application.Onboarding.InviteBuyerToHousingUnit;
@@ -121,6 +122,7 @@ public static class DependencyInjection
 
         services.AddScoped<AddCustomizationOptionUseCase>();
         services.AddScoped<UpdateCustomizationOptionUseCase>();
+        services.AddScoped<UpdateCustomizationOptionThumbnailUseCase>();
         services.AddScoped<SetDefaultCustomizationOptionUseCase>();
         services.AddScoped<RemoveCustomizationOptionUseCase>();
 

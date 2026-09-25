@@ -10,6 +10,7 @@ public class CustomizationOptionViewModel
     public string Name { get; set; } = string.Empty;
     public decimal SurchargeAmount { get; set; }
     public bool IsDefault { get; set; }
+    public string? ThumbnailImagePath { get; set; }
 }
 
 public class CustomizationAssignmentViewModel
@@ -47,7 +48,7 @@ public class CustomizationDetailsViewModel
             HousingPromotionId = housingPromotionId,
             Name = dto.Name,
             Options = dto.Options
-                .Select(o => new CustomizationOptionViewModel { Id = o.Id, Name = o.Name, SurchargeAmount = o.SurchargeAmount, IsDefault = o.IsDefault })
+                .Select(o => new CustomizationOptionViewModel { Id = o.Id, Name = o.Name, SurchargeAmount = o.SurchargeAmount, IsDefault = o.IsDefault, ThumbnailImagePath = o.ThumbnailImagePath })
                 .ToList(),
             Assignments = dto.Assignments
                 .Select(a => new CustomizationAssignmentViewModel

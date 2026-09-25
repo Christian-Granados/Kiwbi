@@ -5,4 +5,5 @@ public sealed record CustomizationOptionForBuyerDto(
     string Name,
     decimal SurchargeAmount,
     bool IsDefault,
-    bool IsEffectiveSelection);
+    bool IsEffectiveSelection,
+    string? ThumbnailImagePath);

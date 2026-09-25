@@ -41,6 +41,7 @@ public class CustomizationConfiguration : IEntityTypeConfiguration<Customization
             options.Property(o => o.Name).HasColumnName("name").HasMaxLength(200).IsRequired();
             options.Property(o => o.SurchargeAmount).HasColumnName("surcharge_amount").HasColumnType("decimal(10,2)").IsRequired();
             options.Property(o => o.IsDefault).HasColumnName("is_default").IsRequired();
+            options.Property(o => o.ThumbnailImagePath).HasColumnName("thumbnail_image_path").HasMaxLength(500);
 
             options.HasIndex("CustomizationId", nameof(CustomizationOption.Name)).IsUnique();
         });

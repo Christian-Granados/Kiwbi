@@ -10,6 +10,7 @@ using Kiwbi.Application.Customizations.RemoveCustomizationAssignment;
 using Kiwbi.Application.Customizations.RenameCustomization;
 using Kiwbi.Application.Customizations.AddCustomizationOption;
 using Kiwbi.Application.Customizations.UpdateCustomizationOption;
+using Kiwbi.Application.Customizations.UpdateCustomizationOptionThumbnail;
 using Kiwbi.Application.Customizations.SetDefaultCustomizationOption;
 using Kiwbi.Application.Customizations.RemoveCustomizationOption;
 using Kiwbi.Application.RealEstate.GetHousingPromotion;
@@ -40,6 +41,7 @@ public class CustomizationsController : Controller
     private readonly RemoveCustomizationAssignmentUseCase _removeCustomizationAssignmentUseCase;
     private readonly AddCustomizationOptionUseCase _addCustomizationOptionUseCase;
     private readonly UpdateCustomizationOptionUseCase _updateCustomizationOptionUseCase;
+    private readonly UpdateCustomizationOptionThumbnailUseCase _updateCustomizationOptionThumbnailUseCase;
     private readonly SetDefaultCustomizationOptionUseCase _setDefaultCustomizationOptionUseCase;
     private readonly RemoveCustomizationOptionUseCase _removeCustomizationOptionUseCase;
 
@@ -59,6 +61,7 @@ public class CustomizationsController : Controller
         RemoveCustomizationAssignmentUseCase removeCustomizationAssignmentUseCase,
         AddCustomizationOptionUseCase addCustomizationOptionUseCase,
         UpdateCustomizationOptionUseCase updateCustomizationOptionUseCase,
+        UpdateCustomizationOptionThumbnailUseCase updateCustomizationOptionThumbnailUseCase,
         SetDefaultCustomizationOptionUseCase setDefaultCustomizationOptionUseCase,
         RemoveCustomizationOptionUseCase removeCustomizationOptionUseCase)
     {
@@ -77,6 +80,7 @@ public class CustomizationsController : Controller
         _removeCustomizationAssignmentUseCase = removeCustomizationAssignmentUseCase;
         _addCustomizationOptionUseCase = addCustomizationOptionUseCase;
         _updateCustomizationOptionUseCase = updateCustomizationOptionUseCase;
+        _updateCustomizationOptionThumbnailUseCase = updateCustomizationOptionThumbnailUseCase;
         _setDefaultCustomizationOptionUseCase = setDefaultCustomizationOptionUseCase;
         _removeCustomizationOptionUseCase = removeCustomizationOptionUseCase;
     }
@@ -404,6 +408,7 @@ public class CustomizationsController : Controller
             OptionId = optionId,
             Name = option.Name,
             SurchargeAmount = option.SurchargeAmount,
+            ThumbnailImagePath = option.ThumbnailImagePath,
         });
     }
 
@@ -435,6 +440,19 @@ public class CustomizationsController : Controller
         {
             ModelState.AddModelError(string.Empty, result.Error!);
             return View(model);
+        }
+
+        if (model.ThumbnailImageFile is { Length: > 0 } file)
+        {
+            await using var stream = file.OpenReadStream();
+            var thumbnailResult = await _updateCustomizationOptionThumbnailUseCase.ExecuteAsync(
+                new UpdateCustomizationOptionThumbnailCommand(model.CustomizationId, model.OptionId, stream, file.FileName), cancellationToken);
+
+            if (thumbnailResult.IsFailure)
+            {
+                ModelState.AddModelError(string.Empty, thumbnailResult.Error!);
+                return View(model);
+            }
         }
 
         return RedirectToAction(nameof(Details), new { id = model.CustomizationId });

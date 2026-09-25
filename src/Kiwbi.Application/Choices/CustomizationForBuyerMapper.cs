@@ -19,7 +19,8 @@ internal static class CustomizationForBuyerMapper
                 option.Name,
                 option.SurchargeAmount,
                 option.IsDefault,
-                option.Id == effectiveOptionId))
+                option.Id == effectiveOptionId,
+                option.ThumbnailImagePath))
             .ToList();
 
         return new CustomizationForBuyerDto(customization.Id, customization.Name, canSelect, selectedOptionId, effectiveOptionId, options);

@@ -9,6 +9,7 @@ public class CustomizationOptionForBuyerViewModel
     public decimal SurchargeAmount { get; set; }
     public bool IsDefault { get; set; }
     public bool IsEffectiveSelection { get; set; }
+    public string? ThumbnailImagePath { get; set; }
 
     public static CustomizationOptionForBuyerViewModel FromDto(CustomizationOptionForBuyerDto dto) => new()
     {
@@ -17,5 +18,6 @@ public class CustomizationOptionForBuyerViewModel
         SurchargeAmount = dto.SurchargeAmount,
         IsDefault = dto.IsDefault,
         IsEffectiveSelection = dto.IsEffectiveSelection,
+        ThumbnailImagePath = dto.ThumbnailImagePath,
     };
 }

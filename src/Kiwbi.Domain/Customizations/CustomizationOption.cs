@@ -9,6 +9,7 @@ public class CustomizationOption : BaseEntity
     public string Name { get; private set; } = null!;
     public decimal SurchargeAmount { get; private set; }
     public bool IsDefault { get; private set; }
+    public string? ThumbnailImagePath { get; private set; }
 
     private CustomizationOption()
     {
@@ -44,4 +45,7 @@ public class CustomizationOption : BaseEntity
     internal void MarkAsDefault() => IsDefault = true;
 
     internal void UnmarkAsDefault() => IsDefault = false;
+
+    internal void UpdateThumbnail(string? thumbnailImagePath) =>
+        ThumbnailImagePath = string.IsNullOrWhiteSpace(thumbnailImagePath) ? null : thumbnailImagePath.Trim();
 }

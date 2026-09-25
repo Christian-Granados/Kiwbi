@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Http;
 
 namespace Kiwbi.Web.Models.Customizations;
 
@@ -15,4 +16,9 @@ public class EditCustomizationOptionViewModel
     [Range(0, 1_000_000, ErrorMessage = "El sobrecoste no puede ser negativo.")]
     [Display(Name = "Sobrecoste")]
     public decimal SurchargeAmount { get; set; }
+
+    public string? ThumbnailImagePath { get; set; }
+
+    [Display(Name = "Imagen de la opción")]
+    public IFormFile? ThumbnailImageFile { get; set; }
 }

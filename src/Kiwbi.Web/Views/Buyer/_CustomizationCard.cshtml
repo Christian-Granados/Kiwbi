@@ -13,7 +13,14 @@
             <div class="col">
                 <div class="kiwbi-option-card @(option.IsEffectiveSelection ? "selected" : "") @(isOptionLocked ? "kiwbi-option-locked" : "")"
                      title="@(isOptionLocked ? "El plazo de selección ha finalizado y ya no se puede cambiar" : null)">
-                    <span class="kiwbi-option-thumb"></span>
+                    @if (!string.IsNullOrEmpty(option.ThumbnailImagePath))
+                    {
+                        <img src="@option.ThumbnailImagePath" alt="@option.Name" class="kiwbi-option-thumb kiwbi-plan-zoomable" />
+                    }
+                    else
+                    {
+                        <span class="kiwbi-option-thumb"></span>
+                    }
                     <span class="flex-fill text-start">
                         <span class="d-block fw-semibold" style="font-size:.85rem;">@option.Name</span>
                         <span class="kiwbi-option-default-tag @(option.IsDefault ? "" : "invisible")">Por defecto</span>

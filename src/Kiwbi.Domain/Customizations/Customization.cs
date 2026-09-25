@@ -113,6 +113,13 @@ public class Customization : BaseEntity
         Touch();
     }
 
+    public void UpdateOptionThumbnail(Guid optionId, string? thumbnailImagePath)
+    {
+        var option = GetOptionOrThrow(optionId);
+        option.UpdateThumbnail(thumbnailImagePath);
+        Touch();
+    }
+
     public void SetDefaultOption(Guid optionId)
     {
         var option = GetOptionOrThrow(optionId);
