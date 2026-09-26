@@ -73,7 +73,14 @@ public class InviteBuyerToHousingUnitUseCase
         await _buyerInvitationRepository.AddAsync(invitation, cancellationToken);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        await _emailSender.SendBuyerInvitationEmailAsync(invitation.Email, invitation.Token, invitation.ExpiresAtUtc, cancellationToken);
+        try
+        {
+            await _emailSender.SendBuyerInvitationEmailAsync(invitation.Email, invitation.Token, invitation.ExpiresAtUtc, cancellationToken);
+        }
+        catch (FormatException)
+        {
+            return Result.Failure<Guid>("El correo electrónico no es válido.");
+        }
 
         return Result.Success(invitation.Id);
     }

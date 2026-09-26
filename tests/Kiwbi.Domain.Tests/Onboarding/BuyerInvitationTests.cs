@@ -39,6 +39,8 @@ public class BuyerInvitationTests
     [InlineData("not-an-email")]
     [InlineData("@example.com")]
     [InlineData("buyer@")]
+    [InlineData("buyer @example.com")]
+    [InlineData("buyer@exam ple.com")]
     public void Create_WithInvalidEmail_ShouldThrowDomainException(string? email)
     {
         var act = () => BuyerInvitation.Create(HousingUnitId, email!);

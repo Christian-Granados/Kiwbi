@@ -98,7 +98,9 @@ public class BuyerInvitation : BaseEntity
 
         var trimmed = email.Trim();
 
-        if (!trimmed.Contains('@') || trimmed.StartsWith('@') || trimmed.EndsWith('@'))
+        // Validates against the same parser used to actually send the email (SmtpEmailSender), so an
+        // address that passes here (e.g. containing a stray inner space) can't later crash the send.
+        if (trimmed.Any(char.IsWhiteSpace) || !System.Net.Mail.MailAddress.TryCreate(trimmed, out _))
         {
             throw new DomainException("El correo electrónico del comprador no es válido.");
         }

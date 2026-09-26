@@ -65,7 +65,14 @@ public class ResendBuyerInvitationUseCase
         _buyerInvitationRepository.Update(invitation);
         await _unitOfWork.SaveChangesAsync(cancellationToken);
 
-        await _emailSender.SendBuyerInvitationEmailAsync(invitation.Email, invitation.Token, invitation.ExpiresAtUtc, cancellationToken);
+        try
+        {
+            await _emailSender.SendBuyerInvitationEmailAsync(invitation.Email, invitation.Token, invitation.ExpiresAtUtc, cancellationToken);
+        }
+        catch (FormatException)
+        {
+            return Result.Failure("El correo electrónico de esta invitación no es válido. Cancélala y crea una nueva con un correo electrónico corregido.");
+        }
 
         return Result.Success();
     }
