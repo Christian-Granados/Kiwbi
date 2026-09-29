@@ -36,6 +36,8 @@ public class CreateCustomizationViewModel
 
     public List<SelectListItem> AvailableTradeCategories { get; set; } = new();
 
+    public List<SelectListItem> AvailableScopes { get; set; } = new();
+
     public List<SelectListItem> AvailableTypologies { get; set; } = new();
 
     public List<SelectListItem> AvailableUnits { get; set; } = new();

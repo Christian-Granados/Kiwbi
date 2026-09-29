@@ -16,6 +16,7 @@ using Kiwbi.Application.Customizations.RemoveCustomizationOption;
 using Kiwbi.Application.RealEstate.GetHousingPromotion;
 using Kiwbi.Application.RealEstate.GetHousingTypologies;
 using Kiwbi.Application.RealEstate.GetHousingUnits;
+using Kiwbi.Domain.Customizations;
 using Kiwbi.Web.Models.Customizations;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -492,6 +493,13 @@ public class CustomizationsController : Controller
         model.AvailableTradeCategories = tradeCategoriesResult.IsSuccess
             ? tradeCategoriesResult.Value!.Select(t => new SelectListItem(t.Name, t.Id.ToString())).ToList()
             : new List<SelectListItem>();
+
+        model.AvailableScopes = new List<SelectListItem>
+        {
+            new("Toda la promoción", CustomizationScope.WholePromotion.ToString()),
+            new("Tipología", CustomizationScope.Typology.ToString()),
+            new("Vivienda", CustomizationScope.Unit.ToString()),
+        };
 
         await PopulateAvailableTargetsAsync(model, housingPromotionId, cancellationToken);
     }

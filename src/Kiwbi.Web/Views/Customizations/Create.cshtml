@@ -55,7 +55,7 @@
         <div class="kiwbi-fieldset">
             <div class="kiwbi-legend">Se aplica a</div>
             <select asp-for="Scope" id="scopeSelect" class="form-select form-select-sm"
-                    asp-items="Html.GetEnumSelectList<CustomizationScope>()"></select>
+                    asp-items="Model.AvailableScopes"></select>
             <p class="small text-muted mb-0 mt-1">
                 Si eliges "Toda la promoción" no hace falta seleccionar tipologías ni viviendas.
                 Si eliges "Tipología" o "Vivienda", selecciona una o varias en la lista correspondiente.
