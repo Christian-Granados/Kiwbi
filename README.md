@@ -6,7 +6,13 @@ Este repositorio es el Trabajo Fin de Máster de Christian Granados. Ver [`LICEN
 
 - **Demo pública en producción:** https://kiwbi.onrender.com
 - **Presentación del proyecto:** [Google Slides](https://docs.google.com/presentation/d/1UIgTd1C71db1TOWYfe97wVyZ5NRCqsPpyXbaDNkBB58/edit?usp=sharing)
+- **Video de presentación:** [Ver video](https://docs.google.com/videos/d/1oydGH4_pvtWI_mqAyHB1dr-_C8U6ER--KCwVHUeT2TY/play?usp=sharing)
 - **Documentación funcional/técnica ampliada:** carpeta [`.ai-docs/`](.ai-docs/)
+
+| Rol | Email | Contraseña |
+|---|---|---|
+| Promotora | `demo@kiwbi.test` | `DemoKiwbi!2026` |
+| Comprador | `buyer1@kiwbi.test` (también `buyer2`/`3`/`4`) | `DemoBuyer!2026` |
 
 ---
 
