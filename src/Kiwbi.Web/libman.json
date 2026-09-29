@@ -3,7 +3,7 @@
   "defaultProvider": "cdnjs",
   "libraries": [
     {
-      "library": "htmx@4.0.0",
+      "library": "htmx@2.0.11",
       "destination": "wwwroot/lib/htmx.org",
       "files": [
         "htmx.min.js"

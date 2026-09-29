@@ -278,6 +278,26 @@ Antes de grabar:
 
 No deben mostrarse contraseñas, variables de entorno, logs con enlaces privados ni paneles de proveedores cloud.
 
+### Chuleta minimalista para grabar la demo
+
+**Inicio - PROMOTORA** (`demo@kiwbi.test`)
+
+1. **Promociones** → enseñar las tres promociones y sus distintos momentos.
+2. **Puerta Azul → Gremios y Personalizaciones** → mostrar plazos abiertos/vencidos y distintos alcances. No editar.
+3. **Puerta Azul → Viviendas → 3ºA y 3ºB → Invitaciones** → mostrar una caducada y otra pendiente. No enviar.
+
+**CAMBIO A COMPRADOR** (`buyer4@kiwbi.test`)
+
+4. **Mis viviendas → Puerta Azul → 2ºB → Mecanismos eléctricos** → comparar vencido/abierto y elegir una opción. Mostrar actualización sin recarga.
+
+**CAMBIO A PROMOTORA** (`demo@kiwbi.test`)
+
+5. **Puerta Azul → Progreso → refrescar** → localizar la elección recién realizada y mostrar la conexión entre ambos roles.
+6. **Vistalar → Progreso → 1ºB → Armario empotrado** → mostrar opción por defecto y pulsar `Confirmar`.
+7. **Vistalar → Progreso → Exportar PDF** → abrir el Libro de Obra y mostrar su agrupación por gremio y vivienda.
+
+**Salida** → mantener el PDF visible, decir la frase de transición y cortar al cierre ante cámara.
+
 ### Demo 1 - Tres promociones, tres momentos del proceso
 
 **Tiempo:** 25-30 segundos.
