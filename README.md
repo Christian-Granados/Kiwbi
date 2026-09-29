@@ -5,6 +5,7 @@
 Este repositorio es el Trabajo Fin de Máster de Christian Granados. Ver [`LICENSE`](LICENSE) para las condiciones de uso.
 
 - **Demo pública en producción:** https://kiwbi.onrender.com
+- **Presentación del proyecto:** [Google Slides](https://docs.google.com/presentation/d/1UIgTd1C71db1TOWYfe97wVyZ5NRCqsPpyXbaDNkBB58/edit?usp=sharing)
 - **Documentación funcional/técnica ampliada:** carpeta [`.ai-docs/`](.ai-docs/)
 
 ---
